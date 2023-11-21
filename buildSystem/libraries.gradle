@@ -1,0 +1,60 @@
+apply from: "$rootProject.projectDir/buildsystem/versionlibrary.gradle"
+def version = ext.versionlibrary
+
+ext.libraries = [
+
+        //ANDROID BASE
+        androidx_core                : "androidx.core:core-ktx:$version.androidxCore",
+        androidx_app_compat           : "androidx.appcompat:appcompat:$version.androidxAppCompat",
+        androidx_constraint_layout    : "androidx.constraintlayout:constraintlayout:$version.androidConstraintLayout",
+        androidx_navigation          : "androidx.navigation:navigation-ui-ktx:$version.androidxNavigation",
+        fragment_ktx                 : "androidx.fragment:fragment-ktx:$version.fragmentKtx",
+        androidx_navigation_fragment  : "androidx.navigation:navigation-fragment-ktx:$version.androidxNavigationFragment",
+        androidx_navigation_dynamic   : "androidx.navigation:navigation-dynamic-features-fragment:$version.androidxNavigationDynamic",
+
+        //ANDROID OPTIONAL
+        androidx_swipe_refresh        : "androidx.swiperefreshlayout:swiperefreshlayout:$version.androidSwipeRefresh",
+        google_hilt                  : "com.google.dagger:hilt-android:$version.hiltKapt",
+        navigation_hilt              : "androidx.hilt:hilt-navigation-fragment:$version.hiltNavigation",
+        gson_code                    : "com.google.code.gson:gson:$version.gsonCode",
+        retrofit                    : "com.squareup.retrofit2:retrofit:$version.retrofit",
+        retrofit_converter           : "com.squareup.retrofit2:converter-gson:$version.retrofitConverter",
+        kotlinx_coroutines           : "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$version.kotlinxCoroutinesJvm",
+        glide                       : "com.github.bumptech.glide:glide:$version.glide",
+        glide_ok_http                 : "com.github.bumptech.glide:okhttp3-integration:$version.glideOkHttp",
+        lifecycle_library_core        : "androidx.lifecycle:lifecycle-livedata-ktx:$version.lifecycleLibraryCore",
+        coroutine_retrofit           : "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:$version.coroutineRetrofit",
+        reactivex                   : "io.reactivex.rxjava2:rxjava:$version.reactivex",
+        reactivex_android            : "io.reactivex.rxjava2:rxandroid:$version.reactivexAndroid",
+        okhttp3                      : "com.squareup.okhttp3:okhttp:$version.okhttp3",
+
+        //MATERIAL BASE
+        android_material             : "com.google.android.material:material:$version.androidMaterial",
+
+        //TEST
+        junit_test                   : "junit:junit:$version.testJunit",
+        android_test_implementation   : "androidx.test.ext:junit:$version.androidTestJunit",
+        android_testespresso         : "androidx.test.espresso:espresso-core:$version.androidTestEspresso",
+        mockk                       : "io.mockk:mockk:$version.mockk",
+        arch_core                    : "androidx.arch.core:core-testing:$version.archCore",
+        junit_ktx                    : "androidx.test.ext:junit-ktx:$version.junitKtx",
+
+        //KAPT
+        databinding_kapt             : "com.android.databinding:compiler:$version.databindingKapt",
+        hilt_kapt                    : "com.google.dagger:hilt-compiler:$version.hiltKapt",
+
+        //EXTERNAL LIBRARY
+        ssp_dimensv0                 : "com.intuit.sdp:sdp-android:$version.sspDimensv0",
+        ssp_dimensv6                 : "com.intuit.ssp:ssp-android:$version.sspDimensv6",
+        confirm_pass                 : "com.github.fraggjkee:sms-confirmation-view:$version.confirmPass",
+
+        //JAVA
+        javax_inject                  : "javax.inject:javax.inject:$version.javaxInject",
+        squeareup_okHttp              : "com.squareup.okhttp3:okhttp:$version.squeareupOkHttp",
+        squeareup_interceptor         : "com.squareup.okhttp3:logging-interceptor:$version.squeareupInterceptor",
+        kapt_glide                    : "com.github.bumptech.glide:compiler:$version.kaptGlide",
+
+        //ROOM
+        roomRuntime                   : "androidx.room:room-runtime:$version.room",
+        roomCompiler                  : "androidx.room:room-compiler:$version.room"
+]

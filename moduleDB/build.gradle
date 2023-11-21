@@ -1,0 +1,48 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+apply from: rootProject.file("buildSystem/libraries.gradle")
+def libraries = ext.libraries
+apply from: "$rootProject.projectDir/buildsystem/genericbuild.gradle"
+def configuration = ext.configuration
+
+android {
+    namespace 'com.example.moduledb'
+    compileSdk configuration.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion configuration.minSdkVersion
+        targetSdkVersion configuration.targetSdkVersion
+        versionCode configuration.versionCode
+        versionName configuration.versionName
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+}
+
+dependencies {
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.8.22")
+    implementation "${libraries.junit_ktx}"
+    implementation "${libraries.androidx_navigation}"
+    implementation "${libraries.androidx_navigation_fragment}"
+    implementation "${libraries.retrofit}"
+    implementation "${libraries.retrofit_converter}"
+    implementation "${libraries.okhttp3}"
+    implementation "${libraries.lifecycle_library_core}"
+
+    implementation "${libraries.roomRuntime}"
+    kapt "${libraries.roomCompiler}"
+
+}
