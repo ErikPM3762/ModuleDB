@@ -9,5 +9,5 @@ class InitDbAhorrobus(
     private val initDbRepository: InitDbRepository
 ) {
 
-    suspend fun initializeDatabase() = initDbRepository.getPointsInterest()
+    suspend fun initializeDatabase() = initDbRepository
 }

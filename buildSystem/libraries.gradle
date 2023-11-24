@@ -56,5 +56,6 @@ ext.libraries = [
 
         //ROOM
         roomRuntime                   : "androidx.room:room-runtime:$version.room",
-        roomCompiler                  : "androidx.room:room-compiler:$version.room"
+        roomCompiler                  : "androidx.room:room-compiler:$version.room",
+        roomKtx                       : "androidx.room:room-ktx:$version.room"
 ]

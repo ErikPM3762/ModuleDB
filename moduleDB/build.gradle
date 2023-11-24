@@ -43,6 +43,7 @@ dependencies {
     implementation "${libraries.lifecycle_library_core}"
 
     implementation "${libraries.roomRuntime}"
+    implementation "${libraries.roomKtx}"
     kapt "${libraries.roomCompiler}"
 
 }
