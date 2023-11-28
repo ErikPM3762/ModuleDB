@@ -1,10 +1,10 @@
 package com.mobilityado.data
 
 data class Line(
-    val idBusLine: String,
-    val idBusSAE: String,
-    val descriptionLine: String,
-    val descriptionLocalCompany: String,
+    val id: String,
+    val idSAE: String,
+    val description: String,
+    val localCompany: String,
     val color: String?,
-    val brand: String
+    val brands: List<Brand>
 )
