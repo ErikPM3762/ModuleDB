@@ -1,8 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
-
+apply plugin: 'dagger.hilt.android.plugin'
+apply from: rootProject.file("buildSystem/libraries.gradle")
+def libraries = ext.libraries
 
 android {
     namespace 'com.example.moduledb'
@@ -14,7 +17,11 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
-
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -42,4 +49,19 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation "${libraries.androidx_navigation}"
+    implementation "${libraries.androidx_navigation_fragment}"
+
+    implementation "${libraries.kotlinx_coroutines}"
+    implementation "${libraries.javax_inject}"
+
+    implementation "${libraries.squeareup_okHttp}"
+    implementation "${libraries.squeareup_interceptor}"
+    implementation "${libraries.retrofit_converter}"
+    implementation "${libraries.gson_code}"
+    implementation "${libraries.coroutine_retrofit}"
+
+    implementation "${libraries.google_hilt}"
+    kapt "${libraries.hilt_kapt}"
 }

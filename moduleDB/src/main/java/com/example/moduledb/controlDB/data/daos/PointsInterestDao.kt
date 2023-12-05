@@ -3,7 +3,7 @@ package com.example.moduledb.controlDB.data.daos
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
-import com.example.moduledb.controlDB.data.models.PointsInterest
+import com.example.moduledb.controlDB.data.entities.PointsInterest
 
 @Dao
 abstract class PointsInterestDao : BaseDao <PointsInterest,Long>() {

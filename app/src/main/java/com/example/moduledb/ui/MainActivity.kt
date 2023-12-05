@@ -1,19 +1,20 @@
-package com.example.moduledb
+package com.example.moduledb.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.moduledb.controlDB.controlInitDb.DbControl
-import com.example.moduledb.controlDB.interfazAccess.initDb
+import androidx.activity.viewModels
+import com.example.moduledb.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    private val dbControlInterface: initDb = DbControl()
+    private val mainViewModel: MainViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-       dbControlInterface.initDbAhorrobus()
+      mainViewModel.getPointsInterest()
     }
 }
