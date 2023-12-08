@@ -10,4 +10,7 @@ abstract class PointsInterestDao : BaseDao <PointsInterest,Long>() {
 
     @Query("SELECT * from PointsInterest")
     abstract fun getPointsInterestData(): LiveData<PointsInterest>
+
+    @Query("SELECT COUNT(*)>0 FROM PointsInterest")
+    abstract fun getPointsInterestCount(): Boolean
 }

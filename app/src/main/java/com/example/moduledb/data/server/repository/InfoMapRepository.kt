@@ -1,6 +1,7 @@
 package com.example.moduledb.data.server.repository
 
 
+import android.util.Log
 import com.example.moduledb.controlDB.data.daos.PointsInterestDao
 import com.example.moduledb.controlDB.data.mapers.toPointsInterestList
 import com.example.moduledb.controlDB.data.models.PointsInterestResponse
@@ -25,7 +26,15 @@ class InfoMapRepository @Inject constructor(
         remoteDataSource.getPointsInterest().loading().map { result ->
             if (result is NetResult.Success) {
                 val pointsInterestList = result.data.toPointsInterestList()
-                pointInterestDao.insertOrUpdate(pointsInterestList)
+                pointInterestDao.getPointsInterestCount().let {
+                    Log.d("JULIAN", "PERSONAL: $it")
+                }.also {
+                    pointInterestDao.insertOrUpdate(pointsInterestList)
+                    Log.d("JULIAN", "Kotlin: ${pointInterestDao.findAll().count()}")
+                    Log.d("JULIAN", "PERSONAL: ${pointInterestDao.getPointsInterestCount()}")
+                }
+
+
             }
             result
         }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
