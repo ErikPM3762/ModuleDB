@@ -3,7 +3,8 @@ package com.example.moduledb.controlDB
 import android.content.Context
 import androidx.room.Room
 import com.example.moduledb.controlDB.data.AppDataBase
-import com.example.moduledb.controlDB.data.daos.PointsInterestDao
+import com.example.moduledb.controlDB.data.daos.MDbPOIsDao
+import com.example.moduledb.controlDB.data.daos.MDbPORechargeDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +28,13 @@ object DaoModule {
 
     @Singleton
     @Provides
-    fun providePointsInterestDao(database: AppDataBase): PointsInterestDao {
+    fun providePointsInterestDao(database: AppDataBase): MDbPOIsDao {
         return database.pointsInterest()
+    }
+
+    @Singleton
+    @Provides
+    fun providePointsRechargeDao(database: AppDataBase): MDbPORechargeDao {
+        return database.pointsRecharge()
     }
 }

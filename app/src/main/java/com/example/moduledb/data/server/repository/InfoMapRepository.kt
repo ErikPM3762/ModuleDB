@@ -1,9 +1,13 @@
 package com.example.moduledb.data.server.repository
 
 
-import com.example.moduledb.controlDB.data.daos.PointsInterestDao
+import android.util.Log
+import com.example.moduledb.controlDB.data.daos.MDbPOIsDao
+import com.example.moduledb.controlDB.data.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.mapers.toPointsInterestList
-import com.example.moduledb.controlDB.data.models.PointsInterestResponse
+import com.example.moduledb.controlDB.data.mapers.toPointsRechargeList
+import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 import com.example.moduledb.data.server.source.InfoMapRemoteDataSource
 import com.example.moduledb.utils.NetResult
 import com.example.moduledb.utils.getGenericError
@@ -17,17 +21,26 @@ import javax.inject.Inject
 
 class InfoMapRepository @Inject constructor(
     private val remoteDataSource: InfoMapRemoteDataSource,
-    private val pointInterestDao: PointsInterestDao
+    private val pointInterestDao: MDbPOIsDao,
+    private val pointRechargeDao: MDbPORechargeDao
 ) {
 
 
-    suspend fun getPointsInterest(): Flow<NetResult<List<PointsInterestResponse>>> =
+    suspend fun getPointsInterest(): Flow<NetResult<List<MDbPOIsResponse>>> =
         remoteDataSource.getPointsInterest().loading().map { result ->
             if (result is NetResult.Success) {
-                val pointsInterestList = result.data.toPointsInterestList()
-                pointInterestDao.insertOrUpdate(pointsInterestList)
+                Log.e("TEST-INTERES-AA",result.data.toString())
+                pointInterestDao.insertOrUpdate(result.data.toPointsInterestList())
             }
             result
-        }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
-            .flowOn(Dispatchers.IO)
+        }.loading()
+
+    suspend fun getPointsRecharge(): Flow<NetResult<List<MDbPORechargeResponse>>> =
+        remoteDataSource.getPointsRecharge().loading().map { result ->
+            if (result is NetResult.Success) {
+                val pointsInterestList = result.data.toPointsRechargeList()
+                pointRechargeDao.insertOrUpdate(pointsInterestList)
+            }
+            result
+        }.loading()
 }

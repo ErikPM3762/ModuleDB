@@ -1,8 +1,10 @@
 package com.example.moduledb.data.server.source
 
-import com.example.moduledb.controlDB.data.models.PointsInterestResponse
+import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 import com.example.moduledb.data.server.ServiceApi
 import com.example.moduledb.data.server.request.POIsRequest
+import com.example.moduledb.data.server.request.RechargingPointsRequest
 import com.example.moduledb.utils.NetResult
 import com.example.moduledb.utils.parse
 import com.example.moduledb.utils.toNetworkResult
@@ -18,11 +20,19 @@ class RetrofitInfoMapDataSource @Inject constructor(private val serviceApi: Serv
     InfoMapRemoteDataSource {
 
 
-    override suspend fun getPointsInterest(): Flow<NetResult<ArrayList<PointsInterestResponse>>> =
+    override suspend fun getPointsInterest(): Flow<NetResult<ArrayList<MDbPOIsResponse>>> =
         flow {
             emit(serviceApi.getPOIs(POIsRequest()))
-        }.catch { error -> emit(error.toNetworkResult()) }
+        }
             .map { res -> res.parse {
                 it.result!!.pointOfInterestList!! } }
+            .flowOn(Dispatchers.IO)
+
+    override suspend fun getPointsRecharge(): Flow<NetResult<ArrayList<MDbPORechargeResponse>>> =
+        flow {
+            emit(serviceApi.getRechargingPoints(RechargingPointsRequest()))
+        }
+            .map { res -> res.parse {
+                it.result!!.pointOfRechargeList!! } }
             .flowOn(Dispatchers.IO)
 }
