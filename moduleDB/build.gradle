@@ -48,6 +48,8 @@ dependencies {
     implementation "${libraries.lifecycle_library_core}"
     implementation "${libraries.google_hilt}"
     kapt "${libraries.hilt_kapt}"
+    implementation "${libraries.squeareup_interceptor}"
+    implementation "${libraries.coroutine_retrofit}"
 
 
     implementation "${libraries.roomRuntime}"
@@ -56,7 +58,6 @@ dependencies {
 
     implementation "${libraries.roomRuntime}"
     annotationProcessor  "${libraries.roomCompiler}"
-
 
 }
 

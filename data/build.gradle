@@ -1,0 +1,26 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+apply from: rootProject.file("buildSystem/libraries.gradle")
+def libraries = ext.libraries
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+dependencies {
+
+    implementation "${libraries.kotlinx_coroutines}"
+    implementation "${libraries.javax_inject}"
+
+    implementation "${libraries.squeareup_okHttp}"
+    implementation "${libraries.squeareup_interceptor}"
+    implementation "${libraries.retrofit_converter}"
+    implementation "${libraries.gson_code}"
+    implementation "${libraries.coroutine_retrofit}"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
+    implementation project(path: ':moduleDB')
+}

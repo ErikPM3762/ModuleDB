@@ -1,8 +1,8 @@
 package com.example.moduledb.controlDB.data.mapers
 
 import android.util.Log
-import com.example.moduledb.controlDB.data.entities.MDbPOIs
-import com.example.moduledb.controlDB.data.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
+import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 
@@ -12,13 +12,13 @@ import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 fun MDbPOIsResponse.toPointsInterest(): MDbPOIs {
     return MDbPOIs(
         id = id?.toLongOrNull() ?: 0L,
-        idPointOfInterest = id!! ,
-        pointOfInterest = name!! ,
-        descPointOfInterest = description!!,
-        pointOfInterestAddress = address!!,
+        idPointOfInterest = id ?: "N/A" ,
+        pointOfInterest = name ?: "N/A" ,
+        descPointOfInterest = description ?: "N/A",
+        pointOfInterestAddress = address ?: "N/A",
         pointOfInterestPhone = phone ?: "N/A",
-        latitude = latitude!!,
-        longitude = longitude!!
+        latitude = latitude ?: "N/A",
+        longitude = longitude ?: "N/A"
     )
 }
 
@@ -33,19 +33,19 @@ fun List<MDbPOIsResponse>.toPointsInterestList(): List<MDbPOIs> {
  */
 fun MDbPORechargeResponse.toPointsRecharge(): MDbPORecharge {
     return MDbPORecharge(
-        id = this.idRechargeCenter.toLongOrNull() ?: 0L,
-        idRechargeCenter = idRechargeCenter,
-        RechargeCenter =RechargeCenter,
-        latitude = latitude,
-        longitude = longitude,
-        rechargeCenterTypeId = rechargeCenterTypeId,
-        rechargeCenterType = rechargeCenterType,
-        rechargeCenterCategory = rechargeCenterCategory,
-        street = street,
-        outdoorNumber = outdoorNumber,
-        interiorNumber = interiorNumber,
-        neighborhood = neighborhood,
-        postalCode = postalCode
+        id = idRechargeCenter?.toLongOrNull() ?: 0L,
+        idRechargeCenter = idRechargeCenter ?: "N/A",
+        RechargeCenter = RechargeCenter ?: "N/A",
+        latitude = latitude ?: "N/A",
+        longitude = longitude ?: "N/A",
+        rechargeCenterTypeId = rechargeCenterTypeId ?: "N/A",
+        rechargeCenterType = rechargeCenterType ?: "N/A",
+        rechargeCenterCategory = rechargeCenterCategory ?: "N/A",
+        street = street ?: "N/A",
+        outdoorNumber = outdoorNumber ?: "N/A",
+        interiorNumber = interiorNumber ?: "N/A",
+        neighborhood = neighborhood ?: "N/A",
+        postalCode = postalCode ?: 0
     )
 }
 

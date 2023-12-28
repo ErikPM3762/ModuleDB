@@ -6,27 +6,27 @@ import com.google.gson.annotations.SerializedName
 
 data class MDbPORechargeResponse(
     @SerializedName("idRechargeCenter")
-    val idRechargeCenter: String,
+    val idRechargeCenter: String?,
     @SerializedName("RechargeCenter")
-    val RechargeCenter: String,
+    val RechargeCenter: String?,
     @SerializedName("latitude")
-    val latitude: String,
+    val latitude: String?,
     @SerializedName("longitude")
-    val longitude: String,
+    val longitude: String?,
     @SerializedName("rechargeCenterTypeId")
-    val rechargeCenterTypeId: String,
+    val rechargeCenterTypeId: String?,
     @SerializedName("rechargeCenterType")
-    val rechargeCenterType: String,
+    val rechargeCenterType: String?,
     @SerializedName("rechargeCenterCategory")
-    val rechargeCenterCategory: String,
+    val rechargeCenterCategory: String?,
     @SerializedName("street")
-    val street: String,
+    val street: String?,
     @SerializedName("outdoorNumber")
-    val outdoorNumber: String,
+    val outdoorNumber: String?,
     @SerializedName("interiorNumber")
-    val interiorNumber: String,
+    val interiorNumber: String?,
     @SerializedName("neighborhood")
-    val neighborhood: String,
+    val neighborhood: String?,
     @SerializedName("postalCode")
-    val postalCode: Int
+    val postalCode: Int?
 )
