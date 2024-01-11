@@ -7,6 +7,5 @@ data class Stop(
     val description: String,
     val longitude: Double,
     val latitude: Double,
-    val order: Int = 0,
-    val brands: List<Brand>
+    val order: Int = 0
 )
