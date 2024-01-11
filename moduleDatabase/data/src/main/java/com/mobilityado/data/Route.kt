@@ -4,8 +4,10 @@ data class Route(
     val idLine: String,
     val id: String,
     val idSAE: String,
-    val descriptionLine: String,
-    val descriptionLocalCompany: String,
-    val color: String?,
-    val brands: List<Brand>
+    val description: String,
+    val localCompany: String,
+    val color: String,
+    val brands: List<Brand>,
+    val stops: List<Stop>,
+    val path: List<List<Path>>
 )
