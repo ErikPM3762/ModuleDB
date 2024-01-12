@@ -3,7 +3,6 @@ package com.example.moduledb.controlDB.modules
 import android.content.Context
 import com.example.moduledb.controlDB.data.remote.ServiceApi
 import com.example.moduledb.controlDB.data.remote.server.BaseInterceptor
-import com.example.moduledb.controlDB.data.remote.server.Constantes
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
 import com.example.moduledb.controlDB.data.remote.source.InfoMapRemoteDataSource
@@ -24,6 +23,19 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ModuleInject {
 
+    /**
+     * Funciones externas en archivo C++ para obtener las URL base correspondientes
+     * para la consulta de servicios
+     */
+    private external fun getUriApiDev():String
+    private external fun getUriApiPre():String
+    private external fun getUriApiPro():String
+
+    /**
+     * En este apartado configuraremos las inyecciones correspondientes para los servicios de consulta
+     * de API a Oracle
+     */
+
     @Singleton
     @Provides
     fun provideInterceptor (networkMonitor: NetworkMonitor) = BaseInterceptor(networkMonitor)
@@ -32,7 +44,7 @@ object ModuleInject {
     @Provides
     fun provideRetrofit(client: OkHttpClient): ServiceApi {
         return Retrofit.Builder()
-            .baseUrl(Constantes.URI_API_PRE)
+            .baseUrl(getUriApiPre())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
@@ -47,15 +59,20 @@ object ModuleInject {
     }
 
 
-   /* @Singleton
+    @Singleton
     @Provides
     fun provideOkHttpClient(interceptor: BaseInterceptor): OkHttpClient {
         return interceptor.okHttpClient
-    }*/
+    }
 
     @Singleton
     @Provides
     fun provideNetworkMonitor (@ApplicationContext context : Context) : NetworkMonitor {
         return LiveNetworkMonitor(context)
     }
+
+    /**
+     * En este apartado configuraremos las inyecciones correspondientes para los servicios de consulta
+     * de API a AWS
+     */
 }

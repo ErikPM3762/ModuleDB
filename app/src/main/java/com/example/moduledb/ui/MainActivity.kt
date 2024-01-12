@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import com.example.moduledb.R
 import com.example.moduledb.controlDB.initData.InitDbViewModel
+import com.example.moduledb.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
