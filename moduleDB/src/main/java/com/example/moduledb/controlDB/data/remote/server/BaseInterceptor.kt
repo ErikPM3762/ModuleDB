@@ -1,7 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.server
 
 
-import com.example.moduledb.controlDB.data.remote.ServiceApi
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -79,7 +78,7 @@ class BaseInterceptor @Inject constructor(private val networkMonitor: NetworkMon
                     .addCallAdapterFactory(CoroutineCallAdapterFactory())
                     .build()
                     .run {
-                        create(ServiceApi::class.java)
+                        create(OracleServiceApi::class.java)
                     }
 
                 val newAccessToken = getOAuthTokenService.getAuthToken("client_credentials", "ADOAPIs").execute()

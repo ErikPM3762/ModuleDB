@@ -1,10 +1,13 @@
 package com.example.moduledb.controlDB.data.mapers
 
 import android.util.Log
+import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroRegion
 
 /**
  * Transformacion del objeto para puntos de interes
@@ -12,8 +15,8 @@ import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 fun MDbPOIsResponse.toPointsInterest(): MDbPOIs {
     return MDbPOIs(
         id = id?.toLongOrNull() ?: 0L,
-        idPointOfInterest = id ?: "N/A" ,
-        pointOfInterest = name ?: "N/A" ,
+        idPointOfInterest = id ?: "N/A",
+        pointOfInterest = name ?: "N/A",
         descPointOfInterest = description ?: "N/A",
         pointOfInterestAddress = address ?: "N/A",
         pointOfInterestPhone = phone ?: "N/A",
@@ -51,4 +54,24 @@ fun MDbPORechargeResponse.toPointsRecharge(): MDbPORecharge {
 
 fun List<MDbPORechargeResponse>.toPointsRechargeList(): List<MDbPORecharge> {
     return this.map { it.toPointsRecharge() }
+}
+
+/**
+ * Transformacion del objeto para listado de Macro Regiones
+ */
+fun MDBMacroRegions.toMacroRegions(): MDbMacroRegions {
+    return MDbMacroRegions(
+        idMacroRegion = idMacroRegion,
+        desMacroRegion = desMacroRegion,
+        latitudeMacroRegion = latitudeMacroRegion,
+        longitudeMacroRegion = longitudeMacroRegion,
+        routeCount = 0
+
+    )
+}
+
+fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
+    return this.map {
+        it.toMacroRegions()
+    }
 }

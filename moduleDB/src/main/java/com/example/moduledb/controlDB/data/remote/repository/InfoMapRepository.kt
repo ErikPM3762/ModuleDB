@@ -9,7 +9,7 @@ import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 import com.example.moduledb.controlDB.data.models.MDbVTPointInterestResponse
 import com.example.moduledb.controlDB.data.models.MDbVTPointRechargeResponse
-import com.example.moduledb.controlDB.data.remote.source.InfoMapRemoteDataSource
+import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading
@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class InfoMapRepository @Inject constructor(
-    private val remoteDataSource: InfoMapRemoteDataSource,
+    private val remoteDataSource: IInfoMapDataSource,
     private val pointInterestDao: MDbPOIsDao,
     private val pointRechargeDao: MDbPORechargeDao
 ) {

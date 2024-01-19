@@ -1,12 +1,14 @@
 package com.example.moduledb.controlDB.modules
 
 import android.content.Context
-import com.example.moduledb.controlDB.data.remote.ServiceApi
+import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.data.remote.server.BaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
-import com.example.moduledb.controlDB.data.remote.source.InfoMapRemoteDataSource
-import com.example.moduledb.controlDB.data.remote.source.RetrofitInfoMapDataSource
+import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
+import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
+import com.example.moduledb.controlDB.data.remote.source.InfoMapDataSource
+import com.example.moduledb.controlDB.data.remote.source.RegionsDataSource
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -42,20 +44,26 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideRetrofit(client: OkHttpClient): ServiceApi {
+    fun provideRetrofit(client: OkHttpClient): OracleServiceApi {
         return Retrofit.Builder()
             .baseUrl(getUriApiPre())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
             .build()
-            .create(ServiceApi::class.java)
+            .create(OracleServiceApi::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideUserRemoteDataSource(serviceApi: ServiceApi): InfoMapRemoteDataSource {
-        return RetrofitInfoMapDataSource(serviceApi)
+    fun provideInfoMapDataSource(serviceApi: OracleServiceApi): IInfoMapDataSource {
+        return InfoMapDataSource(serviceApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMacroRegionsRemoteDataSource(serviceApi: OracleServiceApi): IRegionsDataSource {
+        return RegionsDataSource(serviceApi)
     }
 
 

@@ -20,5 +20,6 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
+        mainViewModel.getMacroRegions(11)
     }
 }

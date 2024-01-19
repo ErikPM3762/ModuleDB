@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
+import com.example.moduledb.controlDB.usecase.GetMacroRegions
 import com.example.moduledb.controlDB.usecase.GetPointsInterest
 import com.example.moduledb.controlDB.usecase.GetPointsRecharge
 import com.example.moduledb.controlDB.usecase.GetVersionTablePointInterest
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class InitDbViewModel @Inject constructor(
     private val getPointsInterest: GetPointsInterest,
     private val getPointsRecharge: GetPointsRecharge,
+    private val getMacroRegions: GetMacroRegions,
     private val getVersionTablePointInterest: GetVersionTablePointInterest,
     private val getVersionTablePointRecharge: GetVersionTablePointRecharge,
     private val mDbVersionInfoDao: MDbVersionInfoDao
@@ -40,7 +42,7 @@ class InitDbViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            mDbVersionInfoDao.insertOrUpdatePointInterestAndRecharge(0,0)
+            mDbVersionInfoDao.insertOrUpdatePointInterestAndRecharge(0, 0)
         }
     }
 
@@ -60,6 +62,7 @@ class InitDbViewModel @Inject constructor(
                             _pointsOfInterestAvailable.postValue(Event(Unit))
                         }
                     }
+
                     else -> {}
                 }
 
@@ -84,6 +87,19 @@ class InitDbViewModel @Inject constructor(
                         }
                     }
 
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun getMacroRegions(idLocalCompany: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getMacroRegions.invoke(idLocalCompany).collect() { resultVersion ->
+                when (resultVersion) {
+                    is NetResult.Success -> {
+                        _pointsOfInterestAvailable.postValue(Event(Unit))
+                    }
                     else -> {}
                 }
             }

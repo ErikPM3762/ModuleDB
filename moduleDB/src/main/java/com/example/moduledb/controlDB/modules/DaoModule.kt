@@ -3,6 +3,7 @@ package com.example.moduledb.controlDB.modules
 import android.content.Context
 import androidx.room.Room
 import com.example.moduledb.controlDB.data.local.AppDataBase
+import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
@@ -42,5 +43,11 @@ object DaoModule {
     @Provides
     fun provideVersionTableDao(database: AppDataBase): MDbVersionInfoDao {
         return database.versionTable()
+    }
+
+    @Singleton
+    @Provides
+    fun provideMacroRegionsDao(database: AppDataBase): MDbMacroRegionsDao {
+        return database.macroRegions()
     }
 }

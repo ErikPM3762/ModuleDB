@@ -4,11 +4,11 @@ import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
 import com.example.moduledb.controlDB.data.models.MDbVTPointInterestResponse
 import com.example.moduledb.controlDB.data.models.MDbVTPointRechargeResponse
-import com.example.moduledb.controlDB.data.remote.ServiceApi
 import com.example.moduledb.controlDB.data.remote.request.POIsRequest
 import com.example.moduledb.controlDB.data.remote.request.RechargingPointsRequest
-import com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest.VTPointInterestResultResponse
+import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.NetResult
+import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.parse
 import com.example.moduledb.controlDB.utils.toNetworkResult
 import com.google.gson.JsonObject
@@ -20,16 +20,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class RetrofitInfoMapDataSource @Inject constructor(private val serviceApi: ServiceApi) :
-    InfoMapRemoteDataSource {
-
-    val commonRequestData = JsonObject().apply {
-        addProperty("idFront", 51)
-        addProperty("country", "mexico")
-        addProperty("state", "")
-        addProperty("cityOrTown", "")
-        addProperty("idLocalCompany", "11")
-    }
+class InfoMapDataSource @Inject constructor(private val serviceApi: OracleServiceApi) :
+    IInfoMapDataSource {
 
     override suspend fun getPointsInterest(): Flow<NetResult<ArrayList<MDbPOIsResponse>>> =
         flow {
@@ -53,7 +45,7 @@ class RetrofitInfoMapDataSource @Inject constructor(private val serviceApi: Serv
 
     override suspend fun getVersionTablePointInterest(): Flow<NetResult<MDbVTPointInterestResponse>> =
         flow {
-            emit(serviceApi.getPOIsVersion(commonRequestData))
+            emit(serviceApi.getPOIsVersion(RequestDataBase.data))
         }.catch { error ->
             emit(error.toNetworkResult())
         }.map { res -> res.parse {it.result!!.parse() } }
@@ -61,7 +53,7 @@ class RetrofitInfoMapDataSource @Inject constructor(private val serviceApi: Serv
 
     override suspend fun getVersionTablePointRecharge(): Flow<NetResult<MDbVTPointRechargeResponse>> =
         flow {
-            emit(serviceApi.getRechargingPointsVersion(commonRequestData))
+            emit(serviceApi.getRechargingPointsVersion(RequestDataBase.data))
         }.catch { error ->
             emit(error.toNetworkResult())
         }.map { res -> res.parse {it.result!!.parse() } }
