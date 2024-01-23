@@ -1,5 +1,6 @@
 package com.example.moduledb.controlDB.utils
 
+import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.google.gson.JsonObject
 
@@ -36,5 +37,33 @@ object RequestDataBase {
         state = "benidorm",
         idLocalCompany = "5",
         idFront = 51
+    )
+
+    fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
+        AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+
+    private fun getAhorrobusListLinesRequest(idMacroRegion: String) = LinesListRequest(
+        idFront = 70,
+        country = "intermedio",
+        state = "intermedio",
+        cityOrTown = "intermedio",
+        idLocalCompany = "11",
+        idMacroRegion = idMacroRegion,
+        idRegion = "",
+        idBrand = ""
+    )
+
+    private fun getBenidormListLinesRequest(idRegion: String?) = LinesListRequest(
+        idFront = 70,
+        country = "spain",
+        state = "benidorm",
+        cityOrTown = "benidorm",
+        idLocalCompany = "5",
+        idMacroRegion = "",
+        idRegion = idRegion ?: "",
+        idBrand = ""
     )
 }

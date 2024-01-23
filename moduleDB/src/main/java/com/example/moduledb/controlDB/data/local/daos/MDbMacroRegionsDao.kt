@@ -11,4 +11,7 @@ abstract class MDbMacroRegionsDao : BaseDao<MDbMacroRegions, Long>() {
 
     @Query("SELECT * from MDbMacroRegions")
     abstract fun getMacrpoRegions(): List<MDbMacroRegions>
+
+    @Query("SELECT * FROM MDBMacroRegions WHERE idMacroRegion IN (:regionIds)")
+    abstract fun getExistingRegions(regionIds: List<String>): List<MDbMacroRegions>
 }

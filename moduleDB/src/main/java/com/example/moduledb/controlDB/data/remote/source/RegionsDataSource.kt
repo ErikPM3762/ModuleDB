@@ -1,10 +1,7 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import com.example.moduledb.controlDB.data.mapers.toMacroRegionList
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.remote.request.POIsRequest
-import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroRegion
-import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroRegionsResponse
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
@@ -32,6 +29,19 @@ class RegionsDataSource @Inject constructor(
             .map { res ->
                 res.parse {
                     it.result!!.statesList!!
+                }
+            }
+            .flowOn(Dispatchers.IO)
+
+    override suspend fun getListLines(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbListLines>>> =
+        flow {
+            emit(oracleServiceApi.getListaLineas(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion)))
+        }.catch { error ->
+            emit(error.toNetworkResult())
+        }
+            .map { res ->
+                res.parse {
+                    it.result!!.busLine!!
                 }
             }
             .flowOn(Dispatchers.IO)

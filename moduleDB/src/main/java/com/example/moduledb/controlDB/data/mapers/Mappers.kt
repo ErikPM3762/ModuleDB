@@ -1,13 +1,13 @@
 package com.example.moduledb.controlDB.data.mapers
 
-import android.util.Log
+
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroRegion
 
 /**
  * Transformacion del objeto para puntos de interes
@@ -73,5 +73,27 @@ fun MDBMacroRegions.toMacroRegions(): MDbMacroRegions {
 fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
     return this.map {
         it.toMacroRegions()
+    }
+}
+
+/**
+ * Transformacion del objeto para listado de Lineas
+ */
+fun MDbListLines.toLines(idMacroRegion: String): MDbListLines {
+    return MDbListLines(
+    idBusLine = idBusLine,
+    idBusSAE = idBusSAE,
+    descBusLine = descBusLine,
+    desLocalCompany = desLocalCompany,
+    color = color,
+    brands = brands,
+    macroRegions = macroRegions,
+    regions = regions,
+    idMacroRegion = idMacroRegion)
+}
+
+fun List<MDbListLines>.toListLines(idMacroRegion: String): List<MDbListLines> {
+    return this.map {
+        it.toLines(idMacroRegion)
     }
 }
