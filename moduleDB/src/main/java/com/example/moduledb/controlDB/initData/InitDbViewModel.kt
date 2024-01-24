@@ -1,19 +1,21 @@
 package com.example.moduledb.controlDB.initData
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moduledb.controlDB.data.local.daos.MDbListLinesDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
-import com.example.moduledb.controlDB.usecase.GetListLines
+import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
+import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
 import com.example.moduledb.controlDB.usecase.GetPointsInterest
 import com.example.moduledb.controlDB.usecase.GetPointsRecharge
+import com.example.moduledb.controlDB.usecase.GetRegions
 import com.example.moduledb.controlDB.usecase.GetVersionTablePointInterest
 import com.example.moduledb.controlDB.usecase.GetVersionTablePointRecharge
 import com.example.moduledb.controlDB.utils.Event
@@ -29,11 +31,14 @@ class InitDbViewModel @Inject constructor(
     private val getPointsInterest: GetPointsInterest,
     private val getPointsRecharge: GetPointsRecharge,
     private val getMacroRegions: GetMacroRegions,
+    private val getRegions: GetRegions,
     private val getVersionTablePointInterest: GetVersionTablePointInterest,
     private val getVersionTablePointRecharge: GetVersionTablePointRecharge,
-    private val getListLines: GetListLines,
+    private val getLinesByMacroRegion: GetLinesByMacroRegion,
+    private val getLinesByRegion: GetLinesByRegion,
     private val mDbVersionInfoDao: MDbVersionInfoDao,
-    private val mDbLinesList: MDbListLinesDao,
+    private val mDbLinesList: MDbLinesByMacroRegionDao,
+    private val mDbLinesByRegion: MDbLinesByRegionDao,
     private val mDbMacroRegionList: MDbMacroRegionsDao
 ) :
     ViewModel() {
@@ -65,6 +70,10 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+     * Obtenemos los puntos de interes solo si la version es diferente a la guardada en local.
+     */
     fun getPointsInterest() {
         viewModelScope.launch(Dispatchers.IO) {
             getVersionTablePointInterest.invoke().collect() { resultVersion ->
@@ -89,6 +98,10 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+     * Obtenemos los puntos de recarga solo si la version es diferente a la guardada en local.
+     */
     fun getPointsRecharge() {
         viewModelScope.launch(Dispatchers.IO) {
             getVersionTablePointRecharge.invoke().collect() { resultVersion ->
@@ -112,6 +125,10 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+     * Obtener las macro regiones e iterar sobre la respuesta para guardar la lista de lineas por macroRegion
+     */
     fun getMacroRegions(idLocalCompany: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             getMacroRegions.invoke(idLocalCompany).collect() { result ->
@@ -121,7 +138,7 @@ class InitDbViewModel @Inject constructor(
                         val macroRegions = result.data
                         for (macroRegion in macroRegions) {
                             viewModelScope.launch {
-                                getListLines.invoke(idLocalCompany, macroRegion.idMacroRegion)
+                                getLinesByMacroRegion.invoke(idLocalCompany, macroRegion.idMacroRegion)
                                     .collect() { resultListLines ->
                                         when (resultListLines) {
                                             is NetResult.Success -> {}
@@ -142,7 +159,44 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun getLineDb(idMacroRegion: Long) {
+    /**
+     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+     * Obtener las regiones e iterar sobre la respuesta para guardar la lista de lineas por Region
+     */
+    fun getRegions(idLocalCompany: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getRegions.invoke(idLocalCompany).collect() { result ->
+                when (result) {
+                    is NetResult.Success -> {
+                        mDbLinesByRegion.deleteAll()
+                        val regions = result.data
+                        for (region in regions) {
+                            viewModelScope.launch {
+                                getLinesByRegion.invoke(idLocalCompany, region.idRegion)
+                                    .collect() { resultListLines ->
+                                        when (resultListLines) {
+                                            is NetResult.Success -> {}
+
+                                            else -> {
+                                                // Manejar el error si es necesario
+                                            }
+                                        }
+                                        _pointsOfInterestAvailable.postValue(Event(Unit))
+                                    }
+                            }
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    /**
+     * Funcion publica para obtener el listado de lineas por MacroRegion
+     */
+    fun getLinesByMacroRegionDb(idMacroRegion: Long) {
         viewModelScope.launch(Dispatchers.IO) {
             val result = mDbLinesList.getMDbListLinesById(idMacroRegion.toString())
             withContext(Dispatchers.Main) {
@@ -151,16 +205,22 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Funcion publica para obtener el listado de macroRegiones
+     */
     fun getMacroRegionListDb() {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = mDbMacroRegionList.getMacrpoRegions()
+            val result = mDbMacroRegionList.getMacroRegions()
             withContext(Dispatchers.Main) {
                 _mdbListMacroRegion.value = result
             }
         }
     }
 
-    fun getListLinesDb() {
+    /**
+     * Funcion publica para obtener el listado del total de lineas generada por las macroRegiones
+     */
+    fun getAllListLinesGeneratedByMacroRegion() {
         viewModelScope.launch(Dispatchers.IO) {
             val result = mDbLinesList.getAllMDbListLines()
             withContext(Dispatchers.Main) {

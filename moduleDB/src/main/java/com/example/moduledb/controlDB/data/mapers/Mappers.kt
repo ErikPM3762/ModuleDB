@@ -2,12 +2,16 @@ package com.example.moduledb.controlDB.data.mapers
 
 
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
+import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.models.MDBRegions
 import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
+
 
 /**
  * Transformacion del objeto para puntos de interes
@@ -77,9 +81,9 @@ fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
 }
 
 /**
- * Transformacion del objeto para listado de Lineas
+ * Transformacion del objeto para listado de Lineas por Macro Regiones
  */
-fun MDbListLines.toLines(idMacroRegion: String): MDbListLines {
+fun MDbListLines.toLineByMacroRegion(idMacroRegion: String): MDbListLines {
     return MDbListLines(
     idBusLine = idBusLine,
     idBusSAE = idBusSAE,
@@ -92,8 +96,52 @@ fun MDbListLines.toLines(idMacroRegion: String): MDbListLines {
     idMacroRegion = idMacroRegion)
 }
 
-fun List<MDbListLines>.toListLines(idMacroRegion: String): List<MDbListLines> {
+fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbListLines> {
     return this.map {
-        it.toLines(idMacroRegion)
+        it.toLineByMacroRegion(idMacroRegion)
+    }
+}
+
+/**
+ * Transformacion del objeto para listado de Regiones
+ */
+fun MDBRegions.toRegions(): MDdRegions {
+    return MDdRegions(
+        idRegion= idRegion,
+        desRegion = desRegion,
+        latitudeRegion = latitudeRegion,
+        longitudeRegion = longitudeRegion,
+        idMacroRegion = idMacroRegion,
+        desMacroRegion = desMacroRegion,
+        latitudeMacroRegion = latitudeMacroRegion,
+        longitudeMacroRegion = longitudeMacroRegion,
+    )
+}
+
+fun List<MDBRegions>.toRegionList(): List<MDdRegions> {
+    return this.map {
+        it.toRegions()
+    }
+}
+
+/**
+ * Transformacion del objeto para listado de Lineas por Regiones
+ */
+fun MDbLinesByRegion.toLineByRegion(idMacroRegion: String): MDbLinesByRegion {
+    return MDbLinesByRegion(
+        idBusLine = idBusLine,
+        idBusSAE = idBusSAE,
+        descBusLine = descBusLine,
+        desLocalCompany = desLocalCompany,
+        color = color,
+        brands = brands,
+        macroRegions = macroRegions,
+        regions = regions,
+        idMacroRegion = idMacroRegion)
+}
+
+fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLinesByRegion> {
+    return this.map {
+        it.toLineByRegion(idMacroRegion)
     }
 }

@@ -3,10 +3,12 @@ package com.example.moduledb.controlDB.modules
 import android.content.Context
 import androidx.room.Room
 import com.example.moduledb.controlDB.data.local.AppDataBase
-import com.example.moduledb.controlDB.data.local.daos.MDbListLinesDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import dagger.Module
 import dagger.Provides
@@ -54,7 +56,20 @@ object DaoModule {
 
     @Singleton
     @Provides
-    fun provideListMacroRegionsDao(database: AppDataBase): MDbListLinesDao {
+    fun provideListMacroRegionsDao(database: AppDataBase): MDbLinesByMacroRegionDao {
         return database.listMacroRegions()
     }
+
+    @Singleton
+    @Provides
+    fun provideRegionsDao(database: AppDataBase): MDbRegionsDao {
+        return database.regions()
+    }
+
+    @Singleton
+    @Provides
+    fun provideListRegionsDao(database: AppDataBase): MDbLinesByRegionDao {
+        return database.listRegions()
+    }
+
 }

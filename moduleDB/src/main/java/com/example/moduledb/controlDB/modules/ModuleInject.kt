@@ -67,11 +67,11 @@ object ModuleInject {
     }
 
 
-    /*@Singleton
+    @Singleton
     @Provides
     fun provideOkHttpClient(interceptor: BaseInterceptor): OkHttpClient {
         return interceptor.okHttpClient
-    }*/
+    }
 
     @Singleton
     @Provides

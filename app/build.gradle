@@ -67,6 +67,10 @@ dependencies {
     implementation "${libraries.kotlinx_coroutines}"
     implementation "${libraries.javax_inject}"
 
+    implementation "${libraries.roomRuntime}"
+    implementation "${libraries.roomKtx}"
+    kapt "${libraries.roomCompiler}"
+
     implementation "${libraries.squeareup_okHttp}"
     implementation "${libraries.squeareup_interceptor}"
     implementation "${libraries.retrofit_converter}"

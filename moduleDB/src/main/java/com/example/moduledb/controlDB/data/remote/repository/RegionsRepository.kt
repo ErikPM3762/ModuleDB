@@ -1,12 +1,19 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
-import com.example.moduledb.controlDB.data.local.daos.MDbListLinesDao
+import android.util.Log
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
-import com.example.moduledb.controlDB.data.mapers.toListLines
+import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.mapers.toLinesByMacroRegions
+import com.example.moduledb.controlDB.data.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.mapers.toMacroRegionList
+import com.example.moduledb.controlDB.data.mapers.toRegionList
 import com.example.moduledb.controlDB.data.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.models.MDBRegions
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
@@ -21,21 +28,26 @@ import javax.inject.Inject
 class RegionsRepository @Inject constructor(
     private val remoteDataSource: IRegionsDataSource,
     private val macroRegionsDao: MDbMacroRegionsDao,
-    private val listLinesDao: MDbListLinesDao
+    private val regionsDao: MDbRegionsDao,
+    private val linesByMacroRegionDao: MDbLinesByMacroRegionDao,
+    private val linesByRegionDao: MDbLinesByRegionDao
 ) {
 
-
-    suspend fun getRegions(idLocalCompany: Int): Flow<NetResult<List<MDBMacroRegions>>> =
+    /**
+     * funcion get para obtener las macroRegiones
+     * toMacroRegionList transforma el resultado para guardarse en la base de datos
+     */
+    suspend fun getMacroRegions(idLocalCompany: Int): Flow<NetResult<List<MDBMacroRegions>>> =
         remoteDataSource.getStateInfo(idLocalCompany)
             .loading()
             .map { result ->
                 if (result is NetResult.Success) {
                     val macroRegionsList = result.data.toMacroRegionList()
-                    val existingRegions = macroRegionsDao.getExistingRegions(macroRegionsList.map { it.idMacroRegion })
-                    val newRegions = macroRegionsList.filter { region ->
+                    val existingRegions = macroRegionsDao.getExistingMacroRegions(macroRegionsList.map { it.idMacroRegion })
+                    val newMacroRegions = macroRegionsList.filter { region ->
                         existingRegions.none { it.idMacroRegion == region.idMacroRegion }
                     }
-                    macroRegionsDao.insertOrUpdate(newRegions)
+                    macroRegionsDao.insertOrUpdate(newMacroRegions)
                 }
                 result
             }
@@ -43,10 +55,51 @@ class RegionsRepository @Inject constructor(
             .catch { error -> emit(NetResult.Error(getGenericError())) }
             .flowOn(Dispatchers.IO)
 
-    suspend fun getListLines (idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbListLines>>> =
-        remoteDataSource.getListLines(idLocalCompany, idMacroRegion).loading().map { result ->
+
+    /**
+     * funcion get para obtener las lineas por MacroRegion
+     * toLinesByMacroRegions transforma el resultado para guardarse en la base de datos
+     */
+    suspend fun getLinesByMacroRegion (idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbListLines>>> =
+        remoteDataSource.getLinesByMacroRegions(idLocalCompany, idMacroRegion).loading().map { result ->
             if (result is NetResult.Success) {
-                listLinesDao.insertListIfNotExists(result.data.toListLines(idMacroRegion))
+                linesByMacroRegionDao.insertListIfNotExists(result.data.toLinesByMacroRegions(idMacroRegion))
+            }
+            result
+        }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
+            .flowOn(Dispatchers.IO)
+
+    /**
+     * funcion get para obtener las Regiones de Benidorm
+     * toRegionList transforma el resultado para guardarse en la base de datos
+     */
+    suspend fun getRegions(idLocalCompany: Int): Flow<NetResult<List<MDBRegions>>> =
+        remoteDataSource.getRegionsInfo(idLocalCompany)
+            .loading()
+            .map { result ->
+                if (result is NetResult.Success) {
+                    val regionsList = result.data.toRegionList()
+                    val existingRegions = regionsDao.getExistingRegions(regionsList.map { it.idMacroRegion })
+                    val newRegions = regionsList.filter { region ->
+                        existingRegions.none { it.idMacroRegion == region.idMacroRegion }
+                    }
+                    regionsDao.insertOrUpdate(newRegions)
+                }
+                result
+            }
+            .loading()
+            .catch { error -> emit(NetResult.Error(getGenericError())) }
+            .flowOn(Dispatchers.IO)
+
+    /**
+     * funcion get para obtener las Lineas por Region de Benidorm
+     * toLinesByRegions transforma el resultado para guardarse en la base de datos
+     */
+    suspend fun getLinesByRegion(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbLinesByRegion>>> =
+        remoteDataSource.getLinesByRegions(idLocalCompany, idMacroRegion).loading().map { result ->
+            if (result is NetResult.Success) {
+                Log.e("INSERTAME", result.data.toLinesByRegions(idMacroRegion).toString())
+                linesByRegionDao.insertOrUpdate(result.data.toLinesByRegions(idMacroRegion))
             }
             result
         }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }

@@ -8,14 +8,13 @@ import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 
 
 @Dao
-abstract class MDbListLinesDao : BaseDao<MDbListLines, Long>() {
+abstract class MDbLinesByMacroRegionDao : BaseDao<MDbListLines, Long>() {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     abstract fun insertListIfNotExists(mdbListLines: List<MDbListLines>)
 
     @Query("SELECT * FROM MDbListLines WHERE idMacroRegion = :idMacroRegion")
     abstract fun getMDbListLinesById(idMacroRegion: String): List<MDbListLines>
-
 
     @Query("DELETE FROM MDbListLines")
     abstract suspend fun deleteAll()
