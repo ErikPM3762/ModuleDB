@@ -2,6 +2,8 @@ package com.example.moduledb.controlDB.utils
 
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
+import com.example.moduledb.controlDB.data.remote.request.StopsRequest
+import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
 import com.google.gson.JsonObject
 
 object RequestDataBase {
@@ -23,6 +25,18 @@ object RequestDataBase {
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
+    fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
+        AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+
+    fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
+        AppId.AHORROBUS.idLocalCompany -> getAhorrobusStopsRequest()
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+
     private fun getAhorrobusRequest() = MacroRegionsRequest(
         idLocalCompany = "11",
         country = "mexico",
@@ -38,12 +52,6 @@ object RequestDataBase {
         idLocalCompany = "5",
         idFront = 51
     )
-
-    fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
-        AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
-    }
 
     private fun getAhorrobusListLinesRequest(idMacroRegion: String) = LinesListRequest(
         idFront = 70,
@@ -65,5 +73,29 @@ object RequestDataBase {
         idMacroRegion = "",
         idRegion = idRegion ?: "",
         idBrand = ""
+    )
+
+    private fun getAhorrobusStopsRequest() = StopsRequest(
+        idLocalCompany = "11",
+        country = "mexico",
+        cityOrTown = "mexico",
+        state = "mexico",
+        idFront = 51,
+        idbusLine = "",
+        idBrand = ""
+    )
+
+    fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) = when (idLocalCompany) {
+        AppId.SEGOVIA.idLocalCompany -> getSegoviaTeoricsByTypeStop(idBusLine,tripCode)
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+    private fun getSegoviaTeoricsByTypeStop(idBusLine: String, tripCode: String) = TeoricByTypeStopSegoviaRequest(
+        idFront = 100,
+        country = "españa",
+        state = "provincia_segovia",
+        cityOrTown = "segovia",
+        idLocalCompany = "65",
+        idBusLine = idBusLine,
+        tripCode = tripCode
     )
 }

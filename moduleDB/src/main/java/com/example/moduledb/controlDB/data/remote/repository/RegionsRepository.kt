@@ -1,19 +1,18 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
-import com.example.moduledb.controlDB.data.mapers.toLinesByMacroRegions
-import com.example.moduledb.controlDB.data.mapers.toLinesByRegions
-import com.example.moduledb.controlDB.data.mapers.toMacroRegionList
-import com.example.moduledb.controlDB.data.mapers.toRegionList
-import com.example.moduledb.controlDB.data.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.models.MDBRegions
+import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
+import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
+import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
+import com.example.moduledb.controlDB.data.local.mapers.toRegionList
+import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.remote.models.MDBRegions
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
@@ -98,7 +97,6 @@ class RegionsRepository @Inject constructor(
     suspend fun getLinesByRegion(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbLinesByRegion>>> =
         remoteDataSource.getLinesByRegions(idLocalCompany, idMacroRegion).loading().map { result ->
             if (result is NetResult.Success) {
-                Log.e("INSERTAME", result.data.toLinesByRegions(idMacroRegion).toString())
                 linesByRegionDao.insertOrUpdate(result.data.toLinesByRegions(idMacroRegion))
             }
             result

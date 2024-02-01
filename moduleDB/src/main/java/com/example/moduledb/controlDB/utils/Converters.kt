@@ -2,6 +2,7 @@ package com.example.moduledb.controlDB.utils
 
 import androidx.room.TypeConverter
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
 import com.example.moduledb.controlDB.data.local.entities.RegionEntity
 import com.google.gson.Gson
@@ -49,6 +50,18 @@ class Converters {
 
     @TypeConverter
     fun fromList(list: List<String>): String {
+        val gson = Gson()
+        return gson.toJson(list)
+    }
+
+    @TypeConverter
+    fun fromStringStop(value: String): List<BusStopBrandsEntity> {
+        val listType = object : TypeToken<List<BusStopBrandsEntity>>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromListStop(list: List<BusStopBrandsEntity>): String {
         val gson = Gson()
         return gson.toJson(list)
     }

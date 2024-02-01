@@ -13,10 +13,13 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
@@ -41,8 +44,10 @@ import com.example.moduledb.controlDB.utils.Converters
         RegionEntity::class,
         MacroRegionEntity::class,
         MDdRegions::class,
-        MDbLinesByRegion::class],
-    version = 12,
+        MDbLinesByRegion::class,
+        MDbListStops::class,
+        BusStopBrandsEntity::class],
+    version = 13,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -54,7 +59,8 @@ import com.example.moduledb.controlDB.utils.Converters
         AutoMigration(from = 8, to = 9),
         AutoMigration(from = 9, to = 10),
         AutoMigration(from = 10, to = 11),
-        AutoMigration(from = 11, to = 12)
+        AutoMigration(from = 11, to = 12),
+        AutoMigration(from = 12, to = 13)
     ]
 )
 @TypeConverters(Converters::class)
@@ -84,6 +90,11 @@ abstract class AppDataBase : RoomDatabase() {
      */
     abstract fun listMacroRegions(): MDbLinesByMacroRegionDao
     abstract fun listRegions(): MDbLinesByRegionDao
+
+    /**
+     * Abstract fun para lista de paradas
+     */
+    abstract fun listStops(): MDbStopsDao
 
     /**
      * Cada que eliminemos alguna columna o renombremos algun campo o tabla tendremos que manejarlo con los spec

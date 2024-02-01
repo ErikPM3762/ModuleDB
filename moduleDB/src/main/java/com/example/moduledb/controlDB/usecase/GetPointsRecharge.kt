@@ -1,6 +1,6 @@
 package com.example.moduledb.controlDB.usecase
 
-import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
 import com.example.moduledb.controlDB.data.remote.repository.InfoMapRepository
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest.VTPointInterestResponse
 import com.example.moduledb.controlDB.utils.NetResult

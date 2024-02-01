@@ -1,6 +1,6 @@
 package com.example.moduledb.controlDB.usecase
 
-import com.example.moduledb.controlDB.data.models.MDbVTPointRechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbVTPointRechargeResponse
 import com.example.moduledb.controlDB.data.remote.repository.InfoMapRepository
 import com.example.moduledb.controlDB.utils.NetResult
 import kotlinx.coroutines.flow.Flow

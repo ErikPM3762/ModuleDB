@@ -1,9 +1,9 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.data.models.MDbVTPointInterestResponse
-import com.example.moduledb.controlDB.data.models.MDbVTPointRechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbVTPointInterestResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbVTPointRechargeResponse
 import com.example.moduledb.controlDB.utils.NetResult
 import kotlinx.coroutines.flow.Flow
 

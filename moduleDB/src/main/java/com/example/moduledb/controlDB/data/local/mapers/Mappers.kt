@@ -1,16 +1,18 @@
-package com.example.moduledb.controlDB.data.mapers
+package com.example.moduledb.controlDB.data.local.mapers
 
 
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.models.MDBRegions
-import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.remote.models.MDBRegions
+import com.example.moduledb.controlDB.data.remote.models.MDBStops
+import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
 
 
 /**
@@ -143,5 +145,23 @@ fun MDbLinesByRegion.toLineByRegion(idMacroRegion: String): MDbLinesByRegion {
 fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLinesByRegion> {
     return this.map {
         it.toLineByRegion(idMacroRegion)
+    }
+}
+
+/**
+ * Transformacion del objeto para paradas Oracle
+ */
+fun MDBStops.toStop(): MDbListStops {
+    return MDbListStops(
+        idBusStop = idBusStop,
+        desBusStop = desBusStop,
+        coordinates = coordinates,
+        buslineCrossing = buslineCrossing,
+        brands = brands)
+}
+
+fun List<MDBStops>.toStop(): List<MDbListStops> {
+    return this.map {
+        it.toStop()
     }
 }

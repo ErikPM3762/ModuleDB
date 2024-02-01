@@ -3,12 +3,12 @@ package com.example.moduledb.controlDB.data.remote.repository
 
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
-import com.example.moduledb.controlDB.data.mapers.toPointsInterestList
-import com.example.moduledb.controlDB.data.mapers.toPointsRechargeList
-import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.data.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.data.models.MDbVTPointInterestResponse
-import com.example.moduledb.controlDB.data.models.MDbVTPointRechargeResponse
+import com.example.moduledb.controlDB.data.local.mapers.toPointsInterestList
+import com.example.moduledb.controlDB.data.local.mapers.toPointsRechargeList
+import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbVTPointInterestResponse
+import com.example.moduledb.controlDB.data.remote.models.MDbVTPointRechargeResponse
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError

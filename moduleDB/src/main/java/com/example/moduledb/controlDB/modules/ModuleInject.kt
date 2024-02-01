@@ -1,14 +1,18 @@
 package com.example.moduledb.controlDB.modules
 
 import android.content.Context
+import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
-import com.example.moduledb.controlDB.data.remote.server.BaseInterceptor
+import com.example.moduledb.controlDB.data.remote.server.MDbBaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
+import com.example.moduledb.controlDB.data.remote.source.IStopsDataSource
 import com.example.moduledb.controlDB.data.remote.source.InfoMapDataSource
 import com.example.moduledb.controlDB.data.remote.source.RegionsDataSource
+import com.example.moduledb.controlDB.data.remote.source.StopDataSource
+import com.example.moduledb.controlDB.utils.EnvironmentManager
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import dagger.Module
 import dagger.Provides
@@ -26,27 +30,19 @@ import javax.inject.Singleton
 object ModuleInject {
 
     /**
-     * Funciones externas en archivo C++ para obtener las URL base correspondientes
-     * para la consulta de servicios
-     */
-    private external fun getUriApiDev():String
-    private external fun getUriApiPre():String
-    private external fun getUriApiPro():String
-
-    /**
      * En este apartado configuraremos las inyecciones correspondientes para los servicios de consulta
      * de API a Oracle
      */
 
     @Singleton
     @Provides
-    fun provideInterceptor (networkMonitor: NetworkMonitor) = BaseInterceptor(networkMonitor)
+    fun provideInterceptor (networkMonitor: NetworkMonitor) = MDbBaseInterceptor(networkMonitor)
 
     @Singleton
     @Provides
     fun provideRetrofit(client: OkHttpClient): OracleServiceApi {
         return Retrofit.Builder()
-            .baseUrl(getUriApiPre())
+            .baseUrl(EnvironmentManager.uriApi)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
@@ -66,11 +62,17 @@ object ModuleInject {
         return RegionsDataSource(serviceApi)
     }
 
+    @Singleton
+    @Provides
+    fun provideStopRemoteDataSource(serviceApi: OracleServiceApi): IStopsDataSource {
+        return StopDataSource(serviceApi)
+    }
+
 
     @Singleton
     @Provides
-    fun provideOkHttpClient(interceptor: BaseInterceptor): OkHttpClient {
-        return interceptor.okHttpClient
+    fun provideOkHttpClient(interceptor: MDbBaseInterceptor): OkHttpClient {
+        return interceptor.oracleOkHttpClient
     }
 
     @Singleton
@@ -83,4 +85,17 @@ object ModuleInject {
      * En este apartado configuraremos las inyecciones correspondientes para los servicios de consulta
      * de API a AWS
      */
+
+    @Singleton
+    @Provides
+    fun provideRetrofitLinesSpain(interceptor: MDbBaseInterceptor): AwsServiceApi {
+        val client = interceptor.awsOkHttpClient
+        return Retrofit.Builder()
+            .baseUrl(EnvironmentManager.uriApi)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .client(client)
+            .build()
+            .create(AwsServiceApi::class.java)
+    }
 }

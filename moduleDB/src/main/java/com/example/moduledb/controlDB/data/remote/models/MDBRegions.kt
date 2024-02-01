@@ -1,4 +1,4 @@
-package com.example.moduledb.controlDB.data.models
+package com.example.moduledb.controlDB.data.remote.models
 
 
 data class MDBRegions(

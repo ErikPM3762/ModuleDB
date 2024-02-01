@@ -1,7 +1,7 @@
-package com.example.moduledb.controlDB.data.models
+package com.example.moduledb.controlDB.data.remote.models
 
 
-data class MDBMacroRegions(
+data class MDBTeorics(
     val idMacroRegion: String = "",
     val desMacroRegion: String = "",
     val latitudeMacroRegion: String = "",

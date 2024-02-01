@@ -9,6 +9,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import dagger.Module
 import dagger.Provides
@@ -70,6 +71,12 @@ object DaoModule {
     @Provides
     fun provideListRegionsDao(database: AppDataBase): MDbLinesByRegionDao {
         return database.listRegions()
+    }
+
+    @Singleton
+    @Provides
+    fun provideListStopsDao(database: AppDataBase): MDbStopsDao {
+        return database.listStops()
     }
 
 }

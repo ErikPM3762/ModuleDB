@@ -49,6 +49,10 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.getAllListLinesGeneratedByMacroRegion()
         }
 
+        binding.btnStops.setOnClickListener {
+            mainViewModel.getStops(5)
+        }
+
 
         mainViewModel.mdbListLines.observe(this) { mdbListLines ->
             for (mdbListLine in mdbListLines) {
@@ -58,20 +62,24 @@ class MainActivity : AppCompatActivity() {
             binding.txtSizeLines.text = mdbListLines.size.toString()
         }
 
-        mainViewModel.pointsOfInterestAvailable.observe(this){
+        mainViewModel.pointsOfInterestAvailable.observe(this) {
             binding.img1.visibility = View.VISIBLE
         }
 
-        mainViewModel.pointsOfRechargeAvailable.observe(this){
+        mainViewModel.pointsOfRechargeAvailable.observe(this) {
             binding.img2.visibility = View.VISIBLE
         }
 
-        mainViewModel.mdbListMacroRegion.observe(this){
+        mainViewModel.mdbListMacroRegion.observe(this) {
             Toast.makeText(this, "Total de regiones ${it.size}", Toast.LENGTH_SHORT).show()
         }
 
-        mainViewModel.mdbListAllLines.observe(this){
+        mainViewModel.mdbListAllLines.observe(this) {
             Toast.makeText(this, "Total de lineas ${it.size}", Toast.LENGTH_SHORT).show()
+        }
+
+        mainViewModel.mdbListStops.observe(this){
+            Toast.makeText(this, "Total de paradas ${it.size}", Toast.LENGTH_SHORT).show()
         }
 
 

@@ -5,6 +5,7 @@ import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.example.moduledb.controlDB.data.remote.request.POIsRequest
 import com.example.moduledb.controlDB.data.remote.request.RechargingPointsRequest
+import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.response.AuthTokenResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.DetailLineResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.LinesByMacroRegionsResponse
@@ -13,6 +14,7 @@ import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroReg
 import com.example.moduledb.controlDB.data.remote.response.pointsInterest.POIsResponse
 import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.PORechargeResponse
 import com.example.moduledb.controlDB.data.remote.response.regions.RegionsResponse
+import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest.VTPointInterestResponse
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointRecharge.VTPointRechargeResponse
 import com.google.gson.JsonObject
@@ -49,6 +51,9 @@ interface OracleServiceApi {
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerDetalleLinea")
     suspend fun getDetailOfLine(@Body params: DetailLinesListRequest): Response<DetailLineResponse>
 
+    @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerListaParadas")
+    suspend fun getStops(@Body params: StopsRequest): Response<StopsResponse>
+
 
     @FormUrlEncoded
     @POST("/apis/1.0.0/usuarios/1.0.0/invitado")
@@ -67,4 +72,5 @@ interface OracleServiceApi {
 
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerListaLineas")
     suspend fun getLinesByRegion(@Body params: LinesListRequest): Response<LinesByRegionsResponse>
+
 }

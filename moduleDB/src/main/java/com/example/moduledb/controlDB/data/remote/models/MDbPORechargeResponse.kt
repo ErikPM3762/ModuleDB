@@ -1,4 +1,4 @@
-package com.example.moduledb.controlDB.data.models
+package com.example.moduledb.controlDB.data.remote.models
 
 import com.google.gson.annotations.SerializedName
 

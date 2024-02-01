@@ -9,6 +9,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
+import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
@@ -16,6 +17,7 @@ import com.example.moduledb.controlDB.usecase.GetMacroRegions
 import com.example.moduledb.controlDB.usecase.GetPointsInterest
 import com.example.moduledb.controlDB.usecase.GetPointsRecharge
 import com.example.moduledb.controlDB.usecase.GetRegions
+import com.example.moduledb.controlDB.usecase.GetStops
 import com.example.moduledb.controlDB.usecase.GetVersionTablePointInterest
 import com.example.moduledb.controlDB.usecase.GetVersionTablePointRecharge
 import com.example.moduledb.controlDB.utils.Event
@@ -35,6 +37,7 @@ class InitDbViewModel @Inject constructor(
     private val getVersionTablePointInterest: GetVersionTablePointInterest,
     private val getVersionTablePointRecharge: GetVersionTablePointRecharge,
     private val getLinesByMacroRegion: GetLinesByMacroRegion,
+    private val getStops: GetStops,
     private val getLinesByRegion: GetLinesByRegion,
     private val mDbVersionInfoDao: MDbVersionInfoDao,
     private val mDbLinesList: MDbLinesByMacroRegionDao,
@@ -63,6 +66,9 @@ class InitDbViewModel @Inject constructor(
 
     private val _mdbListAllLines = MutableLiveData<List<MDbListLines>>()
     val mdbListAllLines: LiveData<List<MDbListLines>> get() = _mdbListAllLines
+
+    private val _mdbListStops = MutableLiveData<List<MDbListStops>>()
+    val mdbListStops: LiveData<List<MDbListStops>> get() = _mdbListStops
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -138,7 +144,10 @@ class InitDbViewModel @Inject constructor(
                         val macroRegions = result.data
                         for (macroRegion in macroRegions) {
                             viewModelScope.launch {
-                                getLinesByMacroRegion.invoke(idLocalCompany, macroRegion.idMacroRegion)
+                                getLinesByMacroRegion.invoke(
+                                    idLocalCompany,
+                                    macroRegion.idMacroRegion
+                                )
                                     .collect() { resultListLines ->
                                         when (resultListLines) {
                                             is NetResult.Success -> {}
@@ -225,6 +234,25 @@ class InitDbViewModel @Inject constructor(
             val result = mDbLinesList.getAllMDbListLines()
             withContext(Dispatchers.Main) {
                 _mdbListAllLines.value = result
+            }
+        }
+    }
+
+    /**
+     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+     * Obtenemos la lista de las paradas de Oracle
+     */
+    fun getStops(idLocalCompany: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            getStops.invoke(idLocalCompany).collect() { result ->
+                when (result) {
+                    is NetResult.Success -> {
+                        val mdbListStops = result.data as List<MDbListStops>
+                        _mdbListStops.postValue(mdbListStops)
+                    }
+
+                    else -> {}
+                }
             }
         }
     }
