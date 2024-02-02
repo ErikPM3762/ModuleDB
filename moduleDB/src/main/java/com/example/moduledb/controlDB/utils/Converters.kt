@@ -55,13 +55,15 @@ class Converters {
     }
 
     @TypeConverter
-    fun fromStringStop(value: String): List<BusStopBrandsEntity> {
+    fun fromStringStop(value: String?): List<BusStopBrandsEntity>? {
+        if (value.isNullOrEmpty()) return null
         val listType = object : TypeToken<List<BusStopBrandsEntity>>() {}.type
         return Gson().fromJson(value, listType)
     }
 
     @TypeConverter
-    fun fromListStop(list: List<BusStopBrandsEntity>): String {
+    fun fromListStop(list: List<BusStopBrandsEntity>?): String? {
+        if (list == null) return null
         val gson = Gson()
         return gson.toJson(list)
     }

@@ -59,9 +59,7 @@ class StopsRepository @Inject constructor(
                     result
                 }
                 .loading()
-                .catch { error ->
-                    emit(NetResult.Error(getGenericError()))
-                }
+
                 .flowOn(Dispatchers.IO)
                 .collect { emit(it) }
         }

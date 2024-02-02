@@ -1,5 +1,6 @@
 package com.example.moduledb.controlDB.usecase
 
+import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
 import com.example.moduledb.controlDB.data.remote.repository.InfoMapRepository
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest.VTPointInterestResponse
@@ -9,6 +10,6 @@ import javax.inject.Inject
 
 class GetPointsRecharge @Inject constructor(private val infoMapRepository: InfoMapRepository){
 
-    suspend fun invoke() : Flow<NetResult<List<MDbPORechargeResponse>>> =
-        infoMapRepository.getPointsRecharge()
+    suspend fun invoke() : Flow<NetResult<List<MDbPORecharge>>> =
+        infoMapRepository.fetchPointOfRechargeData()
 }

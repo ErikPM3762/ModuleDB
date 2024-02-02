@@ -64,8 +64,8 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideStopRemoteDataSource(serviceApi: OracleServiceApi): IStopsDataSource {
-        return StopDataSource(serviceApi)
+    fun provideStopRemoteDataSource(serviceApi: OracleServiceApi, serviceApiAws: AwsServiceApi): IStopsDataSource {
+        return StopDataSource(serviceApi, serviceApiAws)
     }
 
 

@@ -46,25 +46,25 @@ Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getAutorizationPro(
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getUriApiDevAws(JNIEnv *env, jobject) {
-    std::string url = "https://auth-ap1.mgmt.q4.mobility-ado.com/";
+    std::string url = "https://ap1.mgmt.q4.mobility-ado.com/";
     return env->NewStringUTF(url.c_str());
 }
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getUriApiPreAws(JNIEnv *env, jobject) {
-    std::string url = "https://auth-ap1.mgmt.q4.mobility-ado.com/";
+    std::string url = "https://ap1.mgmt.q4.mobility-ado.com/";
     return env->NewStringUTF(url.c_str());
 }
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getUriApiProAws(JNIEnv *env, jobject) {
-    std::string url = "https://auth-ap1.mgmt.q4.mobility-ado.com/";
+    std::string url = "https://auth-ap1.mgmt.q4.mobility-ado.com";
     return env->NewStringUTF(url.c_str());
 }
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getAutorizationDevAws(JNIEnv *env, jobject) {
-    std::string tokenName = "Basic NjhmMjMwOTdiOWZjNDJiNzgxZGQ2NDQ5OWE0YTYwOWM6NDY2MTkyMDEtMmY5Yi00NDRhLWEwM2EtOGUxZGNiMjI1MzBh";
+    std::string tokenName = "Basic ZDVjM2VjMTJhZTMwNDg0MDhiN2E4OGY5NDRhMTg2Zjc6NGFhMTY3NjMtOTMwOC00NDE3LWJhYjYtOTcyNWFmOGJiNDgx";
     return env->NewStringUTF(tokenName.c_str());
 }
 
@@ -75,7 +75,7 @@ Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getAutorizationPreA
 }
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_example_moduledb_controlDB_utils_EnvironmentManager_getAutorizationProAws(JNIEnv *env, jobject) {
-    std::string tokenName = "Basic NjhmMjMwOTdiOWZjNDJiNzgxZGQ2NDQ5OWE0YTYwOWM6NDY2MTkyMDEtMmY5Yi00NDRhLWEwM2EtOGUxZGNiMjI1MzBh";
+    std::string tokenName = "Basic YTY4N2Q5NjMyNjdkNDMzYThlMjY5ZGMzMWVkYzgwOGU6YzMxZGMwMWEtY2M1NS00MDJkLWJiMjctYjMzNWEzNTAxY2Iz";
     return env->NewStringUTF(tokenName.c_str());
 }
 

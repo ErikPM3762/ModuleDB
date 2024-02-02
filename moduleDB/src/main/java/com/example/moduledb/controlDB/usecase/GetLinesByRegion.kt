@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 class GetLinesByRegion @Inject constructor(private val regionsRepository: RegionsRepository) {
 
-    suspend fun invoke(idLocalCompany : Int, idMacroRegion: String) : Flow<NetResult<List<MDbLinesByRegion>>> =
+    suspend fun invoke(idLocalCompany : Int, idMacroRegion: String) : Flow<NetResult<List<Any>>> =
         regionsRepository.getLinesByRegion(idLocalCompany, idMacroRegion)
 }

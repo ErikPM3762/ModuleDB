@@ -149,7 +149,7 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
     private fun getAuthAWS(interceptor: HttpLoggingInterceptor): String {
         // Refresh your access_token using a synchronous api request
         val getOAuthTokenService = Retrofit.Builder()
-            .baseUrl(EnvironmentManager.uriApi)
+            .baseUrl(EnvironmentManager.uriApiHardcode)
             .client(
                 OkHttpClient.Builder()
                     .readTimeout(retrofitTimeout, TimeUnit.SECONDS)

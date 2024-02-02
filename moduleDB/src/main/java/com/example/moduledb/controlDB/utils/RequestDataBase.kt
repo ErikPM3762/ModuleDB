@@ -1,8 +1,11 @@
+@file:Suppress("IMPLICIT_CAST_TO_ANY")
+
 package com.example.moduledb.controlDB.utils
 
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
+import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
 import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
 import com.google.gson.JsonObject
 
@@ -32,8 +35,9 @@ object RequestDataBase {
     }
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
+        //AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusStopsRequest()
+        AppId.OURENSE.idLocalCompany -> getOurenseStopsRequest()
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
@@ -83,6 +87,14 @@ object RequestDataBase {
         idFront = 51,
         idbusLine = "",
         idBrand = ""
+    )
+
+    private fun getOurenseStopsRequest() = StopsSpainRequest(
+        idFront = 100,
+        country = "españa",
+        state = "ourense",
+        cityOrTown = "ourense",
+        idLocalCompany = "53"
     )
 
     fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) = when (idLocalCompany) {

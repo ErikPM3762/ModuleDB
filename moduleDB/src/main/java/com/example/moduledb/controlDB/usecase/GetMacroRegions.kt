@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 class GetMacroRegions @Inject constructor(private val regionsRepository: RegionsRepository) {
 
-    suspend fun invoke(idLocalCompany : Int) : Flow<NetResult<List<MDBMacroRegions>>> =
+    suspend fun invoke(idLocalCompany : Int) : Flow<NetResult<List<Any>>> =
         regionsRepository.getMacroRegions(idLocalCompany)
 }

@@ -2,6 +2,9 @@ package com.example.moduledb.controlDB.data.remote.source
 
 import com.example.moduledb.controlDB.data.remote.models.MDBStops
 import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.data.remote.request.StopsRequest
+import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
+import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
@@ -16,7 +19,9 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class StopDataSource @Inject constructor(
-    private val oracleServiceApi: OracleServiceApi) :
+    private val oracleServiceApi: OracleServiceApi,
+    private val awsServiceApi: AwsServiceApi)
+:
     IStopsDataSource {
 
     /**
@@ -37,9 +42,8 @@ class StopDataSource @Inject constructor(
      */
     override suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDBStops>>> =
         flow {
-            emit(oracleServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany)))
-        }.catch { error ->
-            emit(error.toNetworkResult())
+            if (idLocalCompany == 53) emit(awsServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest))
+            else emit(oracleServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest))
         }
             .map { res ->
                 res.parse {

@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
         mainViewModel.getMacroRegions(11)
-        mainViewModel.getRegions(5)
+
 
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()
@@ -44,13 +44,20 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        binding.btnPOR.setOnClickListener {
+            mainViewModel.getPointsRecharge()
+        }
+
+        binding.btnMacroRegions.setOnClickListener {
+            mainViewModel.getMacroRegions(5)
+        }
+
         binding.btnListRegions.setOnClickListener {
-            mainViewModel.getMacroRegionListDb()
-            mainViewModel.getAllListLinesGeneratedByMacroRegion()
+            mainViewModel.getRegions(5)
         }
 
         binding.btnStops.setOnClickListener {
-            mainViewModel.getStops(5)
+            mainViewModel.getStops(53)
         }
 
 
