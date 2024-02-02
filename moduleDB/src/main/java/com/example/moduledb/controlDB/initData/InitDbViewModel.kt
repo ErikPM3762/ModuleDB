@@ -84,6 +84,7 @@ class InitDbViewModel @Inject constructor(
             getPointsInterest.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
+                        Log.e("***", "Total de POIS ${result.data.size}")
                         _pointsOfInterestAvailable.postValue(Event(Unit))
                     }
                     else -> {}
@@ -103,6 +104,7 @@ class InitDbViewModel @Inject constructor(
             getPointsRecharge.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
+                        Log.e("***", "Total de POR ${result.data.size}")
                         _pointsOfRechargeAvailable.postValue(Event(Unit))
                     }
                     else -> {}

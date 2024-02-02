@@ -4,31 +4,37 @@ package com.example.moduledb.controlDB.utils
 
 object EnvironmentManager {
 
-    private val environmentSelected = Environment.QA_ORACLE
+    private val environmentSelected = Environment.QA
 
-    val uriApi: String = when (environmentSelected) {
-        Environment.DEV_ORACLE -> getUriApiDev()
-        Environment.DEV_AWS -> getUriApiDevAws()
+    val uriApiOracle: String = when (environmentSelected) {
+        Environment.DEV -> getUriApiDev()
+        Environment.QA -> getUriApiPre()
+        Environment.PROD -> getUriApiPro()
+        else -> {getUriApiDev()}
+    }
 
-        Environment.QA_ORACLE -> getUriApiPre()
-        Environment.QA_AWS -> getUriApiPreAws()
-
-        Environment.PROD_ORACLE -> getUriApiPro()
-        Environment.PROD_AWS -> getUriApiProAws()
+    val uriApiAws: String = when (environmentSelected) {
+        Environment.DEV -> getUriApiDevAws()
+        Environment.QA -> getUriApiPreAws()
+        Environment.PROD -> getUriApiProAws()
+        else -> {getUriApiDevAws()}
     }
 
     val uriApiHardcode: String = getUriApiProAws()
 
 
-    val authorization: String = when (environmentSelected) {
-        Environment.DEV_ORACLE -> getAutorizationDev()
-        Environment.DEV_AWS -> getAutorizationDevAws()
+    val authorizationOracle: String = when (environmentSelected) {
+        Environment.DEV -> getAutorizationDev()
+        Environment.QA -> getAutorizationPre()
+        Environment.PROD -> getAutorizationPro()
+        else -> {getAutorizationDev()}
+    }
 
-        Environment.QA_ORACLE -> getAutorizationPre()
-        Environment.QA_AWS -> getAutorizationPreAws()
-
-        Environment.PROD_ORACLE -> getAutorizationPro()
-        Environment.PROD_AWS -> getAutorizationProAws()
+    val authorizationAws: String = when (environmentSelected) {
+        Environment.DEV -> getAutorizationDevAws()
+        Environment.QA -> getAutorizationPreAws()
+        Environment.PROD -> getAutorizationProAws()
+        else -> {getAutorizationDev()}
     }
 
 
@@ -56,10 +62,7 @@ object EnvironmentManager {
 }
 
 enum class Environment {
-    DEV_AWS,
-    QA_AWS,
-    PROD_AWS,
-    DEV_ORACLE,
-    QA_ORACLE,
-    PROD_ORACLE
+    QA,
+    DEV,
+    PROD
 }

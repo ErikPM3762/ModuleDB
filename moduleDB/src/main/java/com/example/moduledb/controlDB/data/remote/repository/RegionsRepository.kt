@@ -39,13 +39,13 @@ class RegionsRepository @Inject constructor(
      * toMacroRegionList transforma el resultado para guardarse en la base de datos
      */
     suspend fun getMacroRegions(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
-        val localMacroRegions = macroRegionsDao.getMacroRegions()
+        val localMacroRegions = withContext(Dispatchers.IO) {
+            macroRegionsDao.getMacroRegions()
+        }
         if (localMacroRegions.isNotEmpty()) {
             emit(NetResult.Success(localMacroRegions))
         } else {
-            remoteDataSource.getStateInfo(idLocalCompany)
-                .loading()
-                .map { result ->
+            remoteDataSource.getStateInfo(idLocalCompany).loading().map { result ->
                     if (result is NetResult.Success) {
                         val macroRegionsList = result.data.toMacroRegionList()
                         val existingRegions =
@@ -56,13 +56,9 @@ class RegionsRepository @Inject constructor(
                         macroRegionsDao.insertOrUpdate(newMacroRegions)
                     }
                     result
-                }
-                .loading()
-                .catch { error ->
+                }.loading().catch { error ->
                     emit(NetResult.Error(getGenericError()))
-                }
-                .flowOn(Dispatchers.IO)
-                .collect { emit(it) }
+                }.flowOn(Dispatchers.IO).collect { emit(it) }
         }
     }.flowOn(Dispatchers.IO)
 
@@ -71,10 +67,11 @@ class RegionsRepository @Inject constructor(
      * toLinesByMacroRegions transforma el resultado para guardarse en la base de datos
      */
     suspend fun getLinesByMacroRegion(
-        idLocalCompany: Int,
-        idMacroRegion: String
+        idLocalCompany: Int, idMacroRegion: String
     ): Flow<NetResult<List<Any>>> = flow {
-        val localMacroRegions = linesByMacroRegionDao.getMDbListLinesById(idMacroRegion)
+        val localMacroRegions = withContext(Dispatchers.IO) {
+            linesByMacroRegionDao.getMDbListLinesById(idMacroRegion)
+        }
         if (localMacroRegions.isNotEmpty()) {
             emit(NetResult.Success(localMacroRegions))
         } else {
@@ -88,12 +85,9 @@ class RegionsRepository @Inject constructor(
                         )
                     }
                     result
-                }.loading()
-                .catch { error ->
+                }.loading().catch { error ->
                     emit(NetResult.Error(getGenericError()))
-                }
-                .flowOn(Dispatchers.IO)
-                .collect { emit(it) }
+                }.flowOn(Dispatchers.IO).collect { emit(it) }
         }
     }.flowOn(Dispatchers.IO)
 
@@ -102,13 +96,13 @@ class RegionsRepository @Inject constructor(
      * toRegionList transforma el resultado para guardarse en la base de datos
      */
     suspend fun getRegions(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
-        val localRegions = regionsDao.getRegions()
+        val localRegions = withContext(Dispatchers.IO) {
+            regionsDao.getRegions()
+        }
         if (localRegions.isNotEmpty()) {
             emit(NetResult.Success(localRegions))
         } else {
-            remoteDataSource.getRegionsInfo(idLocalCompany)
-                .loading()
-                .map { result ->
+            remoteDataSource.getRegionsInfo(idLocalCompany).loading().map { result ->
                     if (result is NetResult.Success) {
                         val regionsList = result.data.toRegionList()
                         val existingRegions =
@@ -119,9 +113,7 @@ class RegionsRepository @Inject constructor(
                         regionsDao.insertOrUpdate(newRegions)
                     }
                     result
-                }
-                .loading()
-                .catch { error -> emit(NetResult.Error(getGenericError())) }
+                }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
                 .flowOn(Dispatchers.IO)
         }
     }
@@ -131,8 +123,7 @@ class RegionsRepository @Inject constructor(
      * toLinesByRegions transforma el resultado para guardarse en la base de datos
      */
     suspend fun getLinesByRegion(
-        idLocalCompany: Int,
-        idMacroRegion: String
+        idLocalCompany: Int, idMacroRegion: String
     ): Flow<NetResult<List<Any>>> = flow {
         val localLinesByRegion = withContext(Dispatchers.IO) {
             linesByRegionDao.getMDbListLinesById(idMacroRegion)

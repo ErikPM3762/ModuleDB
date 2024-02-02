@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class InfoMapRepository @Inject constructor(
@@ -35,7 +36,9 @@ class InfoMapRepository @Inject constructor(
      * Obtener los puntos de interes
      */
     suspend fun fetchPointInterestData(): Flow<NetResult<List<MDbPOIs>>> = flow {
-        val localPointInterest = pointInterestDao.getPointsInterestData()
+        val localPointInterest = withContext(Dispatchers.IO) {
+            pointInterestDao.getPointsInterestData()
+        }
         if (localPointInterest.isNotEmpty()) {
             emit(NetResult.Success(localPointInterest))
         } else {
@@ -66,7 +69,9 @@ class InfoMapRepository @Inject constructor(
      * Obtener los puntos de recarga
      */
     suspend fun fetchPointOfRechargeData(): Flow<NetResult<List<MDbPORecharge>>> = flow {
-        val localPointRecharge = pointRechargeDao.getPointsRechargeData()
+        val localPointRecharge = withContext(Dispatchers.IO) {
+            pointRechargeDao.getPointsRechargeData()
+        }
         if (localPointRecharge.isNotEmpty()) {
             emit(NetResult.Success(localPointRecharge))
         } else {

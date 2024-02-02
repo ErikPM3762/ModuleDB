@@ -42,7 +42,7 @@ object ModuleInject {
     @Provides
     fun provideRetrofit(client: OkHttpClient): OracleServiceApi {
         return Retrofit.Builder()
-            .baseUrl(EnvironmentManager.uriApi)
+            .baseUrl(EnvironmentManager.uriApiOracle)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)
@@ -91,7 +91,7 @@ object ModuleInject {
     fun provideRetrofitLinesSpain(interceptor: MDbBaseInterceptor): AwsServiceApi {
         val client = interceptor.awsOkHttpClient
         return Retrofit.Builder()
-            .baseUrl(EnvironmentManager.uriApi)
+            .baseUrl(EnvironmentManager.uriApiAws)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(client)

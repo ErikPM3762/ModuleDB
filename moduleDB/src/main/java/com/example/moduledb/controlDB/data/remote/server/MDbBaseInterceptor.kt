@@ -90,7 +90,7 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                     .authenticator { _, response ->
                         // Refresh your access_token using a synchronous api request
                         val getOAuthTokenService = Retrofit.Builder()
-                            .baseUrl(EnvironmentManager.uriApi)
+                            .baseUrl(EnvironmentManager.uriApiOracle)
                             .client(OkHttpClient.Builder()
                                 .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
                                 .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
@@ -104,7 +104,7 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                                             .newBuilder()
                                             .addHeader(
                                                 "Authorization",
-                                                EnvironmentManager.authorization
+                                                EnvironmentManager.authorizationOracle
                                             )
                                             .addHeader(
                                                 "Content-Type",
@@ -165,7 +165,7 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                         chain.proceed(
                             chain.request()
                                 .newBuilder()
-                                .addHeader("Authorization", EnvironmentManager.authorization)
+                                .addHeader("Authorization", EnvironmentManager.authorizationAws)
                                 .addHeader("Accept", "application/json")
                                 .addHeader(
                                     "x-cache-api",
