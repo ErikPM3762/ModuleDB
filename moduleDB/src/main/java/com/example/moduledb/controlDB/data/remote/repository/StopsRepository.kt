@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StopsRepository @Inject constructor(
@@ -45,7 +46,9 @@ class StopsRepository @Inject constructor(
              .flowOn(Dispatchers.IO)*/
 
     suspend fun getStopsOracle(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
-        val localStops = stopsDao.getAllStops()
+        val localStops = withContext(Dispatchers.IO) {
+            stopsDao.getAllStops()
+        }
         if (localStops.isNotEmpty()) {
             emit(NetResult.Success(localStops))
         } else {
