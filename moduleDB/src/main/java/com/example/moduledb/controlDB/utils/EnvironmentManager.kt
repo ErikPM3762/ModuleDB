@@ -4,7 +4,7 @@ package com.example.moduledb.controlDB.utils
 
 object EnvironmentManager {
 
-    private val environmentSelected = Environment.QA_AWS
+    private val environmentSelected = Environment.QA_ORACLE
 
     val uriApi: String = when (environmentSelected) {
         Environment.DEV_ORACLE -> getUriApiDev()
