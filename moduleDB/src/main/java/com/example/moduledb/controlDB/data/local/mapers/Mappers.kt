@@ -95,7 +95,8 @@ fun MDbListLines.toLineByMacroRegion(idMacroRegion: String): MDbListLines {
     brands = brands,
     macroRegions = macroRegions,
     regions = regions,
-    idMacroRegion = idMacroRegion)
+    idMacroRegion = idMacroRegion
+    )
 }
 
 fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbListLines> {

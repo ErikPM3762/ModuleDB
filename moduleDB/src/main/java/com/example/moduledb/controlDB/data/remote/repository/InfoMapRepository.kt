@@ -70,6 +70,7 @@ class InfoMapRepository @Inject constructor(
      * Obtener los puntos de recarga
      */
     suspend fun fetchPointOfRechargeData(): Flow<NetResult<List<MDbPORecharge>>> = flow {
+
         val localPointRecharge = withContext(Dispatchers.IO) {
             pointRechargeDao.getPointsRechargeData()
         }
@@ -89,13 +90,12 @@ class InfoMapRepository @Inject constructor(
                                 result
                             }.flowOn(Dispatchers.IO)
                         } else {
-                            flow { emit(NetResult.Success(emptyList())) }
+                            flow { emit(NetResult.Success(localPointRecharge)) }
                         }
                     } else {
                         flow { emit(NetResult.Error(getGenericError())) }
                     }
                 }.flowOn(Dispatchers.IO)
-
         }
     }
 }

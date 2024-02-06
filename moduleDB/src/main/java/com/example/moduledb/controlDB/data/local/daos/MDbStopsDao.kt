@@ -10,4 +10,7 @@ abstract class MDbStopsDao : BaseDao<MDbListStops, Long>() {
 
     @Query("SELECT * FROM MDbListStops")
     abstract fun getAllStops(): List<MDbListStops>
+
+    @Query("SELECT * FROM MDbListStops WHERE idbusstop = :idBusStop")
+    abstract fun getStopById(idBusStop: Int): MDbListStops?
 }

@@ -68,4 +68,21 @@ class StopsRepository @Inject constructor(
                 .collect { emit(it) }
         }
     }.flowOn(Dispatchers.IO)
+
+    suspend fun getStopsByBuslineCrossingId(buslineCrossingId: String): List<MDbListStops> {
+        val allStops = withContext(Dispatchers.IO) {stopsDao.getAllStops()}
+        val stopsWithBuslineCrossingId = mutableListOf<MDbListStops>()
+
+        allStops.forEach { stop ->
+            if (stop.buslineCrossing?.contains(buslineCrossingId) == true) {
+                stopsWithBuslineCrossingId.add(stop)
+            }
+        }
+
+        return stopsWithBuslineCrossingId
+    }
+
+    suspend fun getStopById(idBusStop: Int): MDbListStops? {
+        return withContext(Dispatchers.IO) {stopsDao.getStopById(idBusStop)}
+    }
 }

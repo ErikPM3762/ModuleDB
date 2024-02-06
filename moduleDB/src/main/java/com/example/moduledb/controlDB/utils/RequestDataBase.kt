@@ -38,7 +38,7 @@ object RequestDataBase {
     }
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
-        //AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
+        AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusStopsRequest()
         AppId.OURENSE.idLocalCompany -> getOurenseStopsRequest()
         else -> throw IllegalArgumentException("Unknown id company for regions request")

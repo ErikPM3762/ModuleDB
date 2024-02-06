@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
        // mainViewModel.getMacroRegions(11)
+        mainViewModel.fetchStopsByBuslineCrossingId("19")
 
 
         binding.btnLISTMCRG.setOnClickListener {
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnStops.setOnClickListener {
-            mainViewModel.getStops(53)
+            mainViewModel.getStops(5)
         }
 
 

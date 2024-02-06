@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
@@ -22,6 +23,8 @@ import com.example.moduledb.controlDB.usecase.GetMacroRegions
 import com.example.moduledb.controlDB.usecase.GetPointsInterest
 import com.example.moduledb.controlDB.usecase.GetPointsRecharge
 import com.example.moduledb.controlDB.usecase.GetRegions
+import com.example.moduledb.controlDB.usecase.GetStopByBusLine
+import com.example.moduledb.controlDB.usecase.GetStopById
 import com.example.moduledb.controlDB.usecase.GetStops
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
@@ -41,7 +44,9 @@ class InitDbViewModel @Inject constructor(
     private val getStops: GetStops,
     private val getLinesByRegion: GetLinesByRegion,
     private val mDbVersionInfoDao: MDbVersionInfoDao,
-    private val mDbLinesList: MDbLinesByMacroRegionDao
+    private val mDbLinesList: MDbLinesByMacroRegionDao,
+    private val getStopsByBusLine: GetStopByBusLine,
+    private val getStopsById: GetStopById
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -106,6 +111,7 @@ class InitDbViewModel @Inject constructor(
                         Log.e("***", "Total de POR ${result.data.size}")
                         _pointsOfRechargeAvailable.postValue(Event(Unit))
                     }
+
                     else -> {}
                 }
             }
@@ -130,9 +136,14 @@ class InitDbViewModel @Inject constructor(
                                 ).collect() { resultListLines ->
                                     when (resultListLines) {
                                         is NetResult.Success -> {
-                                            val listLinesByMRegions = resultListLines.data as List<MDbListLines>
-                                            Log.e("El tamaño de Las lineas es : ", "${listLinesByMRegions.size}")
+                                            val listLinesByMRegions =
+                                                resultListLines.data as List<MDbListLines>
+                                            Log.e(
+                                                "El tamaño de Las lineas es : ",
+                                                "${listLinesByMRegions.size}"
+                                            )
                                         }
+
                                         else -> {
                                             // Manejar el error si es necesario
                                         }
@@ -166,7 +177,8 @@ class InitDbViewModel @Inject constructor(
                                     .collect() { resultListLines ->
                                         when (resultListLines) {
                                             is NetResult.Success -> {
-                                                val listByregions = resultListLines.data as List<MDbLinesByRegion>
+                                                val listByregions =
+                                                    resultListLines.data as List<MDbLinesByRegion>
                                                 Log.e("Size lineas es : ", "${listByregions.size}")
                                             }
 
@@ -214,6 +226,23 @@ class InitDbViewModel @Inject constructor(
                     else -> {}
                 }
             }
+        }
+    }
+
+    fun fetchStopsByBuslineCrossingId(buslineCrossingId: String) {
+        viewModelScope.launch {
+            val stopListResult = getStopsByBusLine.invoke(buslineCrossingId)
+            val stopList: List<MDbListStops> = stopListResult as List<MDbListStops>
+
+            for (stop in stopList) {
+                Log.e("LIST_STOP_BY_ID", stop.toString())
+            }
+        }
+
+        viewModelScope.launch {
+            val stopListResult = getStopsById.invoke(1)
+            val stop: MDbListStops? = stopListResult
+                Log.e("STOP_BY_ID", stop.toString())
         }
     }
 }
