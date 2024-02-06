@@ -142,11 +142,7 @@ class RegionsRepository @Inject constructor(
                     }
                     result
                 }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
-                .flowOn(Dispatchers.IO)
+                .flowOn(Dispatchers.IO).collect{emit(it)}
         }
     }
-}
-
-private fun <T> FlowCollector<T>.emit(value: NetResult.Success<List<MDdRegions>>) {
-    emit(value)
 }
