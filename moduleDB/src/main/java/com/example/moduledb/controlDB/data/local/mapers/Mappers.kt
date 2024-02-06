@@ -69,8 +69,8 @@ fun MDBMacroRegions.toMacroRegions(): MDbMacroRegions {
     return MDbMacroRegions(
         idMacroRegion = idMacroRegion,
         desMacroRegion = desMacroRegion,
-        latitudeMacroRegion = latitudeMacroRegion,
-        longitudeMacroRegion = longitudeMacroRegion,
+        latitudeMacroRegion = latitudeMacroRegion ?: "N/A",
+        longitudeMacroRegion = longitudeMacroRegion ?: "N/A",
         routeCount = 0
 
     )
@@ -107,7 +107,7 @@ fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbLis
 /**
  * Transformacion del objeto para listado de Regiones
  */
-fun MDBRegions.toRegions(): MDdRegions {
+fun MDdRegions.toRegions(): MDdRegions {
     return MDdRegions(
         idRegion= idRegion,
         desRegion = desRegion,
@@ -120,7 +120,7 @@ fun MDBRegions.toRegions(): MDdRegions {
     )
 }
 
-fun List<MDBRegions>.toRegionList(): List<MDdRegions> {
+fun List<MDdRegions>.toRegionList(): List<MDdRegions> {
     return this.map {
         it.toRegions()
     }

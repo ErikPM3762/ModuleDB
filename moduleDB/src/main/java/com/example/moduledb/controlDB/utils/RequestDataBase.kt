@@ -2,6 +2,7 @@
 
 package com.example.moduledb.controlDB.utils
 
+import android.util.Log
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
@@ -23,7 +24,9 @@ object RequestDataBase {
     }
 
     fun getRequestByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getBenidormRequest()
+        AppId.BENIDORM.idLocalCompany -> {
+            getBenidormRequest()
+        }
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusRequest()
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
@@ -54,7 +57,7 @@ object RequestDataBase {
         cityOrTown = "benidorm",
         state = "benidorm",
         idLocalCompany = "5",
-        idFront = 51
+        idFront = 100
     )
 
     private fun getAhorrobusListLinesRequest(idMacroRegion: String) = LinesListRequest(

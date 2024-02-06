@@ -1,5 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.server
 
+import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.request.DetailLinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest

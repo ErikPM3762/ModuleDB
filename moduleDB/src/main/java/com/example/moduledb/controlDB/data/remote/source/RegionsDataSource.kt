@@ -1,7 +1,9 @@
 package com.example.moduledb.controlDB.data.remote.source
 
+import android.util.Log
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBRegions
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
@@ -57,7 +59,7 @@ class RegionsDataSource @Inject constructor(
     /**
      * Metodo para obtener las Regiones
      */
-    override suspend fun getRegionsInfo(idLocalCompany: Int): Flow<NetResult<List<MDBRegions>>> =
+    override suspend fun getRegionsInfo(idLocalCompany: Int): Flow<NetResult<List<MDdRegions>>> =
         flow {
             emit(oracleServiceApi.getStates(RequestDataBase.getRequestByIdCompany(idLocalCompany)))
         }.catch { error ->

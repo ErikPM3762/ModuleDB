@@ -84,7 +84,6 @@ class InitDbViewModel @Inject constructor(
             getPointsInterest.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        Log.e("***", "Total de POIS ${result.data.size}")
                         _pointsOfInterestAvailable.postValue(Event(Unit))
                     }
                     else -> {}
@@ -124,7 +123,6 @@ class InitDbViewModel @Inject constructor(
                 when (result) {
                     is NetResult.Success -> {
                         val macroRegions = result.data as List<MDbMacroRegions>
-                      Log.e("El tamaño de macroRegiones es : ", "${macroRegions.size}")
                         for (macroRegion in macroRegions) {
                             viewModelScope.launch {
                                 getLinesByMacroRegion.invoke(

@@ -1,12 +1,14 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
+import android.util.Log
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
@@ -19,6 +21,7 @@ import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -113,10 +116,11 @@ class RegionsRepository @Inject constructor(
                         regionsDao.insertOrUpdate(newRegions)
                     }
                     result
-                }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
-                .flowOn(Dispatchers.IO)
+                }.loading().catch { error ->
+                emit(NetResult.Error(getGenericError())) }
+                .flowOn(Dispatchers.IO).collect { emit(it) }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     /**
      * funcion get para obtener las Lineas por Region de Benidorm
@@ -141,4 +145,8 @@ class RegionsRepository @Inject constructor(
                 .flowOn(Dispatchers.IO)
         }
     }
+}
+
+private fun <T> FlowCollector<T>.emit(value: NetResult.Success<List<MDdRegions>>) {
+    emit(value)
 }

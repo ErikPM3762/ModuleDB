@@ -20,7 +20,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class InfoMapDataSource @Inject constructor(private val serviceApi: OracleServiceApi) :
+class InfoMapDataSource @Inject constructor(
+    private val serviceApi: OracleServiceApi) :
     IInfoMapDataSource {
 
     override suspend fun getPointsInterest(): Flow<NetResult<ArrayList<MDbPOIsResponse>>> =

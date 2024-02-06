@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
-        mainViewModel.getMacroRegions(11)
+       // mainViewModel.getMacroRegions(11)
 
 
         binding.btnLISTMCRG.setOnClickListener {
