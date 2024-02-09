@@ -2,9 +2,9 @@
 
 package com.example.moduledb.controlDB.utils
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
+import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
 import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
@@ -27,15 +27,17 @@ object RequestDataBase {
         AppId.BENIDORM.idLocalCompany -> {
             getBenidormRequest()
         }
+
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusRequest()
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
-    fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
-        AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
-    }
+    fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) =
+        when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
+            AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
+            else -> throw IllegalArgumentException("Unknown id company for regions request")
+        }
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
         AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
@@ -100,17 +102,32 @@ object RequestDataBase {
         idLocalCompany = "53"
     )
 
-    fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) = when (idLocalCompany) {
-        AppId.SEGOVIA.idLocalCompany -> getSegoviaTeoricsByTypeStop(idBusLine,tripCode)
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
-    }
-    private fun getSegoviaTeoricsByTypeStop(idBusLine: String, tripCode: String) = TeoricByTypeStopSegoviaRequest(
-        idFront = 100,
-        country = "españa",
-        state = "provincia_segovia",
-        cityOrTown = "segovia",
-        idLocalCompany = "65",
-        idBusLine = idBusLine,
-        tripCode = tripCode
+    fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) =
+        when (idLocalCompany) {
+            AppId.SEGOVIA.idLocalCompany -> getSegoviaTeoricsByTypeStop(idBusLine, tripCode)
+            else -> throw IllegalArgumentException("Unknown id company for regions request")
+        }
+
+    private fun getSegoviaTeoricsByTypeStop(idBusLine: String, tripCode: String) =
+        TeoricByTypeStopSegoviaRequest(
+            idFront = 100,
+            country = "españa",
+            state = "provincia_segovia",
+            cityOrTown = "segovia",
+            idLocalCompany = "65",
+            idBusLine = idBusLine,
+            tripCode = tripCode
+        )
+
+    fun getRoutesByIdRequest(
+        idFront: Int = 100,
+        country: String = "ourense",
+        state: String = "ourense",
+        cityOrTown: String = "ourense",
+        idLocalCompany: String = "53",
+        idBusLine: String = "1",
+        tripCode: String = "I"
+    ) = RoutesByIdLineRequest(
+        idFront, country, state, cityOrTown, idLocalCompany, idBusLine, tripCode
     )
 }

@@ -1,22 +1,17 @@
 package com.example.moduledb.controlDB.initData
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
-import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
-import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBRegions
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
@@ -26,10 +21,12 @@ import com.example.moduledb.controlDB.usecase.GetRegions
 import com.example.moduledb.controlDB.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.usecase.GetStopById
 import com.example.moduledb.controlDB.usecase.GetStops
+import com.example.moduledb.controlDB.usecase.routes.GetRoutesByIdLine
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -46,7 +43,8 @@ class InitDbViewModel @Inject constructor(
     private val mDbVersionInfoDao: MDbVersionInfoDao,
     private val mDbLinesList: MDbLinesByMacroRegionDao,
     private val getStopsByBusLine: GetStopByBusLine,
-    private val getStopsById: GetStopById
+    private val getStopsById: GetStopById,
+    private val getRoutesByIdLine: GetRoutesByIdLine
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -91,6 +89,7 @@ class InitDbViewModel @Inject constructor(
                     is NetResult.Success -> {
                         _pointsOfInterestAvailable.postValue(Event(Unit))
                     }
+
                     else -> {}
                 }
             }
@@ -242,7 +241,22 @@ class InitDbViewModel @Inject constructor(
         viewModelScope.launch {
             val stopListResult = getStopsById.invoke(1)
             val stop: MDbListStops? = stopListResult
-                Log.e("STOP_BY_ID", stop.toString())
+            Log.e("STOP_BY_ID", stop.toString())
         }
+    }
+
+    fun getRoutes(idLocalCompany: String, idLine: String) = viewModelScope.launch {
+        getRoutesByIdLine(idLocalCompany, idLine).collectLatest {
+            when (it) {
+                is NetResult.Success -> {
+                    println(it.data)
+                }
+                is NetResult.Error -> println("ERROR")
+                else -> {
+                    //Unused function
+                }
+            }
+        }
+
     }
 }
