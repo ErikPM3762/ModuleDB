@@ -6,7 +6,11 @@ import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBRegions
+import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
+import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
+import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
+import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.parse
@@ -20,7 +24,8 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RegionsDataSource @Inject constructor(
-    private val oracleServiceApi: OracleServiceApi) :
+    private val oracleServiceApi: OracleServiceApi,
+    private val awsServiceApi: AwsServiceApi) :
     IRegionsDataSource {
 
 
@@ -45,7 +50,7 @@ class RegionsDataSource @Inject constructor(
      */
     override suspend fun getLinesByMacroRegions(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbListLines>>> =
         flow {
-            emit(oracleServiceApi.getLinesByMacroRegion(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion)))
+            emit(oracleServiceApi.getLinesByMacroRegion(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion) as LinesListRequest))
         }.catch { error ->
             emit(error.toNetworkResult())
         }
@@ -77,7 +82,13 @@ class RegionsDataSource @Inject constructor(
      */
     override suspend fun getLinesByRegions(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbLinesByRegion>>> =
         flow {
-            emit(oracleServiceApi.getLinesByRegion(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion)))
+            when (idLocalCompany) {
+                AppId.AHORROBUS.idLocalCompany, AppId.BENIDORM.idLocalCompany ->  emit(oracleServiceApi.getLinesByRegion(
+                    RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion) as LinesListRequest
+                ))
+                AppId.RUBI.idLocalCompany ->  emit(awsServiceApi.getLines(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany,"") as LinesListAwsRequest))
+            }
+
         }.catch { error ->
             emit(error.toNetworkResult())
         }

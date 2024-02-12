@@ -2,6 +2,7 @@ package com.example.moduledb.controlDB.data.remote.server
 
 import com.example.moduledb.controlDB.data.remote.request.AuthTokenAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLinesListRequest
+import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.example.moduledb.controlDB.data.remote.request.POIsRequest
@@ -45,6 +46,12 @@ interface AwsServiceApi {
 
     @POST("Signin")
     fun getAWSAuthToken(@Body params: AuthTokenAwsRequest): Call<AuthTokenAwsResponse>
+
+    @POST("ObtenerLista")
+    suspend fun getLines(@Body params: LinesListAwsRequest): Response<LinesByRegionsResponse>
+
+    @POST("ObtenerDetalleLinea")
+    suspend fun getDetailOfLine(@Body params: Any): Response<DetailLineResponse>
 
 
 

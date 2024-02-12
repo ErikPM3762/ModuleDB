@@ -7,9 +7,11 @@ import com.example.moduledb.controlDB.data.remote.server.MDbBaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
+import com.example.moduledb.controlDB.data.remote.source.ILinesDataSource
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
 import com.example.moduledb.controlDB.data.remote.source.IStopsDataSource
 import com.example.moduledb.controlDB.data.remote.source.InfoMapDataSource
+import com.example.moduledb.controlDB.data.remote.source.LinesDataSource
 import com.example.moduledb.controlDB.data.remote.source.RegionsDataSource
 import com.example.moduledb.controlDB.data.remote.source.StopDataSource
 import com.example.moduledb.controlDB.utils.EnvironmentManager
@@ -58,8 +60,14 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideMacroRegionsRemoteDataSource(serviceApi: OracleServiceApi): IRegionsDataSource {
-        return RegionsDataSource(serviceApi)
+    fun provideMacroRegionsRemoteDataSource(serviceApi: OracleServiceApi, awsServiceApi: AwsServiceApi): IRegionsDataSource {
+        return RegionsDataSource(serviceApi, awsServiceApi)
+    }
+
+    @Singleton
+    @Provides
+    fun provideLinesRemoteDataSource(serviceApi: OracleServiceApi, awsServiceApi: AwsServiceApi): ILinesDataSource {
+        return LinesDataSource(serviceApi, awsServiceApi)
     }
 
     @Singleton

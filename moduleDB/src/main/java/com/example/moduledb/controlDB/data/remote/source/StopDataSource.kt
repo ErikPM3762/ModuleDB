@@ -44,7 +44,8 @@ class StopDataSource @Inject constructor(
         flow {
             if (idLocalCompany == 53) emit(awsServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest))
             else emit(oracleServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest))
-        }
+        }.catch { error ->
+            emit(error.toNetworkResult())}
             .map { res ->
                 res.parse {
                     it.result?.stopsList!!

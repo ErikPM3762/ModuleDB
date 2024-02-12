@@ -1,6 +1,7 @@
 package com.example.moduledb.controlDB.data.remote.server
 
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.remote.request.DetailLineRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
@@ -50,7 +51,7 @@ interface OracleServiceApi {
     suspend fun getLinesByMacroRegion(@Body params: LinesListRequest): Response<LinesByMacroRegionsResponse>
 
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerDetalleLinea")
-    suspend fun getDetailOfLine(@Body params: DetailLinesListRequest): Response<DetailLineResponse>
+    suspend fun getDetailOfLine(@Body params: Any): Response<DetailLineResponse>
 
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerListaParadas")
     suspend fun getStops(@Body params: StopsRequest): Response<StopsResponse>

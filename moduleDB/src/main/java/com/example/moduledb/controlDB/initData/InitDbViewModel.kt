@@ -1,22 +1,18 @@
 package com.example.moduledb.controlDB.initData
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
-import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
-import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBRegions
+import com.example.moduledb.controlDB.usecase.GetDetailLinesById
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
@@ -44,9 +40,11 @@ class InitDbViewModel @Inject constructor(
     private val getStops: GetStops,
     private val getLinesByRegion: GetLinesByRegion,
     private val mDbVersionInfoDao: MDbVersionInfoDao,
-    private val mDbLinesList: MDbLinesByMacroRegionDao,
+    private val mDbLinesByMRList: MDbLinesByMacroRegionDao,
+    private val mDbLinesByRList: MDbLinesByRegionDao,
     private val getStopsByBusLine: GetStopByBusLine,
-    private val getStopsById: GetStopById
+    private val getStopsById: GetStopById,
+    private val getDetailLinesById: GetDetailLinesById,
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -91,6 +89,7 @@ class InitDbViewModel @Inject constructor(
                     is NetResult.Success -> {
                         _pointsOfInterestAvailable.postValue(Event(Unit))
                     }
+
                     else -> {}
                 }
             }
@@ -177,9 +176,10 @@ class InitDbViewModel @Inject constructor(
                                     .collect() { resultListLines ->
                                         when (resultListLines) {
                                             is NetResult.Success -> {
-                                                val listByregions =
-                                                    resultListLines.data as List<MDbLinesByRegion>
-                                                Log.e("Size lineas es : ", "${listByregions.size}")
+                                                Log.e(
+                                                    "Size lineas es : ",
+                                                    "${resultListLines.data.size}"
+                                                )
                                             }
 
                                             else -> {
@@ -198,51 +198,152 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Funcion publica para obtener el listado de lineas por MacroRegion
-     */
-    fun getLinesByMacroRegionDb(idMacroRegion: Long) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val result = mDbLinesList.getMDbListLinesById(idMacroRegion.toString())
-            withContext(Dispatchers.Main) {
-                _mdbListLines.value = result
-            }
+    fun getListLines(idLocalCompany: Int){
+        viewModelScope.launch {
+            getLinesByRegion.invoke(idLocalCompany, "")
+                .collect() { resultListLines ->
+                    when (resultListLines) {
+                        is NetResult.Success -> {
+                            Log.e(
+                                "Size lineas es : ",
+                                "${resultListLines.data.size}"
+                            )
+                        }
+
+                        else -> {
+                            // Manejar el error si es necesario
+                        }
+                    }
+                    _pointsOfInterestAvailable.postValue(Event(Unit))
+                }
         }
     }
 
     /**
-     * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
-     * Obtenemos la lista de las paradas de Oracle
+     * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
      */
-    fun getStops(idLocalCompany: Int) {
+    fun getDetailLinesByIdB(idLocalCompany: Int) {
+        var detailLinesInvocationCount = 0
         viewModelScope.launch(Dispatchers.IO) {
-            getStops.invoke(idLocalCompany).collect() { result ->
-                when (result) {
-                    is NetResult.Success -> {
-                        val mdbListStops = result.data as List<MDbListStops>
-                        _mdbListStops.postValue(mdbListStops)
-                    }
+            val linesByRegionList = mDbLinesByMRList.getAllMDbListLines()
+            for (lines in linesByRegionList) {
+                detailLinesInvocationCount++
+                viewModelScope.launch {
+                    getDetailLinesById.invoke(
+                        idLocalCompany,
+                        lines.idBusLine,
+                        lines.macroRegions?.get(0)?.desMacroRegion as String
+                    )
+                        .collect() { resulDetailLines ->
+                            when (resulDetailLines) {
+                                is NetResult.Success -> {
+                                   Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
+                                }
 
-                    else -> {}
+                                else -> {
+                                    // Manejar el error si es necesario
+                                }
+                            }
+                            _pointsOfInterestAvailable.postValue(
+                                Event(Unit)
+                            )
+                        }
                 }
             }
         }
     }
 
-    fun fetchStopsByBuslineCrossingId(buslineCrossingId: String) {
-        viewModelScope.launch {
-            val stopListResult = getStopsByBusLine.invoke(buslineCrossingId)
-            val stopList: List<MDbListStops> = stopListResult as List<MDbListStops>
+    /**
+     * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
+     */
+    fun getDetailLinesByIdA(idLocalCompany: Int) {
+        var detailLinesInvocationCount = 0
+        viewModelScope.launch(Dispatchers.IO) {
+            val linesByRegionList = mDbLinesByRList.getAllMDbListLines()
+            for (lines in linesByRegionList) {
+                detailLinesInvocationCount++
+                viewModelScope.launch {
+                    getDetailLinesById.invoke(
+                        idLocalCompany,
+                        lines.idBusLine,
+                        "mexico"
+                    )
+                        .collect() { resulDetailLines ->
+                            when (resulDetailLines) {
+                                is NetResult.Success -> {
+                                    Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
+                                }
 
-            for (stop in stopList) {
-                Log.e("LIST_STOP_BY_ID", stop.toString())
+                                else -> {
+                                    // Manejar el error si es necesario
+                                }
+                            }
+                            _pointsOfInterestAvailable.postValue(
+                                Event(Unit)
+                            )
+                        }
+                }
+            }
+        }
+    }
+
+        /**
+         * Funcion publica para obtener el listado de lineas por MacroRegion
+         */
+        fun getLinesByMacroRegionDb(idMacroRegion: Long) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val result = mDbLinesByMRList.getMDbListLinesById(idMacroRegion.toString())
+                withContext(Dispatchers.Main) {
+                    _mdbListLines.value = result
+                }
             }
         }
 
-        viewModelScope.launch {
-            val stopListResult = getStopsById.invoke(1)
-            val stop: MDbListStops? = stopListResult
+        /**
+         * Funcion publica para obtener el listado de lineas por MacroRegion
+         */
+        fun getLinesByRegion(idMacroRegion: Long) {
+            viewModelScope.launch(Dispatchers.IO) {
+                val result = mDbLinesByMRList.getMDbListLinesById(idMacroRegion.toString())
+                withContext(Dispatchers.Main) {
+                    _mdbListLines.value = result
+                }
+            }
+        }
+
+        /**
+         * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
+         * Obtenemos la lista de las paradas de Oracle
+         */
+        fun getStops(idLocalCompany: Int) {
+            viewModelScope.launch(Dispatchers.IO) {
+                getStops.invoke(idLocalCompany).collect() { result ->
+                    when (result) {
+                        is NetResult.Success -> {
+                            val mdbListStops = result.data as List<MDbListStops>
+                            _mdbListStops.postValue(mdbListStops)
+                        }
+
+                        else -> {}
+                    }
+                }
+            }
+        }
+
+        fun fetchStopsByBuslineCrossingId(buslineCrossingId: String) {
+            viewModelScope.launch {
+                val stopListResult = getStopsByBusLine.invoke(buslineCrossingId)
+                val stopList: List<MDbListStops> = stopListResult as List<MDbListStops>
+
+                for (stop in stopList) {
+                    Log.e("LIST_STOP_BY_ID", stop.toString())
+                }
+            }
+
+            viewModelScope.launch {
+                val stopListResult = getStopsById.invoke(1)
+                val stop: MDbListStops? = stopListResult
                 Log.e("STOP_BY_ID", stop.toString())
+            }
         }
     }
-}

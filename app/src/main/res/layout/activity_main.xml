@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Recargar Puntos de recarga"
-        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_POI" />
@@ -62,10 +61,9 @@
         android:id="@+id/btn_LISTMCRG"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
         android:text="Obtener Lista Lineas por region DB"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="30dp"
         app:layout_constraintTop_toBottomOf="@+id/btn_POR" />
 
     <TextView
@@ -122,7 +120,6 @@
         android:id="@+id/btn_stops"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:text="Obtener Paradas DB"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -132,12 +129,27 @@
         android:id="@+id/btn_macroRegions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
         android:text="Obtener Macro Regiones DB"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_linesDetailByRegion" />
+
+    <Button
+        android:id="@+id/btn_linesDetailByRegion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Obtener detalle LineaR"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_stops" />
 
-
+    <Button
+        android:id="@+id/btn_lines"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Obtener Lineas Aws"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_macroRegions" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

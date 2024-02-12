@@ -3,17 +3,17 @@ package com.example.moduledb.controlDB.data.remote.response.lines
 import com.google.gson.annotations.SerializedName
 
 data class BusLine(
-    val backTrip: Any,
+    val idBusSAE: String?,
     val color: String?,
-    val desLocalCompany: String,
-    val descBusLine: String,
-    val brands: String?,
-    val distance: Any,
+    val distance: Any?,
+    val outTrip: OutTrip,
+    val backTrip: BackTrip?,
+    val desLocalCompany: String?,
+    val scale: Any?,
+    val idBusLine: String?,
+    val localCompany: String?,
     @SerializedName("geographic_data_structure")
     val geographicDataStructure: GeographicDataStructure,
-    val idBusLine: String,
-    val idBusSAE: String,
-    val localCompany: String,
-    val outTrip: OutTrip,
-    val scale: Any
+    val descBusLine: String?,
+    val brands: String?
 )
