@@ -9,6 +9,10 @@ import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 @Dao
 abstract class MDbLinesDetailDao : BaseDao<MDbLinesDetail, Long>() {
 
+
+    @Query("SELECT * FROM MDbLinesDetail WHERE idBusSAE = :idBusSAE")
+    abstract fun findLineByIdBusSAE(idBusSAE: String): MDbLinesDetail?
+
 }
 
 

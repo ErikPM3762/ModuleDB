@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
     private fun initData(){
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
+        mainViewModel.getDetailLineByIdDb(139)
         // mainViewModel.getMacroRegions(11)
         mainViewModel.fetchStopsByBuslineCrossingId("19")
     }

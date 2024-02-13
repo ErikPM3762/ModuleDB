@@ -7,12 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.usecase.GetDetailLinesById
+import com.example.moduledb.controlDB.usecase.GetDetailLine
+import com.example.moduledb.controlDB.usecase.GetDetailLineById
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
@@ -41,10 +43,12 @@ class InitDbViewModel @Inject constructor(
     private val getLinesByRegion: GetLinesByRegion,
     private val mDbVersionInfoDao: MDbVersionInfoDao,
     private val mDbLinesByMRList: MDbLinesByMacroRegionDao,
+    private val mDbDetailLineById: MDbLinesDetailDao,
     private val mDbLinesByRList: MDbLinesByRegionDao,
     private val getStopsByBusLine: GetStopByBusLine,
     private val getStopsById: GetStopById,
-    private val getDetailLinesById: GetDetailLinesById,
+    private val getDetailLines: GetDetailLine,
+    private val getDetailLinesById: GetDetailLineById
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -229,7 +233,7 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLinesById.invoke(
+                    getDetailLines.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         lines.macroRegions?.get(0)?.desMacroRegion as String
@@ -263,7 +267,7 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLinesById.invoke(
+                    getDetailLines.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         "mexico"
@@ -298,6 +302,18 @@ class InitDbViewModel @Inject constructor(
                 }
             }
         }
+
+    /**
+     * Funcion publica para obtener el detalle de linea por idBusSae
+     */
+    fun getDetailLineByIdDb(idBusLine: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+           val result = getDetailLinesById.invoke((139).toString())
+            withContext(Dispatchers.Main) {
+               Log.e("DetailLineById",result.toString())
+            }
+        }
+    }
 
         /**
          * Funcion publica para obtener el listado de lineas por MacroRegion
