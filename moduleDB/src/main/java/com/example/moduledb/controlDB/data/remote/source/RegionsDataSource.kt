@@ -63,7 +63,7 @@ class RegionsDataSource @Inject constructor(
                     RequestDataBase.getRequestByIdCompanyListLines(
                         idLocalCompany,
                         idMacroRegion
-                    )
+                    ) as LinesListRequest
                 )
             )
         }.catch { error ->

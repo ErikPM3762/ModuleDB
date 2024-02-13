@@ -58,12 +58,6 @@ object RequestDataBase {
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
-    fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) =
-        when (idLocalCompany) {
-            AppId.SEGOVIA.idLocalCompany -> getSegoviaTeoricsByTypeStop(idBusLine, tripCode)
-            else -> throw IllegalArgumentException("Unknown id company for regions request")
-        }
-
     private fun getAhorrobusRequest() = MacroRegionsRequest(
         idLocalCompany = "11",
         country = "mexico",
