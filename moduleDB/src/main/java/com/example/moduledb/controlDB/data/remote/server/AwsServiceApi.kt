@@ -5,6 +5,7 @@ import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
 import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
 import com.example.moduledb.controlDB.data.remote.response.AuthTokenAwsResponse
+import com.example.moduledb.controlDB.data.remote.response.routes.RoutesByIdLineResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
 import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TeoricsByTypeStopResponse
 import retrofit2.Call
@@ -30,6 +31,6 @@ interface AwsServiceApi {
 
 
     @POST("ObtenerTrayectos")
-    suspend fun getRoutesByIdLine(@Body params: RoutesByIdLineRequest): Response<Body>
+    suspend fun getRoutesByIdLine(@Body params: RoutesByIdLineRequest): Response<RoutesByIdLineResponse>
 
 }

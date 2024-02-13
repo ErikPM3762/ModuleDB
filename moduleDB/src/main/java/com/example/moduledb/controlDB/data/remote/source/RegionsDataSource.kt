@@ -1,10 +1,10 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.data.remote.response.routes.toRouteEntity
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.NetResult
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import retrofit2.http.Body
 import javax.inject.Inject
 
 class RegionsDataSource @Inject constructor(
@@ -116,20 +115,21 @@ class RegionsDataSource @Inject constructor(
             }
             .flowOn(Dispatchers.IO)
 
-    override fun getRoutesByIdLine(idLocalCompany: String, idLines: String): Flow<NetResult<Body>> =
-        flow {
-            val request = RequestDataBase.getRoutesByIdRequest(
-                idLocalCompany = idLocalCompany,
-                idBusLine = idLines
-            )
-            val response = awsServiceApi.getRoutesByIdLine(request)
-            emit(response)
-        }.catch { error ->
-            Log.e("getRoutesByIdLine", error.toString())
-            emit(error.toNetworkResult())
-        }.map { res ->
-            res.parse {
-                it
-            }
+    override fun getRoutesByIdLine(
+        idLocalCompany: String,
+        idLines: String
+    ) = flow {
+        val request = RequestDataBase.getRoutesByIdRequest(
+            idLocalCompany = idLocalCompany,
+            idBusLine = idLines
+        )
+        val response = awsServiceApi.getRoutesByIdLine(request)
+        emit(response)
+    }.catch { error ->
+        emit(error.toNetworkResult())
+    }.map { res ->
+        res.parse {
+            it.toRouteEntity(idLines)
         }
+    }
 }

@@ -13,16 +13,18 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
-import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
 import com.example.moduledb.controlDB.data.local.entities.MDbVersionInfo
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
@@ -46,7 +48,8 @@ import com.example.moduledb.controlDB.utils.Converters
         MDdRegions::class,
         MDbLinesByRegion::class,
         MDbListStops::class,
-        BusStopBrandsEntity::class],
+        BusStopBrandsEntity::class,
+        MDbRouteEntity::class],
     version = 13,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
@@ -65,11 +68,10 @@ import com.example.moduledb.controlDB.utils.Converters
 )
 @TypeConverters(Converters::class)
 
-/**
- * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
- * para proveer las dependencias
- */
-
+    /**
+    * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
+     * para proveer las dependencias
+    */
 abstract class AppDataBase : RoomDatabase() {
 
     /**
@@ -95,6 +97,12 @@ abstract class AppDataBase : RoomDatabase() {
      * Abstract fun para lista de paradas
      */
     abstract fun listStops(): MDbStopsDao
+
+    /**
+     * Abstact fun to list Routes
+     */
+
+    abstract fun routesDao(): MDbRouteDao
 
     /**
      * Cada que eliminemos alguna columna o renombremos algun campo o tabla tendremos que manejarlo con los spec

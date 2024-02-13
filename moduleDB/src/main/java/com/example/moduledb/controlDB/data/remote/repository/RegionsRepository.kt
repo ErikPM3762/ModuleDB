@@ -1,11 +1,11 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
@@ -15,14 +15,14 @@ import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import retrofit2.http.Body
 import javax.inject.Inject
 
 class RegionsRepository @Inject constructor(
@@ -30,7 +30,8 @@ class RegionsRepository @Inject constructor(
     private val macroRegionsDao: MDbMacroRegionsDao,
     private val regionsDao: MDbRegionsDao,
     private val linesByMacroRegionDao: MDbLinesByMacroRegionDao,
-    private val linesByRegionDao: MDbLinesByRegionDao
+    private val linesByRegionDao: MDbLinesByRegionDao,
+    private val routeDao: MDbRouteDao,
 ) {
 
     /**
@@ -114,8 +115,7 @@ class RegionsRepository @Inject constructor(
                 result
             }.loading().catch { error ->
                 emit(NetResult.Error(getGenericError()))
-            }
-                .flowOn(Dispatchers.IO).collect { emit(it) }
+            }.flowOn(Dispatchers.IO).collect { emit(it) }
         }
     }.flowOn(Dispatchers.IO)
 
@@ -148,47 +148,46 @@ class RegionsRepository @Inject constructor(
      */
     fun getRoutesByIdLine(
         idLocalCompany: String, idLine: String
-    ): Flow<NetResult<Body>> = flow {
-        /**
-         * TODO("Make logic to evaluate local data")
-         * val localLinesByRegion = withContext(Dispatchers.IO) {
-         * linesByRegionDao.getMDbListLinesById(idLine)
-         * }
-         */
-        val haveLocalData = false
+    ): Flow<NetResult<Any>> = flow {
+        val haveLocalData = withContext(currentCoroutineContext()) {
+            routeDao.getIfLocalDataExist(idLine)
+        }
         val data = when (haveLocalData) {
             true -> getLocalRoutesData(idLocalCompany, idLine)
-            false -> {
-                getRemoteRoutesData(idLocalCompany, idLine)
-            }
+            false -> getRemoteRoutesData(idLocalCompany, idLine)
         }
-        data.collect()
+        emit(data)
     }
 
     private suspend fun getLocalRoutesData(
-        idLocalCompany: String,
-        idLine: String
-    ): Flow<NetResult<Body>> {
-        TODO("Make logic to store local data")
-        val localLinesByRegion = withContext(Dispatchers.IO) {
-            linesByRegionDao.getMDbListLinesById(idLine)
+        idLocalCompany: String, idLine: String
+    ): NetResult<Any> {
+        val localData = withContext(currentCoroutineContext()) {
+            routeDao.getRoutesByIdBusLine(idLine)
         }
+        return if (localData.isEmpty()) NetResult.Error(getGenericError())
+        else NetResult.Success(localData)
+
     }
 
-    private suspend fun getRemoteRoutesData(idLocalCompany: String, idLine: String) =
+    private suspend fun getRemoteRoutesData(
+        idLocalCompany: String,
+        idLine: String
+    ): NetResult<Any> {
+        var response: NetResult<Any> = NetResult.Error(getGenericError())
         remoteDataSource.getRoutesByIdLine(idLocalCompany, idLine)
-            .loading()
             .map { result ->
-                /*
                 if (result is NetResult.Success) {
-                    linesByRegionDao.insertOrUpdate(result.data.toLinesByRegions(idLine))
+                    val data = result.data
+                    routeDao.insertOrUpdate(data)
                 }
-                */
                 result
-            }
-            .loading()
-            .catch { error ->
-                Log.e("getRoutesByIdLine", error.toString())
+            }.catch { error ->
                 emit(NetResult.Error(getGenericError()))
+            }.collectLatest {
+                response = it
             }
+        return response
+    }
+
 }

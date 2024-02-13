@@ -246,12 +246,13 @@ class InitDbViewModel @Inject constructor(
     }
 
     fun getRoutes(idLocalCompany: String, idLine: String) = viewModelScope.launch {
+        val TAG = "getRoutes"
         getRoutesByIdLine(idLocalCompany, idLine).collectLatest {
             when (it) {
                 is NetResult.Success -> {
-                    println(it.data)
+                    Log.d(TAG, "getRoutes: ${it.data}")
                 }
-                is NetResult.Error -> println("ERROR")
+                is NetResult.Error -> Log.e(TAG, "getRoutes: error in request")
                 else -> {
                     //Unused function
                 }
