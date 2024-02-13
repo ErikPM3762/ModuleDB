@@ -1,13 +1,12 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import android.util.Log
-import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBRegions
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
+import com.example.moduledb.controlDB.data.remote.response.routes.toRouteEntity
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.AppId
@@ -25,8 +24,8 @@ import javax.inject.Inject
 
 class RegionsDataSource @Inject constructor(
     private val oracleServiceApi: OracleServiceApi,
-    private val awsServiceApi: AwsServiceApi) :
-    IRegionsDataSource {
+    private val awsServiceApi: AwsServiceApi
+) : IRegionsDataSource {
 
 
     /**
@@ -34,7 +33,13 @@ class RegionsDataSource @Inject constructor(
      */
     override suspend fun getStateInfo(idLocalCompany: Int): Flow<NetResult<List<MDBMacroRegions>>> =
         flow {
-            emit(oracleServiceApi.getMacroStates(RequestDataBase.getRequestByIdCompany(idLocalCompany)))
+            emit(
+                oracleServiceApi.getMacroStates(
+                    RequestDataBase.getRequestByIdCompany(
+                        idLocalCompany
+                    )
+                )
+            )
         }.catch { error ->
             emit(error.toNetworkResult())
         }
@@ -48,9 +53,19 @@ class RegionsDataSource @Inject constructor(
     /**
      * Metodo para obtener la lista de lineas por MacroRegion
      */
-    override suspend fun getLinesByMacroRegions(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbListLines>>> =
+    override suspend fun getLinesByMacroRegions(
+        idLocalCompany: Int,
+        idMacroRegion: String
+    ): Flow<NetResult<List<MDbListLines>>> =
         flow {
-            emit(oracleServiceApi.getLinesByMacroRegion(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion) as LinesListRequest))
+            emit(
+                oracleServiceApi.getLinesByMacroRegion(
+                    RequestDataBase.getRequestByIdCompanyListLines(
+                        idLocalCompany,
+                        idMacroRegion
+                    )
+                )
+            )
         }.catch { error ->
             emit(error.toNetworkResult())
         }
@@ -80,13 +95,29 @@ class RegionsDataSource @Inject constructor(
     /**
      * Metodo para obtener la lista de lineas por Region
      */
-    override suspend fun getLinesByRegions(idLocalCompany: Int, idMacroRegion: String): Flow<NetResult<List<MDbLinesByRegion>>> =
+    override suspend fun getLinesByRegions(
+        idLocalCompany: Int,
+        idMacroRegion: String
+    ): Flow<NetResult<List<MDbLinesByRegion>>> =
         flow {
             when (idLocalCompany) {
-                AppId.AHORROBUS.idLocalCompany, AppId.BENIDORM.idLocalCompany ->  emit(oracleServiceApi.getLinesByRegion(
-                    RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany, idMacroRegion) as LinesListRequest
-                ))
-                AppId.RUBI.idLocalCompany ->  emit(awsServiceApi.getLines(RequestDataBase.getRequestByIdCompanyListLines(idLocalCompany,"") as LinesListAwsRequest))
+                AppId.AHORROBUS.idLocalCompany, AppId.BENIDORM.idLocalCompany -> emit(
+                    oracleServiceApi.getLinesByRegion(
+                        RequestDataBase.getRequestByIdCompanyListLines(
+                            idLocalCompany,
+                            idMacroRegion
+                        ) as LinesListRequest
+                    )
+                )
+
+                AppId.RUBI.idLocalCompany -> emit(
+                    awsServiceApi.getLines(
+                        RequestDataBase.getRequestByIdCompanyListLines(
+                            idLocalCompany,
+                            ""
+                        ) as LinesListAwsRequest
+                    )
+                )
             }
 
         }.catch { error ->
@@ -98,4 +129,22 @@ class RegionsDataSource @Inject constructor(
                 }
             }
             .flowOn(Dispatchers.IO)
+
+    override fun getRoutesByIdLine(
+        idLocalCompany: String,
+        idLines: String
+    ) = flow {
+        val request = RequestDataBase.getRoutesByIdRequest(
+            idLocalCompany = idLocalCompany,
+            idBusLine = idLines
+        )
+        val response = awsServiceApi.getRoutesByIdLine(request)
+        emit(response)
+    }.catch { error ->
+        emit(error.toNetworkResult())
+    }.map { res ->
+        res.parse {
+            it.toRouteEntity(idLines)
+        }
+    }
 }

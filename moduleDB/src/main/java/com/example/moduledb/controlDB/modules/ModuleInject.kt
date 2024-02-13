@@ -2,10 +2,10 @@ package com.example.moduledb.controlDB.modules
 
 import android.content.Context
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
-import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
-import com.example.moduledb.controlDB.data.remote.server.MDbBaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
+import com.example.moduledb.controlDB.data.remote.server.MDbBaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
+import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.data.remote.source.ILinesDataSource
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
@@ -38,7 +38,7 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideInterceptor (networkMonitor: NetworkMonitor) = MDbBaseInterceptor(networkMonitor)
+    fun provideInterceptor(networkMonitor: NetworkMonitor) = MDbBaseInterceptor(networkMonitor)
 
     @Singleton
     @Provides
@@ -60,19 +60,28 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideMacroRegionsRemoteDataSource(serviceApi: OracleServiceApi, awsServiceApi: AwsServiceApi): IRegionsDataSource {
+    fun provideMacroRegionsRemoteDataSource(
+        serviceApi: OracleServiceApi,
+        awsServiceApi: AwsServiceApi
+    ): IRegionsDataSource {
         return RegionsDataSource(serviceApi, awsServiceApi)
     }
 
     @Singleton
     @Provides
-    fun provideLinesRemoteDataSource(serviceApi: OracleServiceApi, awsServiceApi: AwsServiceApi): ILinesDataSource {
+    fun provideLinesRemoteDataSource(
+        serviceApi: OracleServiceApi,
+        awsServiceApi: AwsServiceApi
+    ): ILinesDataSource {
         return LinesDataSource(serviceApi, awsServiceApi)
     }
 
     @Singleton
     @Provides
-    fun provideStopRemoteDataSource(serviceApi: OracleServiceApi, serviceApiAws: AwsServiceApi): IStopsDataSource {
+    fun provideStopRemoteDataSource(
+        serviceApi: OracleServiceApi,
+        serviceApiAws: AwsServiceApi
+    ): IStopsDataSource {
         return StopDataSource(serviceApi, serviceApiAws)
     }
 
@@ -85,7 +94,7 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideNetworkMonitor (@ApplicationContext context : Context) : NetworkMonitor {
+    fun provideNetworkMonitor(@ApplicationContext context: Context): NetworkMonitor {
         return LiveNetworkMonitor(context)
     }
 
