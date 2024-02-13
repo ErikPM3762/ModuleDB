@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
     private val mainViewModel: InitDbViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.RUBI.idLocalCompany
+    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             btnMacroRegions.setOnClickListener {mainViewModel.getMacroRegions(idLocalCompany)}
             btnListRegions.setOnClickListener {mainViewModel.getRegions(idLocalCompany)}
             btnStops.setOnClickListener {mainViewModel.getStops(idLocalCompany)}
-            btnLinesDetailByRegion.setOnClickListener { mainViewModel.getDetailLinesByIdA(idLocalCompany) }
+            btnLinesDetailByRegion.setOnClickListener { mainViewModel.getDetailLinesByIdB(idLocalCompany) }
             btnLines.setOnClickListener { mainViewModel.getListLines(idLocalCompany) }
         }
     }

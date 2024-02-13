@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.moduledb.controlDB.data.local.AppDataBase
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
@@ -77,6 +78,12 @@ object DaoModule {
     @Provides
     fun provideListStopsDao(database: AppDataBase): MDbStopsDao {
         return database.listStops()
+    }
+
+    @Singleton
+    @Provides
+    fun provideListDetailLineDao(database: AppDataBase): MDbLinesDetailDao {
+        return database.listDeatilLine()
     }
 
 }

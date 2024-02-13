@@ -1,12 +1,16 @@
 package com.example.moduledb.controlDB.utils
 
 import androidx.room.TypeConverter
+import com.example.moduledb.controlDB.data.local.entities.BackTripEntity
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.GeographicEntity
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
+import com.example.moduledb.controlDB.data.local.entities.OutTripEntity
 import com.example.moduledb.controlDB.data.local.entities.RegionEntity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+
 
 class Converters {
     @TypeConverter
@@ -67,4 +71,41 @@ class Converters {
         val gson = Gson()
         return gson.toJson(list)
     }
+
+    @TypeConverter
+    fun fromStringToOutTrip(value: String?): OutTripEntity? {
+        if (value.isNullOrEmpty()) return null
+        return Gson().fromJson(value, OutTripEntity::class.java)
+    }
+
+    @TypeConverter
+    fun fromOutTripToString(outTrip: OutTripEntity?): String? {
+        if (outTrip == null) return null
+        return Gson().toJson(outTrip)
+    }
+
+    @TypeConverter
+    fun fromStringToBackTrip(value: String?): BackTripEntity? {
+        if (value.isNullOrEmpty()) return null
+        return Gson().fromJson(value, BackTripEntity::class.java)
+    }
+
+    @TypeConverter
+    fun fromBackTripToString(backTrip: BackTripEntity?): String? {
+        if (backTrip == null) return null
+        return Gson().toJson(backTrip)
+    }
+
+    @TypeConverter
+    fun fromStringToGeographicEntity(value: String?): GeographicEntity? {
+        if (value.isNullOrEmpty()) return null
+        return Gson().fromJson(value, GeographicEntity::class.java)
+    }
+
+    @TypeConverter
+    fun fromGeographicEntityToString(geographicEntity: GeographicEntity?): String? {
+        if (geographicEntity == null) return null
+        return Gson().toJson(geographicEntity)
+    }
+
 }

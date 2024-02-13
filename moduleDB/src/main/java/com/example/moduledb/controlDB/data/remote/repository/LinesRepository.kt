@@ -1,9 +1,14 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 import android.util.Log
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
+import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
+import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
+import com.example.moduledb.controlDB.data.local.mapers.toDetailLineList
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
+import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
 import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
@@ -25,7 +30,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LinesRepository @Inject constructor(
-    private val remoteDataSource: ILinesDataSource
+    private val remoteDataSource: ILinesDataSource,
+    private val linesDetailDao: MDbLinesDetailDao
 ) {
 
 
@@ -33,12 +39,12 @@ class LinesRepository @Inject constructor(
         idLocalCompany: Int,
         idBusline: String,
         state: String
-    ): Flow<NetResult<List<BusLine>>> = flow {
+    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
         remoteDataSource.getDetailLineById(idLocalCompany, idBusline, state)
             .loading()
             .map { result ->
                 if (result is NetResult.Success) {
-                    Log.e("LISTA", result.data.toString())
+                    linesDetailDao.insertOrUpdate(result.data.toDetailLineList())
                 }
                 result
 

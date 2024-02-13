@@ -3,6 +3,7 @@ package com.example.moduledb.controlDB.data.local.mapers
 
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
+import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
@@ -13,6 +14,7 @@ import com.example.moduledb.controlDB.data.remote.models.MDBRegions
 import com.example.moduledb.controlDB.data.remote.models.MDBStops
 import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.data.remote.response.lines.BusLine
 
 
 /**
@@ -164,5 +166,31 @@ fun MDBStops.toStop(): MDbListStops {
 fun List<MDBStops>.toStop(): List<MDbListStops> {
     return this.map {
         it.toStop()
+    }
+}
+
+/**
+ * Transformacion del objeto para listado de Macro Regiones
+ */
+fun MDbLinesDetail.toDetailLine(): MDbLinesDetail {
+    return MDbLinesDetail(
+        idBusSAE = idBusSAE,
+        color = color,
+        distance = distance,
+        outTrip = outTrip,
+        backTrip = backTrip,
+        descBusLine = descBusLine,
+        scale = scale,
+        idBusLine = idBusLine,
+        localCompany = localCompany,
+        geographicDataStructure = geographicDataStructure,
+        desLocalCompany = desLocalCompany,
+        brands = brands
+    )
+}
+
+fun List<MDbLinesDetail>.toDetailLineList(): List<MDbLinesDetail> {
+    return this.map {
+        it.toDetailLine()
     }
 }
