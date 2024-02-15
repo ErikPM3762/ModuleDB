@@ -1,10 +1,10 @@
 package com.example.moduledb.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.moduledb.controlDB.data.local.AppDataBase
 import com.example.moduledb.controlDB.initData.InitDbViewModel
@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         initData()
         observers()
 
+        mainViewModel.getRoutes("53", "1")
 
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()
@@ -101,7 +102,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Total de lineas ${it.size}", Toast.LENGTH_SHORT).show()
         }
 
-        mainViewModel.mdbListStops.observe(this){
+        mainViewModel.mdbListStops.observe(this) {
             Toast.makeText(this, "Total de paradas ${it.size}", Toast.LENGTH_SHORT).show()
         }
     }

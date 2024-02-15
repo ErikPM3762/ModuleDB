@@ -2,7 +2,6 @@ package com.example.moduledb.controlDB.data.remote.source
 
 
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
-import com.example.moduledb.controlDB.data.remote.response.lines.BusLine
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.AppId
@@ -34,35 +33,33 @@ class LinesDataSource @Inject constructor(
         idLocalCompany: Int,
         idBusline: String,
         state: String
-    ): Flow<NetResult<List<MDbLinesDetail>>> =
-        flow {
-            when (idLocalCompany) {
-                AppId.BENIDORM.idLocalCompany, AppId.AHORROBUS.idLocalCompany -> emit(
-                    oracleServiceApi.getDetailOfLine(
-                        RequestDataBase.getRequestByIdCompanyDetailLine(
-                            idLocalCompany,
-                            idBusline,
-                            state
-                        )
+    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
+        when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany, AppId.AHORROBUS.idLocalCompany -> emit(
+                oracleServiceApi.getDetailOfLine(
+                    RequestDataBase.getRequestByIdCompanyDetailLine(
+                        idLocalCompany,
+                        idBusline,
+                        state
                     )
                 )
+            )
 
-                AppId.RUBI.idLocalCompany -> emit(
-                    awsServiceApi.getDetailOfLine(
-                        RequestDataBase.getRequestByIdCompanyDetailLine(
-                            idLocalCompany,
-                            idBusline,
-                            state
-                        )
+            AppId.RUBI.idLocalCompany -> emit(
+                awsServiceApi.getDetailOfLine(
+                    RequestDataBase.getRequestByIdCompanyDetailLine(
+                        idLocalCompany,
+                        idBusline,
+                        state
                     )
                 )
-            }
+            )
         }
-            .map { res ->
-                res.parse {
-                    it.result!!.busLine
-                }
-            }.loading().catch { error ->
-      emit(NetResult.Error(getGenericError()))}
-            .flowOn(Dispatchers.IO)
+    }.map { res ->
+        res.parse {
+            it.result!!.busLine
+        }
+    }.loading().catch { error ->
+        emit(NetResult.Error(getGenericError()))
+    }.flowOn(Dispatchers.IO)
 }
