@@ -13,6 +13,8 @@ import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
+import com.example.moduledb.controlDB.usecase.GetDetailLine
+import com.example.moduledb.controlDB.usecase.GetDetailLineById
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
@@ -48,7 +50,8 @@ class InitDbViewModel @Inject constructor(
     private val getStopsByBusLine: GetStopByBusLine,
     private val getStopsById: GetStopById,
     private val getRoutesByIdLine: GetRoutesByIdLine,
-    private val getDetailLinesById: GetDetailLinesById
+    private val getDetailLines: GetDetailLine,
+    private val getDetailLinesById: GetDetailLineById
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -242,6 +245,40 @@ class InitDbViewModel @Inject constructor(
                             when (resulDetailLines) {
                                 is NetResult.Success -> {
                                     Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
+                                }
+
+                                else -> {
+                                    // Manejar el error si es necesario
+                                }
+                            }
+                            _pointsOfInterestAvailable.postValue(
+                                Event(Unit)
+                            )
+                        }
+                }
+            }
+        }
+    }
+
+    /**
+     * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
+     */
+    fun getDetailLinesByIdX(idLocalCompany: Int) {
+        var detailLinesInvocationCount = 0
+        viewModelScope.launch(Dispatchers.IO) {
+            val x = listOf("665","674","675")
+            for (xx in x) {
+                detailLinesInvocationCount++
+                viewModelScope.launch {
+                    getDetailLines.invoke(
+                        idLocalCompany,
+                        xx,
+                        "Campeche"
+                    )
+                        .collect() { resulDetailLines ->
+                            when (resulDetailLines) {
+                                is NetResult.Success -> {
+                                    Log.e("Lineas Llamadas",resulDetailLines.toString())
                                 }
 
                                 else -> {
