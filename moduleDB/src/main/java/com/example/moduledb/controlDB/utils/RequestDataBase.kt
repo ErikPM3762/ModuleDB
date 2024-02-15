@@ -139,17 +139,16 @@ object RequestDataBase {
             tripCode = tripCode
         )
 
-    fun getRoutesByIdRequest(
-        idFront: Int = 100,
-        country: String = "ourense",
-        state: String = "ourense",
-        cityOrTown: String = "ourense",
-        idLocalCompany: String = "53",
-        idBusLine: String = "1",
-        tripCode: String = "I"
-    ) = RoutesByIdLineRequest(
-        idFront, country, state, cityOrTown, idLocalCompany, idBusLine, tripCode
-    )
+    fun getRoutesByIdRequestForBenidorm(idBusLine: String, tripCode: String = "I") =
+        RoutesByIdLineRequest(
+            idFront = 60,
+            country = "spain",
+            state = "benidorm",
+            cityOrTown = "benidorm",
+            idLocalCompany = "5",
+            idBusLine = idBusLine,
+            tripCode = tripCode
+        )
 
     /**
      * Request para obtener el detalle de linea

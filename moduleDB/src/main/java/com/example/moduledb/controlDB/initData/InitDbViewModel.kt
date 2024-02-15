@@ -207,22 +207,20 @@ class InitDbViewModel @Inject constructor(
 
     fun getListLines(idLocalCompany: Int) {
         viewModelScope.launch {
-            getLinesByRegion.invoke(idLocalCompany, "")
-                .collect() { resultListLines ->
-                    when (resultListLines) {
-                        is NetResult.Success -> {
-                            Log.e(
-                                "Size lineas es : ",
-                                "${resultListLines.data.size}"
-                            )
-                        }
-
-                        else -> {
-                            // Manejar el error si es necesario
-                        }
+            getLinesByRegion.invoke(idLocalCompany, "").collect() { resultListLines ->
+                when (resultListLines) {
+                    is NetResult.Success -> {
+                        Log.e(
+                            "Size lineas es : ", "${resultListLines.data.size}"
+                        )
                     }
-                    _pointsOfInterestAvailable.postValue(Event(Unit))
+
+                    else -> {
+                        // Manejar el error si es necesario
+                    }
                 }
+                _pointsOfInterestAvailable.postValue(Event(Unit))
+            }
         }
     }
 
@@ -236,25 +234,24 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLines.invoke(
+                    getDetailLine.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         lines.macroRegions?.get(0)?.desMacroRegion as String
-                    )
-                        .collect() { resulDetailLines ->
-                            when (resulDetailLines) {
-                                is NetResult.Success -> {
-                                    Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
-                                }
-
-                                else -> {
-                                    // Manejar el error si es necesario
-                                }
+                    ).collect() { resulDetailLines ->
+                        when (resulDetailLines) {
+                            is NetResult.Success -> {
+                                Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
                             }
-                            _pointsOfInterestAvailable.postValue(
-                                Event(Unit)
-                            )
+
+                            else -> {
+                                // Manejar el error si es necesario
+                            }
                         }
+                        _pointsOfInterestAvailable.postValue(
+                            Event(Unit)
+                        )
+                    }
                 }
             }
         }
@@ -266,7 +263,7 @@ class InitDbViewModel @Inject constructor(
     fun getDetailLinesByIdX(idLocalCompany: Int) {
         var detailLinesInvocationCount = 0
         viewModelScope.launch(Dispatchers.IO) {
-            val x = listOf("665","674","675")
+            val x = listOf("665", "674", "675")
             for (xx in x) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
@@ -278,7 +275,7 @@ class InitDbViewModel @Inject constructor(
                         .collect() { resulDetailLines ->
                             when (resulDetailLines) {
                                 is NetResult.Success -> {
-                                    Log.e("Lineas Llamadas",resulDetailLines.toString())
+                                    Log.e("Lineas Llamadas", resulDetailLines.toString())
                                 }
 
                                 else -> {
@@ -297,6 +294,7 @@ class InitDbViewModel @Inject constructor(
     /**
      * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
      */
+    /*
     fun getDetailLinesByIdA(idLocalCompany: Int) {
         var detailLinesInvocationCount = 0
         viewModelScope.launch(Dispatchers.IO) {
@@ -305,28 +303,26 @@ class InitDbViewModel @Inject constructor(
                 detailLinesInvocationCount++
                 viewModelScope.launch {
                     getDetailLines.invoke(
-                        idLocalCompany,
-                        lines.idBusLine,
-                        "mexico"
-                    )
-                        .collect() { resulDetailLines ->
-                            when (resulDetailLines) {
-                                is NetResult.Success -> {
-                                    Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
-                                }
-
-                                else -> {
-                                    // Manejar el error si es necesario
-                                }
+                        idLocalCompany, lines.idBusLine, "mexico"
+                    ).collect() { resulDetailLines ->
+                        when (resulDetailLines) {
+                            is NetResult.Success -> {
+                                Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
                             }
-                            _pointsOfInterestAvailable.postValue(
-                                Event(Unit)
-                            )
+
+                            else -> {
+                                // Manejar el error si es necesario
+                            }
                         }
+                        _pointsOfInterestAvailable.postValue(
+                            Event(Unit)
+                        )
+                    }
                 }
             }
         }
     }
+     */
 
     /**
      * Funcion publica para obtener el listado de lineas por MacroRegion
@@ -401,19 +397,40 @@ class InitDbViewModel @Inject constructor(
     }
 
     fun getRoutes(idLocalCompany: String, idLine: String) = viewModelScope.launch {
-        val TAG = "getRoutes"
         getRoutesByIdLine(idLocalCompany, idLine).collectLatest {
             when (it) {
-                is NetResult.Success -> {
-                    Log.d(TAG, "getRoutes: ${it.data}")
-                }
-
-                is NetResult.Error -> Log.e(TAG, "getRoutes: error in request")
+                is NetResult.Success -> println("getRoutes: ${it.data.first()}")
+                is NetResult.Error -> println("getRoutes: error in request")
                 else -> {
                     //Unused function
                 }
             }
         }
+    }
 
+    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "mexico") {
+        var detailLinesInvocationCount = 0
+        for (idBusLine in idBusLineList) {
+            detailLinesInvocationCount++
+            viewModelScope.launch {
+                getDetailLine.invoke(
+                    idLocalCompany, idBusLine, state
+                ).collect { resulDetailLines ->
+                    when (resulDetailLines) {
+                        is NetResult.Success -> {
+                            Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
+                        }
+
+                        else -> {
+                            // Manejar el error si es necesario
+                        }
+                    }
+                    _pointsOfInterestAvailable.postValue(
+                        Event(Unit)
+                    )
+                }
+
+            }
+        }
     }
 }

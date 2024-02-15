@@ -6,6 +6,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
+import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
@@ -15,10 +16,8 @@ import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -148,46 +147,30 @@ class RegionsRepository @Inject constructor(
      */
     fun getRoutesByIdLine(
         idLocalCompany: String, idLine: String
-    ): Flow<NetResult<Any>> = flow {
-        val haveLocalData = withContext(currentCoroutineContext()) {
-            routeDao.getIfLocalDataExist(idLine)
+    ): Flow<NetResult<List<MDbRouteEntity>>> = flow {
+        val haveLocalData = routeDao.getIfLocalDataExist(idLine)
+        when (haveLocalData) {
+            true -> emit(NetResult.Success(getLocalRoutesData(idLine)))
+            false -> getRemoteRoutesData(idLocalCompany, idLine).collect { emit(it) }
         }
-        val data = when (haveLocalData) {
-            true -> getLocalRoutesData(idLocalCompany, idLine)
-            false -> getRemoteRoutesData(idLocalCompany, idLine)
-        }
-        emit(data)
-    }
-
-    private suspend fun getLocalRoutesData(
-        idLocalCompany: String, idLine: String
-    ): NetResult<Any> {
-        val localData = withContext(currentCoroutineContext()) {
-            routeDao.getRoutesByIdBusLine(idLine)
-        }
-        return if (localData.isEmpty()) NetResult.Error(getGenericError())
-        else NetResult.Success(localData)
 
     }
 
-    private suspend fun getRemoteRoutesData(
+    private fun getLocalRoutesData(idLine: String): List<MDbRouteEntity> {
+        return routeDao.getRoutesByIdBusLine(idLine)
+    }
+
+    private fun getRemoteRoutesData(
         idLocalCompany: String,
         idLine: String
-    ): NetResult<Any> {
-        var response: NetResult<Any> = NetResult.Error(getGenericError())
-        remoteDataSource.getRoutesByIdLine(idLocalCompany, idLine)
-            .map { result ->
-                if (result is NetResult.Success) {
-                    val data = result.data
-                    routeDao.insertOrUpdate(data)
-                }
-                result
-            }.catch { error ->
-                emit(NetResult.Error(getGenericError()))
-            }.collectLatest {
-                response = it
-            }
-        return response
+    ) = remoteDataSource.getRoutesByIdLine(idLocalCompany, idLine).map { result ->
+        if (result is NetResult.Success) {
+            val data = result.data
+            routeDao.insertOrUpdate(data)
+        }
+        result
+    }.catch {
+        emit(NetResult.Error(getGenericError()))
     }
 
 }

@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         initData()
         observers()
 
-        mainViewModel.getRoutes("53", "1")
+        mainViewModel.getRoutes("5", "002")
 
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()
@@ -57,26 +57,31 @@ class MainActivity : AppCompatActivity() {
             .build()
     }
 
-    private fun clickListeners(){
+    private fun clickListeners() {
         binding.apply {
-            btnPOR.setOnClickListener {mainViewModel.getPointsRecharge()}
-            btnMacroRegions.setOnClickListener {mainViewModel.getMacroRegions(idLocalCompany)}
-            btnListRegions.setOnClickListener {mainViewModel.getRegions(idLocalCompany)}
-            btnStops.setOnClickListener {mainViewModel.getStops(idLocalCompany)}
-            btnLinesDetailByRegion.setOnClickListener { mainViewModel.getDetailLinesByIdX(idLocalCompany) }
+            btnPOR.setOnClickListener { mainViewModel.getPointsRecharge() }
+            btnMacroRegions.setOnClickListener { mainViewModel.getMacroRegions(idLocalCompany) }
+            btnListRegions.setOnClickListener { mainViewModel.getRegions(idLocalCompany) }
+            btnStops.setOnClickListener { mainViewModel.getStops(idLocalCompany) }
+            btnLinesDetailByRegion.setOnClickListener {
+                mainViewModel.getDetailLinesByIdB(
+                    idLocalCompany
+                )
+            }
             btnLines.setOnClickListener { mainViewModel.getListLines(idLocalCompany) }
         }
     }
 
-    private fun initData(){
+    private fun initData() {
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
        // mainViewModel.getDetailLineByIdDb(139)
         // mainViewModel.getMacroRegions(11)
         mainViewModel.fetchStopsByBuslineCrossingId("19")
+        //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
     }
 
-    private fun observers(){
+    private fun observers() {
 
         mainViewModel.mdbListLines.observe(this) { mdbListLines ->
             for (mdbListLine in mdbListLines) {
