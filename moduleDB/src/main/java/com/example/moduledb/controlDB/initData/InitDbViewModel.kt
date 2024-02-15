@@ -234,7 +234,7 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLine.invoke(
+                    getDetailLines.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         lines.macroRegions?.get(0)?.desMacroRegion as String
@@ -413,7 +413,7 @@ class InitDbViewModel @Inject constructor(
         for (idBusLine in idBusLineList) {
             detailLinesInvocationCount++
             viewModelScope.launch {
-                getDetailLine.invoke(
+                getDetailLines.invoke(
                     idLocalCompany, idBusLine, state
                 ).collect { resulDetailLines ->
                     when (resulDetailLines) {
