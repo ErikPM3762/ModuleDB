@@ -10,6 +10,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import dagger.Module
@@ -86,4 +87,9 @@ object DaoModule {
         return database.listDeatilLine()
     }
 
+    @Singleton
+    @Provides
+    fun provideRoutesDao(database: AppDataBase): MDbRouteDao {
+        return database.routesDao()
+    }
 }

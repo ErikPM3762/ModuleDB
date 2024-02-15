@@ -14,17 +14,19 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
-import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
 import com.example.moduledb.controlDB.data.local.entities.MDbVersionInfo
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
@@ -49,9 +51,10 @@ import com.example.moduledb.controlDB.utils.Converters
         MDbLinesByRegion::class,
         MDbListStops::class,
         BusStopBrandsEntity::class,
-        MDbLinesDetail::class
+        MDbLinesDetail::class,
+        MDbRouteEntity::class,
     ],
-    version = 14,
+    version = 15,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -65,16 +68,16 @@ import com.example.moduledb.controlDB.utils.Converters
         AutoMigration(from = 10, to = 11),
         AutoMigration(from = 11, to = 12),
         AutoMigration(from = 12, to = 13),
-        AutoMigration(from = 13, to = 14)
+        AutoMigration(from = 13, to = 14),
+        AutoMigration(from = 14, to = 15),
     ]
 )
 @TypeConverters(Converters::class)
 
-/**
- * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
- * para proveer las dependencias
- */
-
+    /**
+    * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
+     * para proveer las dependencias
+    */
 abstract class AppDataBase : RoomDatabase() {
 
     /**
@@ -100,6 +103,12 @@ abstract class AppDataBase : RoomDatabase() {
      * Abstract fun para lista de paradas
      */
     abstract fun listStops(): MDbStopsDao
+
+    /**
+     * Abstact fun to list Routes
+     */
+
+    abstract fun routesDao(): MDbRouteDao
 
     /**
      * Abstract fun para lista detalle de linea

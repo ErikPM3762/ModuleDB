@@ -13,8 +13,6 @@ import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.usecase.GetDetailLine
-import com.example.moduledb.controlDB.usecase.GetDetailLineById
 import com.example.moduledb.controlDB.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.usecase.GetMacroRegions
@@ -24,10 +22,12 @@ import com.example.moduledb.controlDB.usecase.GetRegions
 import com.example.moduledb.controlDB.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.usecase.GetStopById
 import com.example.moduledb.controlDB.usecase.GetStops
+import com.example.moduledb.controlDB.usecase.routes.GetRoutesByIdLine
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -47,8 +47,8 @@ class InitDbViewModel @Inject constructor(
     private val mDbLinesByRList: MDbLinesByRegionDao,
     private val getStopsByBusLine: GetStopByBusLine,
     private val getStopsById: GetStopById,
-    private val getDetailLines: GetDetailLine,
-    private val getDetailLinesById: GetDetailLineById
+    private val getRoutesByIdLine: GetRoutesByIdLine,
+    private val getDetailLinesById: GetDetailLinesById
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -241,39 +241,7 @@ class InitDbViewModel @Inject constructor(
                         .collect() { resulDetailLines ->
                             when (resulDetailLines) {
                                 is NetResult.Success -> {
-                                    Log.e("Lineas Llamadas", resulDetailLines.data.toString())
-                                }
-
-                                else -> {
-                                    // Manejar el error si es necesario
-                                }
-                            }
-                            _pointsOfInterestAvailable.postValue(
-                                Event(Unit)
-                            )
-                        }
-                }
-            }
-        }
-    }
-
-    /**
-     * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
-     */
-    fun getDetailLinesByIdX(idLocalCompany: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-         val x = listOf("665","674","675","98")
-            viewModelScope.launch {
-                for (xx in x) {
-                    getDetailLines.invoke(
-                        idLocalCompany,
-                        xx,
-                        "Yucatán"
-                    )
-                        .collect() { resulDetailLines ->
-                            when (resulDetailLines) {
-                                is NetResult.Success -> {
-                                    Log.e("Lineas Llamadas", resulDetailLines.data.toString())
+                                    Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
                                 }
 
                                 else -> {
@@ -393,5 +361,22 @@ class InitDbViewModel @Inject constructor(
             val stop: MDbListStops? = stopListResult
             Log.e("STOP_BY_ID", stop.toString())
         }
+    }
+
+    fun getRoutes(idLocalCompany: String, idLine: String) = viewModelScope.launch {
+        val TAG = "getRoutes"
+        getRoutesByIdLine(idLocalCompany, idLine).collectLatest {
+            when (it) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "getRoutes: ${it.data}")
+                }
+
+                is NetResult.Error -> Log.e(TAG, "getRoutes: error in request")
+                else -> {
+                    //Unused function
+                }
+            }
+        }
+
     }
 }
