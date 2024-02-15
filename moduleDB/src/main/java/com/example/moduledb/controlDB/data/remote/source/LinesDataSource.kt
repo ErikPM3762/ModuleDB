@@ -37,7 +37,7 @@ class LinesDataSource @Inject constructor(
     ): Flow<NetResult<List<MDbLinesDetail>>> =
         flow {
             when (idLocalCompany) {
-                AppId.BENIDORM.idLocalCompany, AppId.AHORROBUS.idLocalCompany -> emit(
+                AppId.AHORROBUS.idLocalCompany -> emit(
                     oracleServiceApi.getDetailOfLine(
                         RequestDataBase.getRequestByIdCompanyDetailLine(
                             idLocalCompany,
@@ -47,7 +47,7 @@ class LinesDataSource @Inject constructor(
                     )
                 )
 
-                AppId.RUBI.idLocalCompany -> emit(
+                AppId.RUBI.idLocalCompany, AppId.BENIDORM.idLocalCompany, -> emit(
                     awsServiceApi.getDetailOfLine(
                         RequestDataBase.getRequestByIdCompanyDetailLine(
                             idLocalCompany,

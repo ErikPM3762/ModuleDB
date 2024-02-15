@@ -30,10 +30,11 @@ class LinesRepository @Inject constructor(
         state: String
     ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
         val localStops = withContext(Dispatchers.IO) {
-            linesDetailByIdDao.findAll()
+            linesDetailDao.findLineByIdBusSAE(idBusline)
+           // linesDetailByIdDao.findAll()
         }
-        if (localStops.isNotEmpty()) {
-            emit(NetResult.Success(localStops))
+        if (localStops?.idBusSAE?.isNotEmpty() == true) {
+            emit(NetResult.Success(listOf(localStops)))
         } else {
             remoteDataSource.getDetailLineById(idLocalCompany, idBusline, state)
                 .loading()

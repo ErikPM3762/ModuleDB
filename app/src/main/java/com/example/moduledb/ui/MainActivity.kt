@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             btnMacroRegions.setOnClickListener {mainViewModel.getMacroRegions(idLocalCompany)}
             btnListRegions.setOnClickListener {mainViewModel.getRegions(idLocalCompany)}
             btnStops.setOnClickListener {mainViewModel.getStops(idLocalCompany)}
-            btnLinesDetailByRegion.setOnClickListener { mainViewModel.getDetailLinesByIdB(idLocalCompany) }
+            btnLinesDetailByRegion.setOnClickListener { mainViewModel.getDetailLinesByIdX(idLocalCompany) }
             btnLines.setOnClickListener { mainViewModel.getListLines(idLocalCompany) }
         }
     }
@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     private fun initData(){
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
-        mainViewModel.getDetailLineByIdDb(139)
+       // mainViewModel.getDetailLineByIdDb(139)
         // mainViewModel.getMacroRegions(11)
         mainViewModel.fetchStopsByBuslineCrossingId("19")
     }
