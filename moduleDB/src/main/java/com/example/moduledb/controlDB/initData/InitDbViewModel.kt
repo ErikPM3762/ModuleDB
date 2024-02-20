@@ -408,17 +408,15 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "mexico") {
-        var detailLinesInvocationCount = 0
+    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") {
         for (idBusLine in idBusLineList) {
-            detailLinesInvocationCount++
             viewModelScope.launch {
                 getDetailLines.invoke(
                     idLocalCompany, idBusLine, state
                 ).collect { resulDetailLines ->
                     when (resulDetailLines) {
                         is NetResult.Success -> {
-                            Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
+                            Log.e("Lineas Llamadas", resulDetailLines.toString())
                         }
 
                         else -> {

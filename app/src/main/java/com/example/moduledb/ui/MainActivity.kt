@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         initData()
         observers()
 
-        mainViewModel.getRoutes("5", "002")
+        mainViewModel.demo(5, listOf("004","005","006"))
 
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()

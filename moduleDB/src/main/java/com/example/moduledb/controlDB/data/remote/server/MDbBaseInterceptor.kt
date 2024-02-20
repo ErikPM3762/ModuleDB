@@ -15,7 +15,7 @@ import java.util.logging.Logger
 import javax.inject.Inject
 
 
-class MDbBaseInterceptor @Inject constructor(private val networkMonitor: NetworkMonitor)  {
+class MDbBaseInterceptor @Inject constructor() {
 
     private val retrofitTimeout = 20.toLong()
 
@@ -45,10 +45,6 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                     .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
                     .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
                     .addInterceptor { chain ->
-                        if (!networkMonitor.isConnected) throw NoNetworkException()
-                        else chain.proceed(chain.request())
-                    }
-                    .addInterceptor { chain ->
                         chain.proceed(
                             chain.request()
                                 .newBuilder()
@@ -58,7 +54,8 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                                 )
                                 .addHeader(
                                     "x-cache-api",
-                                    gsonAws.toJson(chain.request()).substringAfter("arguments\":[").substringBefore("],\"method").replace("ñ","n")
+                                    gsonAws.toJson(chain.request()).substringAfter("arguments\":[")
+                                        .substringBefore("],\"method").replace("ñ", "n")
                                 )
                                 .addHeader("Accept", "application/json")
                                 .build()
@@ -73,10 +70,6 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                 OkHttpClient.Builder()
                     .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
                     .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
-                    .addInterceptor { chain ->
-                        if (!networkMonitor.isConnected) throw NoNetworkException()
-                        else chain.proceed(chain.request())
-                    }
                     .addInterceptor { chain ->
                         chain.proceed(
                             chain.request()
@@ -94,10 +87,6 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                             .client(OkHttpClient.Builder()
                                 .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
                                 .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
-                                .addInterceptor { chain ->
-                                    if (!networkMonitor.isConnected) throw NoNetworkException()
-                                    else chain.proceed(chain.request())
-                                }
                                 .addInterceptor { chain ->
                                     chain.proceed(
                                         chain.request()
@@ -155,13 +144,6 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
                     .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
                     .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
                     .addInterceptor { chain ->
-                        if (networkMonitor.isConnected) {
-                            chain.proceed(chain.request())
-                        } else {
-                            throw NoNetworkException()
-                        }
-                    }
-                    .addInterceptor { chain ->
                         chain.proceed(
                             chain.request()
                                 .newBuilder()
@@ -185,11 +167,8 @@ class MDbBaseInterceptor @Inject constructor(private val networkMonitor: Network
             }
 
         val newAccessToken = getOAuthTokenService.getAWSAuthToken(AuthTokenAwsRequest()).execute()
-        awsAuthToken = if (newAccessToken.isSuccessful) {
-            if (newAccessToken.body() != null) {
-                // Add new header to rejected request and retry it
-                newAccessToken.body()!!.data.idToken
-            } else ""
+        awsAuthToken = if (newAccessToken.isSuccessful && newAccessToken.body() != null) {
+            newAccessToken.body()!!.data.idToken
         } else ""
         return awsAuthToken
     }

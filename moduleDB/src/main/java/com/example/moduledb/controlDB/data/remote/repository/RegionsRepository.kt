@@ -170,6 +170,7 @@ class RegionsRepository @Inject constructor(
         }
         result
     }.catch {
+        println(it)
         emit(NetResult.Error(getGenericError()))
     }
 
