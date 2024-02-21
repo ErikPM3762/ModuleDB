@@ -12,7 +12,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
-import java.util.logging.Logger
 import javax.inject.Inject
 
 
@@ -20,20 +19,17 @@ class MDbBaseInterceptor @Inject constructor() {
 
     private val retrofitTimeout = 20.toLong()
 
+    private val gson: Gson = GsonBuilder()
+        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+        .create()
+
     val oracleOkHttpClient = getOkHttpClient(InterceptorType.ORACLE)
 
     val awsOkHttpClient = getOkHttpClient(InterceptorType.AWS)
 
-    val gsonAws = Gson()
-
 
     enum class InterceptorType {
         AWS, ORACLE
-    }
-
-    enum class Header(val header: String, val value: String) {
-        Accept("Accept", "application/json"),
-        Content_Type("Content-Type", "application/x-www-form-urlencoded")
     }
 
     private fun getOkHttpClient(type: InterceptorType) = HttpLoggingInterceptor().run {
@@ -112,24 +108,16 @@ class MDbBaseInterceptor @Inject constructor() {
                             .run {
                                 create(OracleServiceApi::class.java)
                             }
-
-                        val logger = Logger.getLogger(this.javaClass.name)
-                        logger.info("Requesting Token from Lines Module")
-                        val newAccessToken =
-                            getOAuthTokenService.getAuthToken("client_credentials", "ADOAPIs")
-                                .execute()
+                        val newAccessToken = getOAuthTokenService
+                            .getAuthToken("client_credentials", "ADOAPIs")
+                            .execute()
                         oracleAuthToken = if (!newAccessToken.isSuccessful) ""
-                        else newAccessToken.body()?.access_token
-                            ?: ""
-                        if (oracleAuthToken.isNotEmpty()) logger.info("New access token from Lines Module $oracleAuthToken")
-
+                        else newAccessToken.body()?.access_token ?: ""
                         response.request.newBuilder()
                             .header("Authorization", "Bearer $oracleAuthToken")
                             .build()
                     }
                     .build()
-
-
             }
         }
     }
@@ -137,64 +125,60 @@ class MDbBaseInterceptor @Inject constructor() {
 
     private fun getAuthAWS(interceptor: HttpLoggingInterceptor): String {
         // Refresh your access_token using a synchronous api request
-        val getOAuthTokenService = Retrofit.Builder()
-            .baseUrl(EnvironmentManager.uriApiHardcode)
-            .client(
-                OkHttpClient.Builder()
-                    .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
-                    .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
-                    .addInterceptor { chain ->
-                        chain.proceed(
-                            chain.request()
-                                .newBuilder()
-                                .addHeader("Authorization", EnvironmentManager.authorizationAws)
-                                .addHeader("Accept", "application/json")
-                                .addHeader(
-                                    "x-cache-api",
-                                    "100espanaprovincia_segoviasegovia652I20220715"
-                                )
-                                .build()
-                        )
-                    }
-                    .addInterceptor(interceptor)
-                    .build()
-            )
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-            .run {
-                create(AwsServiceApi::class.java)
-            }
+        return awsAuthToken.ifEmpty {
+            val okHttpClient = OkHttpClient.Builder()
+                .readTimeout(retrofitTimeout, TimeUnit.SECONDS)
+                .connectTimeout(retrofitTimeout, TimeUnit.SECONDS)
+                .addInterceptor { chain ->
+                    chain.proceed(
+                        chain.request()
+                            .newBuilder()
+                            .addHeader("Authorization", EnvironmentManager.authorizationAws)
+                            .addHeader("Accept", "application/json")
+                            .addHeader(
+                                "x-cache-api",
+                                "100espanaprovincia_segoviasegovia652I20220715"
+                            )
+                            .build()
+                    )
+                }
+                .addInterceptor(interceptor)
+                .build()
 
-        val newAccessToken = getOAuthTokenService.getAWSAuthToken(AuthTokenAwsRequest()).execute()
-        awsAuthToken = if (newAccessToken.isSuccessful && newAccessToken.body() != null) {
-            newAccessToken.body()!!.data.idToken
-        } else ""
-        return awsAuthToken
+            val getOAuthTokenService = Retrofit.Builder()
+                .baseUrl(EnvironmentManager.uriApiHardcode)
+                .client(okHttpClient)
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build()
+                .run {
+                    create(AwsServiceApi::class.java)
+                }
+
+            val newAccessToken =
+                getOAuthTokenService.getAWSAuthToken(AuthTokenAwsRequest()).execute()
+            awsAuthToken = if (newAccessToken.isSuccessful && newAccessToken.body() != null)
+                newAccessToken.body()!!.data.idToken else ""
+            awsAuthToken
+        }
+
     }
 
-    private val gson: Gson = GsonBuilder()
-        .setDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
-        .create()
+    private fun createDynamicJson(chainRequest: Request): String {
+        val jsonBuilder = StringBuilder().apply {
+            append("{")
+            append("\"arguments\":[")
+            val bodyString = chainRequest.body?.toString() ?: ""
+            append(bodyString)
+            append("]")
+            append("}")
+        }
+        return jsonBuilder.toString()
+    }
 
     companion object {
         var awsAuthToken = ""
         var oracleAuthToken = ""
     }
 
-    private fun createDynamicJson(chainRequest: Request): String {
-        val jsonBuilder = StringBuilder()
-        jsonBuilder.append("{")
-        jsonBuilder.append("\"arguments\":[")
-
-        val requestBody = chainRequest.body
-        val bodyString = requestBody?.toString() ?: ""
-
-        jsonBuilder.append(bodyString)
-
-        jsonBuilder.append("]")
-        jsonBuilder.append("}")
-
-        return jsonBuilder.toString()
-    }
 }
