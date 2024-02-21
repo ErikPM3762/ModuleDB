@@ -7,6 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -54,8 +55,7 @@ class MDbBaseInterceptor @Inject constructor() {
                                 )
                                 .addHeader(
                                     "x-cache-api",
-                                    gsonAws.toJson(chain.request()).substringAfter("arguments\":[")
-                                        .substringBefore("],\"method").replace("ñ", "n")
+                                    createDynamicJson(chain.request())
                                 )
                                 .addHeader("Accept", "application/json")
                                 .build()
@@ -180,5 +180,21 @@ class MDbBaseInterceptor @Inject constructor() {
     companion object {
         var awsAuthToken = ""
         var oracleAuthToken = ""
+    }
+
+    private fun createDynamicJson(chainRequest: Request): String {
+        val jsonBuilder = StringBuilder()
+        jsonBuilder.append("{")
+        jsonBuilder.append("\"arguments\":[")
+
+        val requestBody = chainRequest.body
+        val bodyString = requestBody?.toString() ?: ""
+
+        jsonBuilder.append(bodyString)
+
+        jsonBuilder.append("]")
+        jsonBuilder.append("}")
+
+        return jsonBuilder.toString()
     }
 }

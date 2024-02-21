@@ -396,17 +396,6 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun getRoutes(idLocalCompany: String, idLine: String) = viewModelScope.launch {
-        getRoutesByIdLine(idLocalCompany, idLine).collectLatest {
-            when (it) {
-                is NetResult.Success -> println("getRoutes: ${it.data.first()}")
-                is NetResult.Error -> println("getRoutes: error in request")
-                else -> {
-                    //Unused function
-                }
-            }
-        }
-    }
 
     fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") {
         for (idBusLine in idBusLineList) {

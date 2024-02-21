@@ -38,7 +38,7 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideInterceptor(networkMonitor: NetworkMonitor) = MDbBaseInterceptor(networkMonitor)
+    fun provideInterceptor(networkMonitor: NetworkMonitor) = MDbBaseInterceptor()
 
     @Singleton
     @Provides
