@@ -14,6 +14,7 @@ import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.data.remote.source.IStopsDataSource
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 import com.example.moduledb.controlDB.domain.repository.StopsRepository
+import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.getGenericError
@@ -93,28 +94,43 @@ class StopsRepositoryImpl @Inject constructor(
     override suspend fun getDetailStopsById(
         idLocalCompany: Int, idBusStop: String
     ): DataResult<MDBDetailStop, Exception> = withContext(Dispatchers.IO) {
-        val localDetailStop = withContext(Dispatchers.IO) {detailStopsDao.findById(idBusStop.toLong())}
-        Log.e("respondeme", "ww")
+        val localDetailStop =
+            withContext(Dispatchers.IO) { detailStopsDao.findById(idBusStop.toLong()) }
         if (localDetailStop != null) {
-            Log.e("respondeme", "pp")
             val dataConverter = localDetailStop.toDetailStop()
             return@withContext DataResult.Success(dataConverter)
-        }
-        else {
-            performUpdateOperation({
-                oracleServiceApi.getDetailStopsById(
-                    RequestDataBase.getRequestByIdCompanyDetailStop(
-                        idLocalCompany, idBusStop
-                    )
-                )
-            }, { response ->
-                Log.e("respondeme", response.toString())
-                response?.result?.stopsList?.toRoomDetailStop()
-            }, { detailStop ->
-                Log.e("respondeme 2", detailStop.toString())
-                detailStopsDao.insertOrUpdate(detailStop)
-                detailStop.toDetailStop()
-            })
+        } else {
+            when (idLocalCompany) {
+                AppId.AHORROBUS.idLocalCompany -> {
+                    performUpdateOperation({
+                        oracleServiceApi.getDetailStopsById(
+                            RequestDataBase.getRequestByIdCompanyDetailStop(
+                                idLocalCompany, idBusStop
+                            )
+                        )
+                    }, { response ->
+                        response?.result?.stopsList?.toRoomDetailStop()
+                    }, { detailStop ->
+                        detailStopsDao.insertOrUpdate(detailStop)
+                        detailStop.toDetailStop()
+                    })
+                }
+
+                else -> {
+                    performUpdateOperation({
+                        awsServiceApi.getDetailStopsById(
+                            RequestDataBase.getRequestByIdCompanyDetailStop(
+                                idLocalCompany, idBusStop
+                            )
+                        )
+                    }, { response ->
+                        response?.result?.stopsList?.toRoomDetailStop()
+                    }, { detailStop ->
+                        detailStopsDao.insertOrUpdate(detailStop)
+                        detailStop.toDetailStop()
+                    })
+                }
+            }
         }
     }
 }
