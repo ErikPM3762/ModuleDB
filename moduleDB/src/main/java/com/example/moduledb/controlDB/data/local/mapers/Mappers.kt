@@ -1,6 +1,7 @@
 package com.example.moduledb.controlDB.data.local.mapers
 
 
+import com.example.moduledb.controlDB.data.local.entities.MDbDetailStops
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
@@ -9,12 +10,11 @@ import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBStops
-import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.data.remote.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.data.remote.response.lines.BusLine
+import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
+import com.example.moduledb.controlDB.domain.models.MDBStops
+import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
+import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 
 
 /**
@@ -193,4 +193,39 @@ fun List<MDbLinesDetail>.toDetailLineList(): List<MDbLinesDetail> {
     return this.map {
         it.toDetailLine()
     }
+}
+
+/**
+ * Transformacion del objeto para detalle de parada
+ */
+private fun MDBDetailStop.toRoomDetailStopConverter(): MDbDetailStops {
+    return MDbDetailStops(
+        id = idBusStop.toLongOrNull() ?: 0L,
+        idBusStop = idBusStop ?: "0",
+        desBusStop = desBusStop ?: "N/A",
+        coordinates = coordinates,
+        buslineCrossing = buslineCrossing,
+        brands = brands
+    )
+}
+
+fun MDBDetailStop.toRoomDetailStop(): MDbDetailStops {
+    return toRoomDetailStopConverter()
+}
+
+/**
+ * Transformacion del objeto para detalle de parada
+ */
+private fun MDbDetailStops.toDetailStopConverter(): MDBDetailStop {
+    return MDBDetailStop(
+        idBusStop = idBusStop ?: "0",
+        desBusStop = desBusStop ?: "N/A",
+        coordinates = coordinates,
+        buslineCrossing = buslineCrossing,
+        brands = brands
+    )
+}
+
+fun MDbDetailStops.toDetailStop(): MDBDetailStop {
+    return toDetailStopConverter()
 }

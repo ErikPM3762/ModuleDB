@@ -1,7 +1,7 @@
 package com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest
 
 
-import com.example.moduledb.controlDB.data.remote.models.MDbVTPointInterestResponse
+import com.example.moduledb.controlDB.domain.models.MDbVTPointInterestResponse
 import com.google.gson.annotations.SerializedName
 
 data class VTPointInterestResultResponse (

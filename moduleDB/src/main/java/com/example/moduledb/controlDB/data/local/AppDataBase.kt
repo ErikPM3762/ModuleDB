@@ -7,6 +7,7 @@ import androidx.room.RenameTable
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.AutoMigrationSpec
+import com.example.moduledb.controlDB.data.local.daos.MDbDetailStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
@@ -19,6 +20,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.MDbDetailStops
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
@@ -53,8 +55,9 @@ import com.example.moduledb.controlDB.utils.Converters
         BusStopBrandsEntity::class,
         MDbLinesDetail::class,
         MDbRouteEntity::class,
+        MDbDetailStops::class
     ],
-    version = 15,
+    version = 16,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -70,50 +73,28 @@ import com.example.moduledb.controlDB.utils.Converters
         AutoMigration(from = 12, to = 13),
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
+        AutoMigration(from = 15, to = 16),
     ]
 )
 @TypeConverters(Converters::class)
 
-    /**
-    * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
-     * para proveer las dependencias
-    */
+/**
+ * Aqui se realiza la conexion de datos de los Dao correspondientes con el inject DaoModule
+ * para proveer las dependencias
+ */
 abstract class AppDataBase : RoomDatabase() {
 
-    /**
-     * Abstract fun para puntos de recarga y puntos de interes
-     */
     abstract fun pointsInterest(): MDbPOIsDao
     abstract fun pointsRecharge(): MDbPORechargeDao
     abstract fun versionTable(): MDbVersionInfoDao
-
-    /**
-     * Abstract fun para Regiones y macroRegiones
-     */
     abstract fun macroRegions(): MDbMacroRegionsDao
     abstract fun regions(): MDbRegionsDao
-
-    /**
-     * Abstract fun para lista de lineas por Region y MacroRegion
-     */
     abstract fun listMacroRegions(): MDbLinesByMacroRegionDao
     abstract fun listRegions(): MDbLinesByRegionDao
-
-    /**
-     * Abstract fun para lista de paradas
-     */
     abstract fun listStops(): MDbStopsDao
-
-    /**
-     * Abstact fun to list Routes
-     */
-
     abstract fun routesDao(): MDbRouteDao
-
-    /**
-     * Abstract fun para lista detalle de linea
-     */
     abstract fun listDeatilLine(): MDbLinesDetailDao
+    abstract fun detailStopsDao(): MDbDetailStopDao
 
     /**
      * Cada que eliminemos alguna columna o renombremos algun campo o tabla tendremos que manejarlo con los spec

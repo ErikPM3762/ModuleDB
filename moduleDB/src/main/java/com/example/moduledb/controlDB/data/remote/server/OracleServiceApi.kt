@@ -1,6 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.server
 
-import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.request.DetailLineRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
@@ -16,6 +16,7 @@ import com.example.moduledb.controlDB.data.remote.response.macroRegions.MacroReg
 import com.example.moduledb.controlDB.data.remote.response.pointsInterest.POIsResponse
 import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.PORechargeResponse
 import com.example.moduledb.controlDB.data.remote.response.regions.RegionsResponse
+import com.example.moduledb.controlDB.data.remote.response.stops.DetailStopsResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointInterest.VTPointInterestResponse
 import com.example.moduledb.controlDB.data.remote.response.versionTablePointRecharge.VTPointRechargeResponse
@@ -52,6 +53,9 @@ interface OracleServiceApi {
 
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerDetalleLinea")
     suspend fun getDetailOfLine(@Body params: Any): Response<DetailLineResponse>
+
+    @POST("apis/1.1.0/lineasYParadas/1.1.0/obtenerDetalleParada")
+    suspend fun getDetailStopsById(@Body params: Any): Response<DetailStopsResponse>
 
     @POST("/apis/1.1.0/lineasYParadas/1.1.0/obtenerListaParadas")
     suspend fun getStops(@Body params: StopsRequest): Response<StopsResponse>

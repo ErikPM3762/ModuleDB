@@ -3,7 +3,7 @@ package com.example.moduledb.controlDB.data.remote.source
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.response.routes.toRouteEntity

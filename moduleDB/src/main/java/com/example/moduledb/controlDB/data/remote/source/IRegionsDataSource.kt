@@ -4,7 +4,7 @@ import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.models.MDBMacroRegions
+import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.utils.NetResult
 import kotlinx.coroutines.flow.Flow
 

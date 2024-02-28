@@ -4,6 +4,7 @@ package com.example.moduledb.controlDB.utils
 
 import com.example.moduledb.controlDB.data.remote.request.DetailLineAwseRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLineRequest
+import com.example.moduledb.controlDB.data.remote.request.DetailStopRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
@@ -55,6 +56,14 @@ object RequestDataBase {
             AppId.BENIDORM.idLocalCompany -> getBenidormDetailLineRequest(idBusLine)
             AppId.AHORROBUS.idLocalCompany -> getAhorrobusDetailLineRequest(idBusLine, state)
             AppId.RUBI.idLocalCompany -> getAwsDetailLineRequest(idBusLine, idLocalCompany)
+            else -> throw IllegalArgumentException("Unknown id company for regions request")
+        }
+
+    fun getRequestByIdCompanyDetailStop(idLocalCompany: Int, idBusStop: String) =
+        when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
+            AppId.AHORROBUS.idLocalCompany -> getDetailStopOracleRequest(idBusStop)
+            AppId.RUBI.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
@@ -120,6 +129,26 @@ object RequestDataBase {
         state = "ourense",
         cityOrTown = "ourense",
         idLocalCompany = "53"
+    )
+
+    private fun getDetailStopOracleRequest(idBusStop: String) = DetailStopRequest(
+        idFront = 100,
+        country = "intermedio",
+        state = "intermedio",
+        cityOrTown = "intermedio",
+        idLocalCompany = "11",
+        idBusLine = "",
+        idBusStop = idBusStop
+    )
+
+    private fun getDetailStopAwsRequest(idBusStop: String) = DetailStopRequest(
+        idFront = 100,
+        country = "españa",
+        state = "provincia",
+        cityOrTown = "segovia",
+        idLocalCompany = "5",
+        idBusLine = "",
+        idBusStop = idBusStop
     )
 
     fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) =

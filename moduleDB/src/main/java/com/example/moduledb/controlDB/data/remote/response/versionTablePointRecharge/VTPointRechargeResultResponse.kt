@@ -1,8 +1,8 @@
 package com.example.moduledb.controlDB.data.remote.response.versionTablePointRecharge
 
 
-import com.example.moduledb.controlDB.data.remote.models.MDbVTPointInterestResponse
-import com.example.moduledb.controlDB.data.remote.models.MDbVTPointRechargeResponse
+import com.example.moduledb.controlDB.domain.models.MDbVTPointInterestResponse
+import com.example.moduledb.controlDB.domain.models.MDbVTPointRechargeResponse
 import com.google.gson.annotations.SerializedName
 
 data class VTPointRechargeResultResponse (

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.moduledb.controlDB.data.local.AppDataBase
 import com.example.moduledb.controlDB.initData.InitDbViewModel
+import com.example.moduledb.controlDB.initData.StopsViewModel
 import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: InitDbViewModel by viewModels()
+    private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
     private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
@@ -79,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         // mainViewModel.getMacroRegions(11)
         mainViewModel.fetchStopsByBuslineCrossingId("19")
         //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
+        stopsViewModel.getDetailOfStopById()
     }
 
     private fun observers() {

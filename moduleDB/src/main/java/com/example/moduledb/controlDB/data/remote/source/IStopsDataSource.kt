@@ -1,7 +1,7 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import com.example.moduledb.controlDB.data.remote.models.MDBStops
-import com.example.moduledb.controlDB.data.remote.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.domain.models.MDBStops
+import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.utils.NetResult
 import kotlinx.coroutines.flow.Flow
 
