@@ -18,6 +18,7 @@ class StopsViewModel @Inject constructor(
 
     fun getDetailOfStopById() {
         viewModelScope.launch {
+            /*
             getDetailStopById(11, "718").collect { result ->
                 when (result) {
                     is DataResult.Success -> println("${result.data}")
@@ -25,6 +26,8 @@ class StopsViewModel @Inject constructor(
                     else -> {println("Error al traer Datos")}
                 }
             }
+
+             */
         }
 
     }

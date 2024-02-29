@@ -36,11 +36,14 @@ class LinesRepository @Inject constructor(
     private suspend fun getRemoteLineDetail(idLocalCompany: Int, idBusline: String, state: String) =
         remoteDataSource.getDetailLineById(idLocalCompany, idBusline, state)
             .map { result ->
-                if (result is NetResult.Success)
-                    linesDetailDao.insertOrUpdate(result.data.toDetailLineList())
+                if (result is NetResult.Success) {
+                    println("idBusLine: $idBusline")
+                    val data = result.data.toDetailLineList()
+                    println(data)
+                    linesDetailDao.insertOrUpdate(data)
+                }
                 result
             }.catch {
-                println(it)
                 emit(NetResult.Error(getGenericError()))
             }
 

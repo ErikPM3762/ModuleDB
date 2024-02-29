@@ -30,8 +30,8 @@ class MainActivity : AppCompatActivity() {
         initData()
         observers()
 
-        mainViewModel.demo(5, listOf("004","005","006"))
-
+        //mainViewModel.demo(5, listOf("004","005","006"))
+        mainViewModel.demo(5, listOf("004","004","006"))
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()
 
@@ -88,7 +88,6 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.mdbListLines.observe(this) { mdbListLines ->
             for (mdbListLine in mdbListLines) {
-                println("idBusLine: ${mdbListLine.idBusLine}")
             }
             binding.img3.visibility = View.VISIBLE
             binding.txtSizeLines.text = mdbListLines.size.toString()

@@ -29,7 +29,6 @@ import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -397,15 +396,15 @@ class InitDbViewModel @Inject constructor(
     }
 
 
-    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") {
-        for (idBusLine in idBusLineList) {
-            viewModelScope.launch {
+    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") =
+        viewModelScope.launch {
+            for (idBusLine in idBusLineList) {
                 getDetailLines.invoke(
                     idLocalCompany, idBusLine, state
                 ).collect { resulDetailLines ->
                     when (resulDetailLines) {
                         is NetResult.Success -> {
-                            Log.e("Lineas Llamadas", resulDetailLines.toString())
+
                         }
 
                         else -> {
@@ -416,8 +415,6 @@ class InitDbViewModel @Inject constructor(
                         Event(Unit)
                     )
                 }
-
             }
         }
-    }
 }
