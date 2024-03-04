@@ -67,6 +67,12 @@ object RequestDataBase {
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
+    fun getRequestByIdCompanyDetailRoute(idLocalCompany: Int, idBusLine: String, idPath: String) =
+        when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany -> getBenidormDetailRouteRequest(idBusLine, idPath)
+            else -> throw IllegalArgumentException("Unknown id company for regions request")
+        }
+
     private fun getAhorrobusRequest() = MacroRegionsRequest(
         idLocalCompany = "11",
         country = "mexico",
@@ -189,6 +195,7 @@ object RequestDataBase {
         idFront = 60,
         idLocalCompany = "5",
         state = "benidorm",
+        pathIdBusLine = ""
     )
 
     private fun getAhorrobusDetailLineRequest(idBusLine: String, state: String) = DetailLineRequest(
@@ -198,6 +205,7 @@ object RequestDataBase {
         idFront = 60,
         idLocalCompany = "11",
         state = state,
+        pathIdBusLine = ""
     )
 
     private fun getAwsDetailLineRequest(idBusLine: String, idLocalCompany: Int) =
@@ -209,5 +217,20 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString(),
             state = "provincia_segovia",
             62418
+        )
+
+    /**
+     * Request para obtener el detalle de ruta
+     */
+
+    private fun getBenidormDetailRouteRequest(idBusLine: String, idPath: String) =
+        DetailLineRequest(
+            cityOrTown = "benidorm",
+            country = "spain",
+            idBusLine = idBusLine,
+            idFront = 60,
+            idLocalCompany = "5",
+            state = "benidorm",
+            pathIdBusLine = idPath
         )
 }

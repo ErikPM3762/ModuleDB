@@ -29,9 +29,6 @@ class MainActivity : AppCompatActivity() {
         clickListeners()
         initData()
         observers()
-
-        mainViewModel.demo(5, listOf("004","005","006"))
-
         binding.btnLISTMCRG.setOnClickListener {
             val idRegionText = binding.etxLine.text.toString()
 
@@ -77,10 +74,11 @@ class MainActivity : AppCompatActivity() {
     private fun initData() {
         mainViewModel.getPointsInterest()
         mainViewModel.getPointsRecharge()
-       // mainViewModel.getDetailLineByIdDb(139)
+        // mainViewModel.getDetailLineByIdDb(139)
         // mainViewModel.getMacroRegions(11)
         mainViewModel.fetchStopsByBuslineCrossingId("19")
         //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
+        mainViewModel.demo2(5, listOf("004", "005", "006"))
         stopsViewModel.getDetailOfStopById()
     }
 
@@ -88,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 
         mainViewModel.mdbListLines.observe(this) { mdbListLines ->
             for (mdbListLine in mdbListLines) {
-                println("idBusLine: ${mdbListLine.idBusLine}")
+                //println("idBusLine: ${mdbListLine.idBusLine}")
             }
             binding.img3.visibility = View.VISIBLE
             binding.txtSizeLines.text = mdbListLines.size.toString()
@@ -113,6 +111,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.mdbListStops.observe(this) {
             Toast.makeText(this, "Total de paradas ${it.size}", Toast.LENGTH_SHORT).show()
         }
+
     }
 
 

@@ -5,19 +5,19 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.example.moduledb.controlDB.data.remote.response.lines.BackTrip
-import com.example.moduledb.controlDB.data.remote.response.lines.GeographicDataStructure
-import com.example.moduledb.controlDB.data.remote.response.lines.OutTrip
 import com.example.moduledb.controlDB.utils.Converters
-import com.google.gson.annotations.SerializedName
 
 
 @Entity
 @TypeConverters(Converters::class)
 data class MDbLinesDetail(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id", defaultValue = "0") val id: Long = 0,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id", defaultValue = "0")
+    val id: Long = 0,
     @ColumnInfo(name = "idBusSAE")
     val idBusSAE: String?,
+    @ColumnInfo(name = "pathIdBusLine")
+    val pathIdBusLine: String?,
     @ColumnInfo(name = "color")
     val color: String?,
     @ColumnInfo(name = "distance")

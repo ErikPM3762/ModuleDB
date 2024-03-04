@@ -2,7 +2,6 @@ package com.example.moduledb.controlDB.data.remote.source
 
 
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
-import com.example.moduledb.controlDB.data.remote.response.lines.BusLine
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.AppId
@@ -22,8 +21,7 @@ import javax.inject.Inject
 class LinesDataSource @Inject constructor(
     private val oracleServiceApi: OracleServiceApi,
     private val awsServiceApi: AwsServiceApi
-) :
-    ILinesDataSource {
+) : ILinesDataSource {
 
 
     /**
@@ -47,7 +45,7 @@ class LinesDataSource @Inject constructor(
                     )
                 )
 
-                AppId.RUBI.idLocalCompany, AppId.BENIDORM.idLocalCompany, -> emit(
+                AppId.RUBI.idLocalCompany, AppId.BENIDORM.idLocalCompany -> emit(
                     awsServiceApi.getDetailOfLine(
                         RequestDataBase.getRequestByIdCompanyDetailLine(
                             idLocalCompany,
@@ -63,6 +61,31 @@ class LinesDataSource @Inject constructor(
                     it.result!!.busLine
                 }
             }.loading().catch { error ->
-                emit(NetResult.Error(getGenericError()))}
+                emit(NetResult.Error(getGenericError()))
+            }
             .flowOn(Dispatchers.IO)
+
+    override fun getRouteDetailByIds(
+        idLocalCompany: Int,
+        idBusline: String,
+        idPath: String
+    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
+        when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany -> emit(
+                awsServiceApi.getDetailOfLine(
+                    RequestDataBase.getRequestByIdCompanyDetailRoute(
+                        idLocalCompany,
+                        idBusline,
+                        idPath
+                    )
+                )
+            )
+        }
+    }.map { res ->
+        res.parse { parse ->
+            parse.result!!.busLine.map { it.copy(pathIdBusLine = idPath) }
+        }
+    }.catch { error ->
+        emit(NetResult.Error(getGenericError()))
+    }
 }
