@@ -24,11 +24,13 @@ import com.example.moduledb.controlDB.domain.usecase.GetRegions
 import com.example.moduledb.controlDB.domain.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
+import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -50,7 +52,8 @@ class InitDbViewModel @Inject constructor(
     private val getStopsById: GetStopById,
     private val getRoutesByIdLine: GetRoutesByIdLine,
     private val getDetailLines: GetDetailLine,
-    private val getDetailLinesById: GetDetailLineById
+    private val getDetailLinesById: GetDetailLineById,
+    private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -398,13 +401,14 @@ class InitDbViewModel @Inject constructor(
 
     fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") =
         viewModelScope.launch {
-            for (idBusLine in idBusLineList) {
+            idBusLineList.forEach { idBusLine ->
+                Log.e("Lineas Llamadas", "idBusLine $idBusLine")
                 getDetailLines.invoke(
                     idLocalCompany, idBusLine, state
-                ).collect { resulDetailLines ->
+                ).collectIndexed { _, resulDetailLines ->
                     when (resulDetailLines) {
                         is NetResult.Success -> {
-
+                            Log.e("Lineas Llamadas", resulDetailLines.toString())
                         }
 
                         else -> {
@@ -415,6 +419,50 @@ class InitDbViewModel @Inject constructor(
                         Event(Unit)
                     )
                 }
+
             }
         }
+
+    fun demo2(idLocalCompany: Int, idBusLineList: List<String>) {
+        for (idBusLine in idBusLineList) {
+            viewModelScope.launch {
+                getRoutesByIdLine.invoke(
+                    idLocalCompany.toString(), idBusLine
+                ).collect { resulDetailLines ->
+                    when (resulDetailLines) {
+                        is NetResult.Success -> {
+                            resulDetailLines.data.forEach {
+                                val idBusLine = it.idBusLine
+                                val idPath = it.pathIdBusLine
+                                getRouteDetailByIdLineAndIdPath.invoke(
+                                    idLocalCompany,
+                                    idBusLine, idPath
+                                ).collect { resultDetailRoute ->
+                                    when (resultDetailRoute) {
+                                        is NetResult.Success -> {
+                                            resultDetailRoute.data
+                                        }
+
+                                        else -> {
+                                            // Manejar el error si es necesario
+                                        }
+                                    }
+                                }
+
+                            }
+                            Log.e("Lineas Llamadas", resulDetailLines.toString())
+                        }
+
+                        else -> {
+                            // Manejar el error si es necesario
+                        }
+                    }
+                    _pointsOfInterestAvailable.postValue(
+                        Event(Unit)
+                    )
+                }
+
+            }
+        }
+    }
 }

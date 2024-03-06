@@ -51,4 +51,36 @@ class LinesRepository @Inject constructor(
     suspend fun getDetailLineById(idBusSae: String): MDbLinesDetail? {
         return withContext(Dispatchers.IO) { linesDetailByIdDao.findLineByIdBusSAE(idBusSae) }
     }
+
+    fun getRouteDetail(
+        idLocalCompany: Int,
+        idBusline: String,
+        pathIdBusLine: String,
+    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
+        val localData = linesDetailDao.findLineByIds(idBusline, pathIdBusLine)
+        when (localData == null) {
+            true -> getRemoteRouteDetail(
+                idLocalCompany,
+                idBusline,
+                pathIdBusLine
+            ).collect { emit(it) }
+
+            false -> emit(NetResult.Success(listOf(localData)))
+        }
+    }
+
+    private suspend fun getRemoteRouteDetail(
+        idLocalCompany: Int,
+        idBusline: String,
+        pathIdBusLine: String
+    ) =
+        remoteDataSource.getRouteDetailByIds(idLocalCompany, idBusline, pathIdBusLine)
+            .map { result ->
+                if (result is NetResult.Success)
+                    linesDetailDao.insertOrUpdate(result.data.toDetailLineList())
+                result
+            }.catch {
+                emit(NetResult.Error(getGenericError()))
+            }
+
 }

@@ -2,19 +2,19 @@ package com.example.moduledb.controlDB.data.local.mapers
 
 
 import com.example.moduledb.controlDB.data.local.entities.MDbDetailStops
-import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
+import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
+import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.domain.models.MDBStops
 import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 
 
 /**
@@ -89,15 +89,15 @@ fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
  */
 fun MDbListLines.toLineByMacroRegion(idMacroRegion: String): MDbListLines {
     return MDbListLines(
-    idBusLine = idBusLine,
-    idBusSAE = idBusSAE,
-    descBusLine = descBusLine,
-    desLocalCompany = desLocalCompany,
-    color = color,
-    brands = brands,
-    macroRegions = macroRegions,
-    regions = regions,
-    idMacroRegion = idMacroRegion
+        idBusLine = idBusLine,
+        idBusSAE = idBusSAE,
+        descBusLine = descBusLine,
+        desLocalCompany = desLocalCompany,
+        color = color,
+        brands = brands,
+        macroRegions = macroRegions,
+        regions = regions,
+        idMacroRegion = idMacroRegion
     )
 }
 
@@ -112,7 +112,7 @@ fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbLis
  */
 fun MDdRegions.toRegions(): MDdRegions {
     return MDdRegions(
-        idRegion= idRegion,
+        idRegion = idRegion,
         desRegion = desRegion,
         latitudeRegion = latitudeRegion,
         longitudeRegion = longitudeRegion,
@@ -142,7 +142,8 @@ fun MDbLinesByRegion.toLineByRegion(idMacroRegion: String): MDbLinesByRegion {
         brands = brands,
         macroRegions = macroRegions,
         regions = regions,
-        idMacroRegion = idMacroRegion)
+        idMacroRegion = idMacroRegion
+    )
 }
 
 fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLinesByRegion> {
@@ -160,7 +161,8 @@ fun MDBStops.toStop(): MDbListStops {
         desBusStop = desBusStop,
         coordinates = coordinates,
         buslineCrossing = buslineCrossing,
-        brands = brands)
+        brands = brands
+    )
 }
 
 fun List<MDBStops>.toStop(): List<MDbListStops> {
@@ -185,7 +187,9 @@ fun MDbLinesDetail.toDetailLine(): MDbLinesDetail {
         localCompany = localCompany,
         geographicDataStructure = geographicDataStructure,
         desLocalCompany = desLocalCompany,
-        brands = brands
+        brands = brands,
+        pathIdBusLine = pathIdBusLine
+
     )
 }
 

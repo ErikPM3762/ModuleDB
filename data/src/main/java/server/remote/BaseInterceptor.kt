@@ -41,7 +41,7 @@ class BaseInterceptor @Inject constructor(private val networkMonitor: NetworkMon
                 )
             }
             .addInterceptor(this)
-            .authenticator { route, response ->
+            .authenticator { _, response ->
                 // Refresh your access_token using a synchronous api request
                 val getOAuthTokenService = Retrofit.Builder()
                     .baseUrl(baseURL)
