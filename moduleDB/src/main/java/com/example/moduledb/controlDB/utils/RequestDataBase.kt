@@ -11,7 +11,7 @@ import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
 import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
-import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
+import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopRequest
 import com.google.gson.JsonObject
 
 object RequestDataBase {
@@ -72,6 +72,18 @@ object RequestDataBase {
             AppId.BENIDORM.idLocalCompany -> getBenidormDetailRouteRequest(idBusLine, idPath)
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
+
+    fun getRequestByTypeStops(idLocalCompany: Int, idBusline: String, tripCode: String) =
+        TeoricByTypeStopRequest(
+            idFront = 100,
+            country = "españa",
+            state = "provincia_segovia",
+            cityOrTown = "segovia",
+            idLocalCompany.toString(),
+            idBusline,
+            tripCode
+        )
+
 
     private fun getAhorrobusRequest() = MacroRegionsRequest(
         idLocalCompany = "11",
@@ -164,7 +176,7 @@ object RequestDataBase {
         }
 
     private fun getSegoviaTeoricsByTypeStop(idBusLine: String, tripCode: String) =
-        TeoricByTypeStopSegoviaRequest(
+        TeoricByTypeStopRequest(
             idFront = 100,
             country = "españa",
             state = "provincia_segovia",

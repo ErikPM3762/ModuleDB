@@ -3,6 +3,7 @@ package com.example.moduledb.controlDB.di
 import android.content.Context
 import com.example.moduledb.controlDB.data.local.daos.MDbDetailStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbTheoricsByTypeStopDao
 import com.example.moduledb.controlDB.data.remote.repository.StopsRepositoryImpl
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
@@ -78,9 +79,10 @@ object ModuleInject {
         awsServiceApi: AwsServiceApi,
         remoteDataSource: IStopsDataSource,
         stopsDao: MDbStopsDao,
-        detailStopsDao: MDbDetailStopDao
+        detailStopsDao: MDbDetailStopDao,
+        theoricByTypeStop: MDbTheoricsByTypeStopDao,
     ): StopsRepository {
-        return StopsRepositoryImpl(serviceApi, awsServiceApi, remoteDataSource, stopsDao, detailStopsDao)
+        return StopsRepositoryImpl(serviceApi, awsServiceApi, remoteDataSource, stopsDao, detailStopsDao,theoricByTypeStop )
     }
 
     @Singleton

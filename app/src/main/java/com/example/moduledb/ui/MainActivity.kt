@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        stopsViewModel.fetchTheoricByTypeStop()
         clickListeners()
         initData()
         observers()
@@ -72,14 +73,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.getPointsInterest()
-        mainViewModel.getPointsRecharge()
+        //mainViewModel.getPointsInterest()
+        //mainViewModel.getPointsRecharge()
         // mainViewModel.getDetailLineByIdDb(139)
         // mainViewModel.getMacroRegions(11)
-        mainViewModel.fetchStopsByBuslineCrossingId("19")
+        //mainViewModel.fetchStopsByBuslineCrossingId("19")
         //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
-        mainViewModel.demo2(5, listOf("004", "005", "006"))
-        stopsViewModel.getDetailOfStopById()
+        //mainViewModel.demo2(5, listOf("004", "005", "006"))
+        //stopsViewModel.getDetailOfStopById()
     }
 
     private fun observers() {

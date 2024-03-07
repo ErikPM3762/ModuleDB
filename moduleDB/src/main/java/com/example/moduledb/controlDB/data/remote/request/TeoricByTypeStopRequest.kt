@@ -1,6 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.request
 
-data class TeoricByTypeStopSegoviaRequest(
+data class TeoricByTypeStopRequest(
      val idFront : Int,
      val country : String,
      val state : String,

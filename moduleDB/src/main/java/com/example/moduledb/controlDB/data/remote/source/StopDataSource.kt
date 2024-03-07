@@ -1,11 +1,16 @@
 package com.example.moduledb.controlDB.data.remote.source
 
+import android.util.Log
 import com.example.moduledb.controlDB.domain.models.MDBStops
-import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
+import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopRequest
+import com.example.moduledb.controlDB.data.remote.response.teroicByStop.BusStopResponse
+import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableDaybusStop
+import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableResponse
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
+import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.parse
@@ -20,8 +25,8 @@ import javax.inject.Inject
 
 class StopDataSource @Inject constructor(
     private val oracleServiceApi: OracleServiceApi,
-    private val awsServiceApi: AwsServiceApi)
-:
+    private val awsServiceApi: AwsServiceApi
+) :
     IStopsDataSource {
 
     /**
@@ -31,9 +36,24 @@ class StopDataSource @Inject constructor(
         idLocalCompany: Int,
         idBusLine: String,
         tripCode: String
-    ): Flow<NetResult<List<MDbPOIsResponse>>> {
-        TODO("Not yet implemented")
-    }
+    ): Flow<NetResult<MDBTheoricByTypeStop>> =
+        flow {
+            emit(
+                awsServiceApi.getTeoricByTypeStop(
+                    RequestDataBase.getRequestByTypeStops(
+                        idLocalCompany,
+                        idBusLine,
+                        tripCode
+                    )
+                )
+            )
+        }.catch { error -> emit(error.toNetworkResult()) }
+            .map { res ->
+                res.parse {
+                    it.result.timeTableDaybusStop
+                }
+            }
+            .flowOn(Dispatchers.IO)
 
 
     /**
@@ -42,10 +62,23 @@ class StopDataSource @Inject constructor(
      */
     override suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDBStops>>> =
         flow {
-            if (idLocalCompany == 53) emit(awsServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest))
-            else emit(oracleServiceApi.getStops(RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest))
+            if (idLocalCompany == 53) emit(
+                awsServiceApi.getStops(
+                    RequestDataBase.getRequestByIdCompanyStops(
+                        idLocalCompany
+                    ) as StopsSpainRequest
+                )
+            )
+            else emit(
+                oracleServiceApi.getStops(
+                    RequestDataBase.getRequestByIdCompanyStops(
+                        idLocalCompany
+                    ) as StopsRequest
+                )
+            )
         }.catch { error ->
-            emit(error.toNetworkResult())}
+            emit(error.toNetworkResult())
+        }
             .map { res ->
                 res.parse {
                     it.result?.stopsList!!

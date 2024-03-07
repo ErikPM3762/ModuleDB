@@ -17,14 +17,18 @@ import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbTheoricsByTypeStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopEntity
+import com.example.moduledb.controlDB.data.local.entities.DayEntity
 import com.example.moduledb.controlDB.data.local.entities.MDbDetailStops
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
+import com.example.moduledb.controlDB.data.local.entities.MDbListTheoricByTypeStop
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
@@ -33,6 +37,7 @@ import com.example.moduledb.controlDB.data.local.entities.MDbVersionInfo
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
 import com.example.moduledb.controlDB.data.local.entities.RegionEntity
+import com.example.moduledb.controlDB.data.local.entities.ScheduleEntity
 import com.example.moduledb.controlDB.utils.Converters
 
 
@@ -55,9 +60,13 @@ import com.example.moduledb.controlDB.utils.Converters
         BusStopBrandsEntity::class,
         MDbLinesDetail::class,
         MDbRouteEntity::class,
-        MDbDetailStops::class
+        MDbDetailStops::class,
+        MDbListTheoricByTypeStop::class,
+        BusStopEntity::class,
+        DayEntity::class,
+        ScheduleEntity::class
     ],
-    version = 17,
+    version = 18,
     autoMigrations = [
         AutoMigration(from = 1, to = 2),
         AutoMigration(from = 2, to = 3),
@@ -74,7 +83,8 @@ import com.example.moduledb.controlDB.utils.Converters
         AutoMigration(from = 13, to = 14),
         AutoMigration(from = 14, to = 15),
         AutoMigration(from = 15, to = 16),
-        AutoMigration(from = 16, to = 17)
+        AutoMigration(from = 16, to = 17),
+        AutoMigration(from = 17, to = 18)
     ]
 )
 @TypeConverters(Converters::class)
@@ -96,6 +106,7 @@ abstract class AppDataBase : RoomDatabase() {
     abstract fun routesDao(): MDbRouteDao
     abstract fun listDeatilLine(): MDbLinesDetailDao
     abstract fun detailStopsDao(): MDbDetailStopDao
+    abstract fun theoricByTypeStop(): MDbTheoricsByTypeStopDao
 
     /**
      * Cada que eliminemos alguna columna o renombremos algun campo o tabla tendremos que manejarlo con los spec

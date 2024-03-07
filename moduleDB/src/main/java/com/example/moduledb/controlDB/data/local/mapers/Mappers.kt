@@ -6,13 +6,17 @@ import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
+import com.example.moduledb.controlDB.data.local.entities.MDbListTheoricByTypeStop
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
+import com.example.moduledb.controlDB.data.remote.response.teroicByStop.BusStopResponse
+import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableDaybusStop
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.domain.models.MDBStops
+import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
 import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
 import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
 
@@ -169,6 +173,34 @@ fun List<MDBStops>.toStop(): List<MDbListStops> {
     return this.map {
         it.toStop()
     }
+}
+
+/**
+ * Transformacion del objeto para teoricos por tipo parada AWS
+ */
+private fun MDBTheoricByTypeStop.toTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+    return MDbListTheoricByTypeStop(
+        busStop = busStop,
+        idLineGenerate = idLineGenerate,
+        tripCode = tripCode
+    )
+}
+
+fun MDBTheoricByTypeStop.toRoomTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+    return this.toTheoricByTypeStop(idLineGenerate, tripCode)
+}
+
+/**
+ * Transformacion del objeto para teoricos por tipo parada AWS
+ */
+private fun MDbListTheoricByTypeStop.toTheoricByStop(): MDBTheoricByTypeStop {
+    return MDBTheoricByTypeStop(
+        busStop = busStop
+    )
+}
+
+fun MDbListTheoricByTypeStop.toTheoricByTypeStop(): MDBTheoricByTypeStop {
+    return this.toTheoricByStop()
 }
 
 /**

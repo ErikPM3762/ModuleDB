@@ -7,5 +7,5 @@ data class TeoricsByTypeStopResponse(
     @SerializedName("header")
     val header: HeaderResponse,
     @SerializedName("result")
-    val result: TimeTableResponse?
+    val result: TimeTableResponse
 )

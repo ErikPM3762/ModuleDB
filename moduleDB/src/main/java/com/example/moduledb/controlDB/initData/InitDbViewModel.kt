@@ -116,7 +116,6 @@ class InitDbViewModel @Inject constructor(
             getPointsRecharge.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        Log.e("***", "Total de POR ${result.data.size}")
                         _pointsOfRechargeAvailable.postValue(Event(Unit))
                     }
 
@@ -178,7 +177,6 @@ class InitDbViewModel @Inject constructor(
                 when (result) {
                     is NetResult.Success -> {
                         val regions = result.data as List<MDdRegions>
-                        Log.e("Size Regiones es : ", "${regions.size}")
                         for (region in regions) {
                             viewModelScope.launch {
                                 getLinesByRegion.invoke(idLocalCompany, region.idRegion)
@@ -212,9 +210,6 @@ class InitDbViewModel @Inject constructor(
             getLinesByRegion.invoke(idLocalCompany, "").collect() { resultListLines ->
                 when (resultListLines) {
                     is NetResult.Success -> {
-                        Log.e(
-                            "Size lineas es : ", "${resultListLines.data.size}"
-                        )
                     }
 
                     else -> {

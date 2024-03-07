@@ -4,7 +4,7 @@ import com.example.moduledb.controlDB.data.remote.request.AuthTokenAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
-import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopSegoviaRequest
+import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopRequest
 import com.example.moduledb.controlDB.data.remote.response.AuthTokenAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.DetailLineResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.LinesByRegionsResponse
@@ -25,7 +25,7 @@ interface AwsServiceApi {
      */
 
     @POST("ObtenerTeoricoPorTipoParada")
-    suspend fun getTeoricByTypeStop(@Body params: TeoricByTypeStopSegoviaRequest): Response<TeoricsByTypeStopResponse>
+    suspend fun getTeoricByTypeStop(@Body params: TeoricByTypeStopRequest): Response<TeoricsByTypeStopResponse>
 
     @POST("ObtenerListaParadas")
     suspend fun getStops(@Body params: StopsSpainRequest): Response<StopsResponse>

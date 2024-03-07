@@ -13,6 +13,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
+import com.example.moduledb.controlDB.data.local.daos.MDbTheoricsByTypeStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import dagger.Module
 import dagger.Provides
@@ -99,5 +100,11 @@ object DaoModule {
     @Provides
     fun provideRoutesDao(database: AppDataBase): MDbRouteDao {
         return database.routesDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideTheoricsStopDao(database: AppDataBase): MDbTheoricsByTypeStopDao {
+        return database.theoricByTypeStop()
     }
 }

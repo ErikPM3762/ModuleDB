@@ -4,10 +4,13 @@ import androidx.room.TypeConverter
 import com.example.moduledb.controlDB.data.local.entities.BackTripEntity
 import com.example.moduledb.controlDB.data.local.entities.BrandEntity
 import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopEntity
+import com.example.moduledb.controlDB.data.local.entities.DayEntity
 import com.example.moduledb.controlDB.data.local.entities.GeographicEntity
 import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
 import com.example.moduledb.controlDB.data.local.entities.OutTripEntity
 import com.example.moduledb.controlDB.data.local.entities.RegionEntity
+import com.example.moduledb.controlDB.data.local.entities.ScheduleEntity
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
@@ -106,6 +109,39 @@ class Converters {
     fun fromGeographicEntityToString(geographicEntity: GeographicEntity?): String? {
         if (geographicEntity == null) return null
         return Gson().toJson(geographicEntity)
+    }
+
+    @TypeConverter
+    fun fromStringToListBusStop(value: String?): List<BusStopEntity>? {
+        val listType = object : TypeToken<List<BusStopEntity>?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromListBusStopToString(list: List<BusStopEntity>?): String? {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    fun fromStringToListDay(value: String?): List<DayEntity>? {
+        val listType = object : TypeToken<List<DayEntity>?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromListDayToString(list: List<DayEntity>?): String? {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    fun fromStringToListSchedule(value: String?): List<ScheduleEntity>? {
+        val listType = object : TypeToken<List<ScheduleEntity>?>() {}.type
+        return Gson().fromJson(value, listType)
+    }
+
+    @TypeConverter
+    fun fromListScheduleToString(list: List<ScheduleEntity>?): String? {
+        return Gson().toJson(list)
     }
 
 }
