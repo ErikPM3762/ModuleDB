@@ -9,6 +9,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByRegionDao
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
+import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
@@ -24,6 +25,7 @@ import com.example.moduledb.controlDB.domain.usecase.GetRegions
 import com.example.moduledb.controlDB.domain.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
+import com.example.moduledb.controlDB.domain.usecase.lines.GetAllLines
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
 import com.example.moduledb.controlDB.utils.Event
@@ -54,6 +56,7 @@ class InitDbViewModel @Inject constructor(
     private val getDetailLines: GetDetailLine,
     private val getDetailLinesById: GetDetailLineById,
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
+    private val getAllLines: GetAllLines
 ) : ViewModel() {
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
@@ -394,7 +397,11 @@ class InitDbViewModel @Inject constructor(
     }
 
 
-    fun demo(idLocalCompany: Int, idBusLineList: List<String>, state: String = "benidorm") =
+    fun demo_getDetailLines(
+        idLocalCompany: Int,
+        idBusLineList: List<String>,
+        state: String = "benidorm"
+    ) =
         viewModelScope.launch {
             idBusLineList.forEach { idBusLine ->
                 Log.e("Lineas Llamadas", "idBusLine $idBusLine")
@@ -418,7 +425,10 @@ class InitDbViewModel @Inject constructor(
             }
         }
 
-    fun demo2(idLocalCompany: Int, idBusLineList: List<String>) {
+    fun demo_getRoutesByIdLine_And_getRouteDetailByIdLineAndIdPath(
+        idLocalCompany: Int,
+        idBusLineList: List<String>
+    ) {
         for (idBusLine in idBusLineList) {
             viewModelScope.launch {
                 getRoutesByIdLine.invoke(
@@ -459,5 +469,24 @@ class InitDbViewModel @Inject constructor(
 
             }
         }
+    }
+
+    fun demo_getAllLines(idLocalCompany: Int) = genericRequest {
+        getAllLines.invoke(idLocalCompany).collect { result ->
+            when (result) {
+                is NetResult.Success -> {
+                    val resultListLines = result.data as List<MDbLinesByRegion>
+                    Log.e(
+                        "Count lineas es : ",
+                        "${resultListLines.count()}"
+                    )
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun genericRequest(code: suspend () -> Unit) = viewModelScope.launch {
+        code()
     }
 }

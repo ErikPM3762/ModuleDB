@@ -7,6 +7,7 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
+import com.example.moduledb.controlDB.data.local.mapers.toLines
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
@@ -140,6 +141,28 @@ class RegionsRepository @Inject constructor(
                 }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
                 .flowOn(Dispatchers.IO).collect { emit(it) }
         }
+    }
+
+    /**
+     * Function to get All lines by idLocalCompany
+     */
+
+    fun getAllLines(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
+        val localData = linesByRegionDao.getAllMDbListLines()
+        if (localData.isNullOrEmpty()) {
+            remoteDataSource.getAllLines(idLocalCompany).loading()
+                .map { result ->
+                    if (result is NetResult.Success) {
+                        linesByRegionDao.insertOrUpdate(result.data.toLines())
+                    }
+                    result
+                }.loading().catch { error ->
+                    println(error)
+                    emit(NetResult.Error(getGenericError()))
+                }
+                .flowOn(Dispatchers.IO).collect { emit(it) }
+        } else emit(NetResult.Success(localData))
+
     }
 
     /**

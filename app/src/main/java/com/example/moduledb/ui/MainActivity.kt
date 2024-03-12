@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
+    private val idLocalCompany = AppId.RUBI.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,14 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        //mainViewModel.getPointsInterest()
-        //mainViewModel.getPointsRecharge()
-        // mainViewModel.getDetailLineByIdDb(139)
-        // mainViewModel.getMacroRegions(11)
-        //mainViewModel.fetchStopsByBuslineCrossingId("19")
-        //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
-        //mainViewModel.demo2(5, listOf("004", "005", "006"))
-        //stopsViewModel.getDetailOfStopById()
+        mainViewModel.demo_getAllLines(5)
     }
 
     private fun observers() {

@@ -1,0 +1,993 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 19,
+    "identityHash": "8a5745feb74b1d8473871417bbbd0baa",
+    "entities": [
+      {
+        "tableName": "MDbPOIs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `idPointOfInterest` TEXT, `PointOfInterest` TEXT, `descPointOfInterest` TEXT, `pointOfInterestAddress` TEXT, `pointOfInterestPhone` TEXT, `latitude` TEXT, `longitude` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idPointOfInterest",
+            "columnName": "idPointOfInterest",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pointOfInterest",
+            "columnName": "PointOfInterest",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "descPointOfInterest",
+            "columnName": "descPointOfInterest",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pointOfInterestAddress",
+            "columnName": "pointOfInterestAddress",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pointOfInterestPhone",
+            "columnName": "pointOfInterestPhone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbPORecharge",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `idRechargeCenter` TEXT, `RechargeCenter` TEXT, `latitude` TEXT, `longitude` TEXT, `rechargeCenterTypeId` TEXT, `rechargeCenterType` TEXT, `rechargeCenterCategory` TEXT, `street` TEXT, `outdoorNumber` TEXT, `interiorNumber` TEXT, `neighborhood` TEXT, `postalCode` INTEGER, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idRechargeCenter",
+            "columnName": "idRechargeCenter",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "RechargeCenter",
+            "columnName": "RechargeCenter",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rechargeCenterTypeId",
+            "columnName": "rechargeCenterTypeId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rechargeCenterType",
+            "columnName": "rechargeCenterType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rechargeCenterCategory",
+            "columnName": "rechargeCenterCategory",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "street",
+            "columnName": "street",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "outdoorNumber",
+            "columnName": "outdoorNumber",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "interiorNumber",
+            "columnName": "interiorNumber",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "neighborhood",
+            "columnName": "neighborhood",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "postalCode",
+            "columnName": "postalCode",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbVersionInfo",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `pointInterestVersion` INTEGER, `pointRechargeVersion` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pointInterestVersion",
+            "columnName": "pointInterestVersion",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pointRechargeVersion",
+            "columnName": "pointRechargeVersion",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbMacroRegions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idMacroRegion` TEXT NOT NULL, `desMacroRegion` TEXT NOT NULL, `latitudeMacroRegion` TEXT NOT NULL, `longitudeMacroRegion` TEXT NOT NULL, `routeCount` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idMacroRegion",
+            "columnName": "idMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desMacroRegion",
+            "columnName": "desMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeMacroRegion",
+            "columnName": "latitudeMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeMacroRegion",
+            "columnName": "longitudeMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "routeCount",
+            "columnName": "routeCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbListLines",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusLine` TEXT NOT NULL, `idBusSAE` TEXT NOT NULL, `descBusLine` TEXT NOT NULL, `desLocalCompany` TEXT NOT NULL, `color` TEXT, `brands` TEXT, `macroRegions` TEXT, `regions` TEXT, `idMacroRegion` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusLine",
+            "columnName": "idBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idBusSAE",
+            "columnName": "idBusSAE",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descBusLine",
+            "columnName": "descBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desLocalCompany",
+            "columnName": "desLocalCompany",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brands",
+            "columnName": "brands",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "macroRegions",
+            "columnName": "macroRegions",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "regions",
+            "columnName": "regions",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "idMacroRegion",
+            "columnName": "idMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BrandEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idBrand` INTEGER NOT NULL, `desBrand` TEXT NOT NULL, `parentId` TEXT NOT NULL, PRIMARY KEY(`idBrand`))",
+        "fields": [
+          {
+            "fieldPath": "idBrand",
+            "columnName": "idBrand",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desBrand",
+            "columnName": "desBrand",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentId",
+            "columnName": "parentId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idBrand"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "RegionEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idRegion` TEXT NOT NULL, `desRegion` TEXT NOT NULL, `parentId` TEXT NOT NULL, PRIMARY KEY(`idRegion`))",
+        "fields": [
+          {
+            "fieldPath": "idRegion",
+            "columnName": "idRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desRegion",
+            "columnName": "desRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentId",
+            "columnName": "parentId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idRegion"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MacroRegionEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`idMacroRegion` TEXT NOT NULL, `desMacroRegion` TEXT NOT NULL, `parentId` TEXT NOT NULL, PRIMARY KEY(`idMacroRegion`))",
+        "fields": [
+          {
+            "fieldPath": "idMacroRegion",
+            "columnName": "idMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desMacroRegion",
+            "columnName": "desMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentId",
+            "columnName": "parentId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "idMacroRegion"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDdRegions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `idRegion` TEXT NOT NULL, `desRegion` TEXT NOT NULL, `latitudeRegion` TEXT NOT NULL, `longitudeRegion` TEXT NOT NULL, `idMacroRegion` TEXT NOT NULL, `desMacroRegion` TEXT NOT NULL, `latitudeMacroRegion` TEXT NOT NULL, `longitudeMacroRegion` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idRegion",
+            "columnName": "idRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desRegion",
+            "columnName": "desRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeRegion",
+            "columnName": "latitudeRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeRegion",
+            "columnName": "longitudeRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idMacroRegion",
+            "columnName": "idMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desMacroRegion",
+            "columnName": "desMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitudeMacroRegion",
+            "columnName": "latitudeMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitudeMacroRegion",
+            "columnName": "longitudeMacroRegion",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbLinesByRegion",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusLine` TEXT NOT NULL, `idBusSAE` TEXT NOT NULL, `descBusLine` TEXT NOT NULL, `desLocalCompany` TEXT NOT NULL, `color` TEXT, `brands` TEXT, `macroRegions` TEXT, `regions` TEXT, `idMacroRegion` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusLine",
+            "columnName": "idBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idBusSAE",
+            "columnName": "idBusSAE",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "descBusLine",
+            "columnName": "descBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desLocalCompany",
+            "columnName": "desLocalCompany",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brands",
+            "columnName": "brands",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "macroRegions",
+            "columnName": "macroRegions",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "regions",
+            "columnName": "regions",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "idMacroRegion",
+            "columnName": "idMacroRegion",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbListStops",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusStop` INTEGER NOT NULL, `desBusStop` TEXT, `coordinates` TEXT, `buslineCrossing` TEXT, `brands` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusStop",
+            "columnName": "idBusStop",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desBusStop",
+            "columnName": "desBusStop",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "buslineCrossing",
+            "columnName": "buslineCrossing",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brands",
+            "columnName": "brands",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BusStopBrandsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBrand` TEXT NOT NULL, `desBrand` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBrand",
+            "columnName": "idBrand",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desBrand",
+            "columnName": "desBrand",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbLinesDetail",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusSAE` TEXT, `pathIdBusLine` TEXT, `color` TEXT, `distance` TEXT, `outTrip` TEXT NOT NULL, `backTrip` TEXT, `desLocalCompany` TEXT, `scale` TEXT, `idBusLine` TEXT, `localCompany` TEXT, `geographicDataStructure` TEXT, `descBusLine` TEXT, `brands` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusSAE",
+            "columnName": "idBusSAE",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pathIdBusLine",
+            "columnName": "pathIdBusLine",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "distance",
+            "columnName": "distance",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "outTrip",
+            "columnName": "outTrip",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "backTrip",
+            "columnName": "backTrip",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "desLocalCompany",
+            "columnName": "desLocalCompany",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "scale",
+            "columnName": "scale",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "idBusLine",
+            "columnName": "idBusLine",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "localCompany",
+            "columnName": "localCompany",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "geographicDataStructure",
+            "columnName": "geographicDataStructure",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "descBusLine",
+            "columnName": "descBusLine",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brands",
+            "columnName": "brands",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbRouteEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusLine` TEXT NOT NULL, `pathIdBusLine` TEXT NOT NULL, `pathIdDescription` TEXT NOT NULL, `direction` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusLine",
+            "columnName": "idBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pathIdBusLine",
+            "columnName": "pathIdBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pathIdDescription",
+            "columnName": "pathIdDescription",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "direction",
+            "columnName": "direction",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbDetailStops",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusStop` TEXT NOT NULL, `desBusStop` TEXT, `coordinates` TEXT, `buslineCrossing` TEXT, `brands` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusStop",
+            "columnName": "idBusStop",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desBusStop",
+            "columnName": "desBusStop",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "coordinates",
+            "columnName": "coordinates",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "buslineCrossing",
+            "columnName": "buslineCrossing",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "brands",
+            "columnName": "brands",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MDbListTheoricByTypeStop",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `busStop` TEXT NOT NULL, `idLineGenerate` TEXT NOT NULL, `tripCode` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "busStop",
+            "columnName": "busStop",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idLineGenerate",
+            "columnName": "idLineGenerate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tripCode",
+            "columnName": "tripCode",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "BusStopEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `idBusStop` TEXT NOT NULL, `days` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "idBusStop",
+            "columnName": "idBusStop",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "days",
+            "columnName": "days",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "DayEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `dayType` TEXT NOT NULL, `schedules` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "dayType",
+            "columnName": "dayType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "schedules",
+            "columnName": "schedules",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ScheduleEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL DEFAULT 0, `dayTime` TEXT NOT NULL, `pathIdBusLine` TEXT NOT NULL, `arrivalBusStop` TEXT NOT NULL, `idBusStop` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "dayTime",
+            "columnName": "dayTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pathIdBusLine",
+            "columnName": "pathIdBusLine",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "arrivalBusStop",
+            "columnName": "arrivalBusStop",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "idBusStop",
+            "columnName": "idBusStop",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8a5745feb74b1d8473871417bbbd0baa')"
+    ]
+  }
+}

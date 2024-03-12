@@ -16,7 +16,7 @@ abstract class MDbLinesByRegionDao : BaseDao<MDbLinesByRegion, Long>() {
     abstract suspend fun deleteAll()
 
     @Query("SELECT * FROM MDbLinesByRegion")
-    abstract fun getAllMDbListLines(): List<MDbLinesByRegion>
+    abstract fun getAllMDbListLines(): List<MDbLinesByRegion>?
 }
 
 

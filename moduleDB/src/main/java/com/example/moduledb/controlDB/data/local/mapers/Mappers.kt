@@ -11,8 +11,6 @@ import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.BusStopResponse
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableDaybusStop
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.domain.models.MDBStops
@@ -157,6 +155,24 @@ fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLine
 }
 
 /**
+ * Transformación de objeto para listado de todas las lineas
+ */
+
+fun List<MDbLinesByRegion>.toLines(): List<MDbLinesByRegion> = this.map { it.toLines() }
+
+fun MDbLinesByRegion.toLines(): MDbLinesByRegion = MDbLinesByRegion(
+    idBusLine = idBusLine,
+    idBusSAE = idBusSAE,
+    descBusLine = descBusLine,
+    desLocalCompany = desLocalCompany,
+    color = color,
+    brands = brands,
+    macroRegions = macroRegions,
+    regions = regions,
+    idMacroRegion = idMacroRegion
+)
+
+/**
  * Transformacion del objeto para paradas Oracle
  */
 fun MDBStops.toStop(): MDbListStops {
@@ -178,7 +194,10 @@ fun List<MDBStops>.toStop(): List<MDbListStops> {
 /**
  * Transformacion del objeto para teoricos por tipo parada AWS
  */
-private fun MDBTheoricByTypeStop.toTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+private fun MDBTheoricByTypeStop.toTheoricByTypeStop(
+    idLineGenerate: String,
+    tripCode: String
+): MDbListTheoricByTypeStop {
     return MDbListTheoricByTypeStop(
         busStop = busStop,
         idLineGenerate = idLineGenerate,
@@ -186,7 +205,10 @@ private fun MDBTheoricByTypeStop.toTheoricByTypeStop(idLineGenerate: String, tri
     )
 }
 
-fun MDBTheoricByTypeStop.toRoomTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+fun MDBTheoricByTypeStop.toRoomTheoricByTypeStop(
+    idLineGenerate: String,
+    tripCode: String
+): MDbListTheoricByTypeStop {
     return this.toTheoricByTypeStop(idLineGenerate, tripCode)
 }
 

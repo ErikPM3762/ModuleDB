@@ -18,11 +18,15 @@ interface IRegionsDataSource {
 
     suspend fun getLinesByRegions(
         idLocalCompany: Int,
-        idMacroRegion: String
+        idRegion: String
     ): Flow<NetResult<List<MDbLinesByRegion>>>
 
     fun getRoutesByIdLine(
         idLocalCompany: String,
         idLines: String
     ): Flow<NetResult<List<MDbRouteEntity>>>
+
+    fun getAllLines(
+        idLocalCompany: Int
+    ): Flow<NetResult<List<MDbLinesByRegion>>>
 }

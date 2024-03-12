@@ -22,6 +22,6 @@ data class MDbLinesByRegion(
     @ColumnInfo(name = "macroRegions") val macroRegions: List<MacroRegionEntity>?,
     @TypeConverters(Converters::class)
     @ColumnInfo(name = "regions") val regions: List<RegionEntity>?,
-    @ColumnInfo(name = "idMacroRegion") var idMacroRegion: String
+    @ColumnInfo(name = "idMacroRegion") var idMacroRegion: String?
 )
 

@@ -3,12 +3,12 @@ package com.example.moduledb.controlDB.data.remote.source
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.response.routes.toRouteEntity
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
+import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
 import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
@@ -97,7 +97,7 @@ class RegionsDataSource @Inject constructor(
      */
     override suspend fun getLinesByRegions(
         idLocalCompany: Int,
-        idMacroRegion: String
+        idRegion: String
     ): Flow<NetResult<List<MDbLinesByRegion>>> =
         flow {
             when (idLocalCompany) {
@@ -105,7 +105,7 @@ class RegionsDataSource @Inject constructor(
                     oracleServiceApi.getLinesByRegion(
                         RequestDataBase.getRequestByIdCompanyListLines(
                             idLocalCompany,
-                            idMacroRegion
+                            idRegion
                         ) as LinesListRequest
                     )
                 )
@@ -150,4 +150,26 @@ class RegionsDataSource @Inject constructor(
             it.toRouteEntity(idLines)
         }
     }
+
+    override fun getAllLines(idLocalCompany: Int): Flow<NetResult<List<MDbLinesByRegion>>> =
+        flow {
+            when (idLocalCompany) {
+                AppId.BENIDORM.idLocalCompany -> emit(
+                    awsServiceApi.getLines(
+                        RequestDataBase.getAllLinesRequestByIdLocalCompany(
+                            idLocalCompany
+                        )
+                    )
+                )
+                else -> throw IllegalArgumentException("Unknown id company for getAllLines request")
+            }
+        }.catch { error ->
+            emit(error.toNetworkResult())
+        }
+            .map { res ->
+                res.parse {
+                    it.result!!.busLine!!
+                }
+            }
+            .flowOn(Dispatchers.IO)
 }

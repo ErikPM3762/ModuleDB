@@ -44,6 +44,11 @@ object RequestDataBase {
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
+    fun getAllLinesRequestByIdLocalCompany(idLocalCompany: Int) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> getBenidormAllLinesRequest(idLocalCompany.toString())
+        else -> throw IllegalArgumentException("Unknown id company for getAllLinesRequestByIdLocalCompany")
+    }
+
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
         AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusStopsRequest()
@@ -129,6 +134,14 @@ object RequestDataBase {
         idMacroRegion = "",
         idRegion = idRegion ?: "",
         idBrand = ""
+    )
+
+    private fun getBenidormAllLinesRequest(idLocalCompany: String) = LinesListAwsRequest(
+        country = "spain",
+        state = "benidorm",
+        cityOrTown = "benidorm",
+        idFront = 100,
+        idLocalCompany = idLocalCompany
     )
 
     private fun getAhorrobusStopsRequest() = StopsRequest(
