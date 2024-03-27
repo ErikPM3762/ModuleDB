@@ -1,7 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
@@ -9,15 +8,12 @@ import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.mapers.toPointsInterestList
 import com.example.moduledb.controlDB.data.local.mapers.toPointsRechargeList
-import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -61,7 +57,14 @@ class InfoMapRepository @Inject constructor(
                     } else {
                         flow { emit(NetResult.Error(getGenericError())) }
                     }
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).collect {
+                    val response = when (it) {
+                        is NetResult.Error -> it
+                        is NetResult.Success -> NetResult.Success(it.data.toPointsInterestList())
+                        else -> NetResult.Error(getGenericError())
+                    }
+                    emit(response)
+                }
         }
     }
 
@@ -95,7 +98,14 @@ class InfoMapRepository @Inject constructor(
                     } else {
                         flow { emit(NetResult.Error(getGenericError())) }
                     }
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).collect {
+                    val response = when (it) {
+                        is NetResult.Error -> it
+                        is NetResult.Success -> NetResult.Success(it.data.toPointsRechargeList())
+                        else -> NetResult.Error(getGenericError())
+                    }
+                    emit(response)
+                }
         }
     }
 }
