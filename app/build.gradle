@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.moduledb"
-        minSdk 26
+        minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -42,6 +42,13 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "3.22.1"
+        }
+    }
 }
 
 dependencies {
@@ -59,6 +66,10 @@ dependencies {
 
     implementation "${libraries.kotlinx_coroutines}"
     implementation "${libraries.javax_inject}"
+
+    implementation "${libraries.roomRuntime}"
+    implementation "${libraries.roomKtx}"
+    kapt "${libraries.roomCompiler}"
 
     implementation "${libraries.squeareup_okHttp}"
     implementation "${libraries.squeareup_interceptor}"

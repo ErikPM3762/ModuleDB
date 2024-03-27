@@ -27,8 +27,8 @@ android {
             }
         }
     }
-
 }
+
 
 dependencies {
     constraints {
@@ -57,7 +57,7 @@ dependencies {
     kapt "${libraries.roomCompiler}"
 
     implementation "${libraries.roomRuntime}"
-    annotationProcessor  "${libraries.roomCompiler}"
+    annotationProcessor "${libraries.roomCompiler}"
 
 }
 
@@ -84,11 +84,11 @@ ext.pomfileManualGenerator = {
     }
     root.children().last()
 }
-project(':moduleDB'){
-    version = "1.0.0"
+project(':moduleDB') {
+    version = "1.0.28"
     group = 'com.mobility.ado.qa'
     artifactoryPublish.dependsOn('build')
-    publishing{
+    publishing {
         publications {
             gms(MavenPublication) {
                 groupId = group

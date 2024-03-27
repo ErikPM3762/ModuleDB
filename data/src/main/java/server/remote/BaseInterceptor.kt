@@ -41,9 +41,8 @@ class BaseInterceptor @Inject constructor(private val networkMonitor: NetworkMon
                 )
             }
             .addInterceptor(this)
-            .authenticator { route, response ->
+            .authenticator { _, response ->
                 // Refresh your access_token using a synchronous api request
-                println(baseURL)
                 val getOAuthTokenService = Retrofit.Builder()
                     .baseUrl(baseURL)
                     .client(OkHttpClient.Builder()
@@ -84,7 +83,6 @@ class BaseInterceptor @Inject constructor(private val networkMonitor: NetworkMon
                         newAccessToken.body()!!.access_token
                     }
                     else {
-                        println("ENTRE AL ELSE")
                         ""
                     }
                 } else {

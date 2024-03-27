@@ -1,6 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.response.pointsInterest
 
-import com.example.moduledb.controlDB.data.models.MDbPOIsResponse
+import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
 import com.google.gson.annotations.SerializedName
 
 data class POIsResultResponse (
