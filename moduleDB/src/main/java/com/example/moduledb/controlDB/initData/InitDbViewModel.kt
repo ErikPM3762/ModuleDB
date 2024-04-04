@@ -373,17 +373,16 @@ class InitDbViewModel @Inject constructor(
      * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
      * Obtenemos la lista de las paradas de Oracle
      */
-    fun getStops(idLocalCompany: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getStops.invoke(idLocalCompany).collect() { result ->
-                when (result) {
-                    is NetResult.Success -> {
-                        val mdbListStops = result.data as List<MDbListStops>
-                        _mdbListStops.postValue(mdbListStops)
-                    }
-
-                    else -> {}
+    fun demoGetStops(idLocalCompany: Int) = genericRequest {
+        Log.d(TAG, "demoGetStops")
+        getStops(idLocalCompany).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
                 }
+                else -> {}
             }
         }
     }
@@ -505,6 +504,7 @@ class InitDbViewModel @Inject constructor(
                     Log.d(TAG, "idLocalCompany: $idLocalCompany")
                     Log.d(TAG, "data: ${result.data}")
                 }
+
                 else -> {}
             }
         }

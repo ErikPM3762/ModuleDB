@@ -109,9 +109,24 @@ object RequestDataBase {
     }
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getAhorrobusStopsRequest()
-        AppId.AHORROBUS.idLocalCompany -> getAhorrobusStopsRequest()
-        AppId.OURENSE.idLocalCompany -> getOurenseStopsRequest()
+        AppId.BENIDORM.idLocalCompany -> StopsSpainRequest(
+            idFront = 100,
+            country = "benidorm",
+            state = "benidorm",
+            cityOrTown = "benidorm",
+            idLocalCompany = "5"
+        )
+
+        AppId.AHORROBUS.idLocalCompany -> StopsRequest(
+            idLocalCompany = "11",
+            country = "mexico",
+            cityOrTown = "mexico",
+            state = "mexico",
+            idFront = 51,
+            idbusLine = "",
+            idBrand = ""
+        )
+
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
@@ -201,24 +216,6 @@ object RequestDataBase {
         cityOrTown = "benidorm",
         idFront = 100,
         idLocalCompany = idLocalCompany
-    )
-
-    private fun getAhorrobusStopsRequest() = StopsRequest(
-        idLocalCompany = "11",
-        country = "mexico",
-        cityOrTown = "mexico",
-        state = "mexico",
-        idFront = 51,
-        idbusLine = "",
-        idBrand = ""
-    )
-
-    private fun getOurenseStopsRequest() = StopsSpainRequest(
-        idFront = 100,
-        country = "españa",
-        state = "ourense",
-        cityOrTown = "ourense",
-        idLocalCompany = "53"
     )
 
     private fun getDetailStopOracleRequest(idBusStop: String) = DetailStopRequest(
@@ -326,6 +323,7 @@ object RequestDataBase {
             cityOrTown = "ourense",
             idLocalCompany = idLocalCompany.toString()
         )
+
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 }

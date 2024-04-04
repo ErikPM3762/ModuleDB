@@ -9,7 +9,6 @@ import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.mapers.toDetailStop
 import com.example.moduledb.controlDB.data.local.mapers.toRoomDetailStop
 import com.example.moduledb.controlDB.data.local.mapers.toRoomTheoricByTypeStop
-import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.local.mapers.toTheoricByTypeStop
 import com.example.moduledb.controlDB.data.performUpdateOperation
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
@@ -69,23 +68,22 @@ class StopsRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
-        val localStops = withContext(Dispatchers.IO) {
-            stopsDao.getAllStops()
-        }
-        if (localStops.isNotEmpty()) {
+    suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
+        val localStops: List<MDbListStops> = stopsDao.getAllStops()
+        if (localStops.isNotEmpty())
             emit(NetResult.Success(localStops))
-        } else {
-            remoteDataSource!!.getStops(idLocalCompany).loading().map { result ->
-                if (result is NetResult.Success) {
-                    val stopList = result.data.toStop()
-                    stopsDao!!.insertOrUpdate(stopList)
+        else
+            remoteDataSource.getStops(idLocalCompany)
+                .map { result ->
+                    if (result is NetResult.Success) {
+                        val stopList = result.data
+                        stopsDao.insertOrUpdate(stopList)
+                    }
+                    result
                 }
-                result
-            }.loading().catch { error -> emit(NetResult.Error(getGenericError())) }
-                .flowOn(Dispatchers.IO).collect { emit(it) }
-        }
-    }.flowOn(Dispatchers.IO)
+                .catch { emit(NetResult.Error(getGenericError())) }
+                .collect { emit(it) }
+    }
 
     suspend fun getStopsByBuslineCrossingId(buslineCrossingId: String): List<MDbListStops> {
         val allStops = withContext(Dispatchers.IO) { stopsDao!!.getAllStops() }

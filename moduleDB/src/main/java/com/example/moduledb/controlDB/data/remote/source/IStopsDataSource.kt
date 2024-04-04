@@ -14,7 +14,7 @@ interface IStopsDataSource {
         tripCode: String
     ): Flow<NetResult<MDBTheoricByTypeStop>>
 
-    suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDBStops>>>
+    suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>>
 
     fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>>
 
