@@ -59,6 +59,8 @@ class InitDbViewModel @Inject constructor(
     private val getAllLines: GetAllLines
 ) : ViewModel() {
 
+    private val TAG = this::class.java.simpleName
+
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
     val pointsOfInterestAvailable: LiveData<Event<Unit>> get() = _pointsOfInterestAvailable
 
@@ -99,12 +101,10 @@ class InitDbViewModel @Inject constructor(
             getPointsInterest(idLocalCompany).collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        val TAG = "GET POIS"
                         Log.d(TAG, "getPOIS: SUCCES")
                         Log.d(TAG, "idLocalCompany: $idLocalCompany")
                         Log.d(TAG, "data: ${result.data}")
                     }
-
                     else -> {}
                 }
             }
@@ -117,12 +117,15 @@ class InitDbViewModel @Inject constructor(
      * Retorna Los puntos de recarga
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
-    fun getPointsRecharge() {
+    fun demoGetRechargePoints(idLocalCompany: Int) {
+        Log.d(TAG, "demoGetRechargePoints")
         viewModelScope.launch(Dispatchers.IO) {
-            getPointsRecharge.invoke().collect { result ->
+            getPointsRecharge(idLocalCompany).collect { result ->
+                Log.d(TAG, "State: $result")
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfRechargeAvailable.postValue(Event(Unit))
+                        Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                        Log.d(TAG, "data: ${result.data}")
                     }
 
                     else -> {}

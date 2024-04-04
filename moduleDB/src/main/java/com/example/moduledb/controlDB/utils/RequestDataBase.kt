@@ -66,6 +66,35 @@ object RequestDataBase {
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
+    fun getRPRequesByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "ourense",
+            state = "ourense",
+            cityOrTown = "ourense",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+
+        AppId.OURENSE.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "spain",
+            state = "benidorm",
+            cityOrTown = "benidorm",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+        AppId.AHORROBUS.idLocalCompany -> BaseRequest(
+            idFront = 51,
+            country = "mexico",
+            state = "",
+            cityOrTown = "",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+
     fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) =
         when (idLocalCompany) {
             AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)

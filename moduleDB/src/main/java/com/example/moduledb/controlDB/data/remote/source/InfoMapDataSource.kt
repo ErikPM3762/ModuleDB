@@ -1,8 +1,9 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import com.example.moduledb.controlDB.data.remote.request.RechargingPointsRequest
 import com.example.moduledb.controlDB.data.remote.response.pointsInterest.GetPOIsAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.pointsInterest.POIsResponse
+import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.GetRPsAwsResponse
+import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.PORechargeResponse
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
@@ -24,8 +25,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class InfoMapDataSource @Inject constructor(
-    private val oracleServiceApi: OracleServiceApi,
-    private val awsServiceApi: AwsServiceApi
+    private val oracleServiceApi: OracleServiceApi, private val awsServiceApi: AwsServiceApi
 ) : IInfoMapDataSource {
 
     override suspend fun getPointsInterest(idLocalCompany: Int): Flow<NetResult<ArrayList<MDbPOIsResponse>>> =
@@ -37,8 +37,7 @@ class InfoMapDataSource @Inject constructor(
                     emit(response)
                 }
 
-                AppId.BENIDORM.idLocalCompany,
-                AppId.OURENSE.idLocalCompany -> {
+                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany -> {
                     val response: Response<GetPOIsAwsResponse> =
                         awsServiceApi.getPointsOfInterestByIdCompany(request)
                     emit(response)
@@ -55,13 +54,13 @@ class InfoMapDataSource @Inject constructor(
                     is GetPOIsAwsResponse -> {
                         val data = it.result.pointsOfInterest.map { poiAws ->
                             MDbPOIsResponse(
-                                poiAws.id.toString(),
-                                poiAws.head,
-                                poiAws.description,
-                                poiAws.address,
-                                poiAws.phone,
-                                poiAws.latitude,
-                                poiAws.longitude
+                                id = poiAws.id.toString(),
+                                name = poiAws.head,
+                                description = poiAws.description,
+                                address = poiAws.address,
+                                phone = poiAws.phone,
+                                latitude = poiAws.latitude,
+                                longitude = poiAws.longitude
                             )
                         }
                         val arrayList = ArrayList<MDbPOIsResponse>(data.count())
@@ -75,32 +74,67 @@ class InfoMapDataSource @Inject constructor(
             }
         }.flowOn(Dispatchers.IO)
 
-    override suspend fun getPointsRecharge(): Flow<NetResult<ArrayList<MDbPORechargeResponse>>> =
+    override suspend fun getPointsRecharge(idLocalCompany: Int): Flow<NetResult<ArrayList<MDbPORechargeResponse>>> =
         flow {
-            emit(oracleServiceApi.getRechargingPoints(RechargingPointsRequest()))
+            val request = RequestDataBase.getPOIRequesByIdCompany(idLocalCompany)
+            when (idLocalCompany) {
+                AppId.AHORROBUS.idLocalCompany -> {
+                    val response: Response<PORechargeResponse> =
+                        oracleServiceApi.getRechargingPoints(request)
+                    emit(response)
+                }
+                AppId.BENIDORM.idLocalCompany -> {
+                    val response: Response<GetRPsAwsResponse> =
+                        awsServiceApi.getRechargingPointsByIdCompany(request)
+                    emit(response)
+                }
+
+                else -> throw Exception("Unknow option for getPointsInterest")
+            }
         }.catch { error ->
             emit(error.toNetworkResult())
-        }
-            .map { res ->
-                res.parse {
-                    it.result!!.pointOfRechargeList!!
+        }.map { res ->
+            res.parse {
+                when (it) {
+                    is PORechargeResponse -> it.result!!.pointOfRechargeList!!
+                    is GetRPsAwsResponse -> {
+                        val data = it.result.rpCenters.map { rpAws ->
+                            MDbPORechargeResponse(
+                                idRechargeCenter = rpAws.id.toString(),
+                                RechargeCenter = rpAws.rechargeCenter,
+                                latitude = rpAws.latitude,
+                                longitude = rpAws.longitude,
+                                rechargeCenterType = rpAws.type,
+                                rechargeCenterTypeId = rpAws.typeId,
+                                rechargeCenterCategory = rpAws.category,
+                                street = rpAws.street,
+                                outdoorNumber = rpAws.outdoorNumber,
+                                interiorNumber = rpAws.interiorNumber,
+                                neighborhood = rpAws.neighborhood,
+                                postalCode = rpAws.postalCode.toIntOrNull() ?: 0
+                            )
+                        }
+                        val arrayList = ArrayList<MDbPORechargeResponse>(data.count())
+                        arrayList.addAll(data)
+                        arrayList
+                    }
+
+                    else -> throw Exception("Unknow option for getPointsInterest")
                 }
             }
-            .flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.IO)
 
     override suspend fun getVersionTablePointInterest(): Flow<NetResult<MDbVTPointInterestResponse>> =
         flow {
             emit(oracleServiceApi.getPOIsVersion(RequestDataBase.data))
         }.catch { error ->
             emit(error.toNetworkResult())
-        }.map { res -> res.parse { it.result!!.parse() } }
-            .flowOn(Dispatchers.IO)
+        }.map { res -> res.parse { it.result!!.parse() } }.flowOn(Dispatchers.IO)
 
     override suspend fun getVersionTablePointRecharge(): Flow<NetResult<MDbVTPointRechargeResponse>> =
         flow {
             emit(oracleServiceApi.getRechargingPointsVersion(RequestDataBase.data))
         }.catch { error ->
             emit(error.toNetworkResult())
-        }.map { res -> res.parse { it.result!!.parse() } }
-            .flowOn(Dispatchers.IO)
+        }.map { res -> res.parse { it.result!!.parse() } }.flowOn(Dispatchers.IO)
 }

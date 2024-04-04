@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.OURENSE.idLocalCompany
+    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun clickListeners() {
         binding.apply {
-            btnPOR.setOnClickListener { mainViewModel.getPointsRecharge() }
+            btnPOR.setOnClickListener { mainViewModel.demoGetRechargePoints(idLocalCompany) }
             btnMacroRegions.setOnClickListener { mainViewModel.getMacroRegions(idLocalCompany) }
             btnListRegions.setOnClickListener { mainViewModel.getRegions(idLocalCompany) }
             btnStops.setOnClickListener { mainViewModel.getStops(idLocalCompany) }
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoGetPointsOfInterest(idLocalCompany)
+        mainViewModel.demoGetRechargePoints(idLocalCompany)
     }
 
     private fun observers() {

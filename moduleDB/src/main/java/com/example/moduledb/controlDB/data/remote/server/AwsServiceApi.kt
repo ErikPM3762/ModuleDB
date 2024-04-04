@@ -10,6 +10,7 @@ import com.example.moduledb.controlDB.data.remote.response.AuthTokenAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.DetailLineResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.LinesByRegionsResponse
 import com.example.moduledb.controlDB.data.remote.response.pointsInterest.GetPOIsAwsResponse
+import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.GetRPsAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.routes.RoutesByIdLineResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.DetailStopsResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
@@ -41,7 +42,6 @@ interface AwsServiceApi {
     @POST("ObtenerDetalleLinea")
     suspend fun getDetailOfLine(@Body params: Any): Response<DetailLineResponse>
 
-
     @POST("ObtenerTrayectos")
     suspend fun getRoutesByIdLine(@Body params: RoutesByIdLineRequest): Response<RoutesByIdLineResponse>
 
@@ -50,4 +50,7 @@ interface AwsServiceApi {
 
     @POST("ListarPuntosInteres")
     suspend fun getPointsOfInterestByIdCompany(@Body params: BaseRequest): Response<GetPOIsAwsResponse>
+
+    @POST("ListarCentrosRecarga")
+    suspend fun getRechargingPointsByIdCompany(@Body params: BaseRequest): Response<GetRPsAwsResponse>
 }

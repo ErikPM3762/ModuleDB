@@ -72,40 +72,41 @@ class InfoMapRepository @Inject constructor(
     /**
      * Obtener los puntos de recarga
      */
-    suspend fun fetchPointOfRechargeData(): Flow<NetResult<List<MDbPORecharge>>> = flow {
-
-        val localPointRecharge = withContext(Dispatchers.IO) {
-            pointRechargeDao.getPointsRechargeData()
-        }
-        if (localPointRecharge.isNotEmpty()) {
-            emit(NetResult.Success(localPointRecharge))
-        } else {
-            remoteDataSource.getVersionTablePointRecharge().loading()
-                .flatMapConcat { versionResult ->
-                    if (versionResult is NetResult.Success) {
-                        val version = mDbVersionInfoDao.getPointRechargeVersion()
-                        val versionRemote = versionResult.data.updateVersion
-                        if (version != versionRemote) {
-                            remoteDataSource.getPointsRecharge().loading().map { result ->
-                                if (result is NetResult.Success) {
-                                    pointRechargeDao.insertOrUpdate(result.data.toPointsRechargeList())
-                                }
-                                result
-                            }.flowOn(Dispatchers.IO)
+    suspend fun fetchPointOfRechargeData(idLocalCompany: Int): Flow<NetResult<List<MDbPORecharge>>> =
+        flow {
+            val localPointRecharge = withContext(Dispatchers.IO) {
+                pointRechargeDao.getPointsRechargeData()
+            }
+            if (localPointRecharge.isNotEmpty()) {
+                emit(NetResult.Success(localPointRecharge))
+            } else {
+                remoteDataSource.getVersionTablePointRecharge().loading()
+                    .flatMapConcat { versionResult ->
+                        if (versionResult is NetResult.Success) {
+                            val version = mDbVersionInfoDao.getPointRechargeVersion()
+                            val versionRemote = versionResult.data.updateVersion
+                            if (version != versionRemote) {
+                                remoteDataSource.getPointsRecharge(idLocalCompany).loading()
+                                    .map { result ->
+                                        if (result is NetResult.Success) {
+                                            pointRechargeDao.insertOrUpdate(result.data.toPointsRechargeList())
+                                        }
+                                        result
+                                    }.flowOn(Dispatchers.IO)
+                            } else {
+                                flow { emit(NetResult.Success(localPointRecharge)) }
+                            }
                         } else {
-                            flow { emit(NetResult.Success(localPointRecharge)) }
+                            flow { emit(NetResult.Error(getGenericError())) }
                         }
-                    } else {
-                        flow { emit(NetResult.Error(getGenericError())) }
+                    }.flowOn(Dispatchers.IO).collect {
+                        val response = when (it) {
+                            is NetResult.Error -> it
+                            is NetResult.Success -> NetResult.Success(it.data.toPointsRechargeList())
+                            else -> NetResult.Error(getGenericError())
+                        }
+                        emit(response)
                     }
-                }.flowOn(Dispatchers.IO).collect {
-                    val response = when (it) {
-                        is NetResult.Error -> it
-                        is NetResult.Success -> NetResult.Success(it.data.toPointsRechargeList())
-                        else -> NetResult.Error(getGenericError())
-                    }
-                    emit(response)
-                }
+            }
         }
-    }
 }
