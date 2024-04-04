@@ -14,6 +14,7 @@ import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.GetRPs
 import com.example.moduledb.controlDB.data.remote.response.routes.RoutesByIdLineResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.DetailStopsResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
+import com.example.moduledb.controlDB.data.remote.response.stops.map.GetMapStopsAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TeoricsByTypeStopResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -49,8 +50,10 @@ interface AwsServiceApi {
     suspend fun getDetailStopsById(@Body params: Any): Response<DetailStopsResponse>
 
     @POST("ListarPuntosInteres")
-    suspend fun getPointsOfInterestByIdCompany(@Body params: BaseRequest): Response<GetPOIsAwsResponse>
+    suspend fun getPointsOfInterest(@Body params: BaseRequest): Response<GetPOIsAwsResponse>
 
     @POST("ListarCentrosRecarga")
-    suspend fun getRechargingPointsByIdCompany(@Body params: BaseRequest): Response<GetRPsAwsResponse>
+    suspend fun getRechargingPoints(@Body params: BaseRequest): Response<GetRPsAwsResponse>
+    @POST("ObtenerMapaParadas")
+    suspend fun getMapStops(@Body params: BaseRequest): Response<GetMapStopsAwsResponse>
 }

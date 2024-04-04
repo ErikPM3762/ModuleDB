@@ -28,6 +28,7 @@ import com.example.moduledb.controlDB.domain.usecase.GetStops
 import com.example.moduledb.controlDB.domain.usecase.lines.GetAllLines
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
+import com.example.moduledb.controlDB.domain.usecase.stops.GetMapStops
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,7 +57,8 @@ class InitDbViewModel @Inject constructor(
     private val getDetailLines: GetDetailLine,
     private val getDetailLinesById: GetDetailLineById,
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
-    private val getAllLines: GetAllLines
+    private val getAllLines: GetAllLines,
+    private val getMapStops: GetMapStops,
 ) : ViewModel() {
 
     private val TAG = this::class.java.simpleName
@@ -105,6 +107,7 @@ class InitDbViewModel @Inject constructor(
                         Log.d(TAG, "idLocalCompany: $idLocalCompany")
                         Log.d(TAG, "data: ${result.data}")
                     }
+
                     else -> {}
                 }
             }
@@ -488,6 +491,20 @@ class InitDbViewModel @Inject constructor(
                     )
                 }
 
+                else -> {}
+            }
+        }
+    }
+
+    fun demoGetMapStops(idLocalCompany: Int) = genericRequest {
+        Log.d(TAG, "demoGetMapStops")
+        getMapStops(idLocalCompany).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
+                }
                 else -> {}
             }
         }

@@ -39,7 +39,7 @@ class InfoMapDataSource @Inject constructor(
 
                 AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany -> {
                     val response: Response<GetPOIsAwsResponse> =
-                        awsServiceApi.getPointsOfInterestByIdCompany(request)
+                        awsServiceApi.getPointsOfInterest(request)
                     emit(response)
                 }
 
@@ -76,7 +76,7 @@ class InfoMapDataSource @Inject constructor(
 
     override suspend fun getPointsRecharge(idLocalCompany: Int): Flow<NetResult<ArrayList<MDbPORechargeResponse>>> =
         flow {
-            val request = RequestDataBase.getPOIRequesByIdCompany(idLocalCompany)
+            val request = RequestDataBase.getRPRequesByIdCompany(idLocalCompany)
             when (idLocalCompany) {
                 AppId.AHORROBUS.idLocalCompany -> {
                     val response: Response<PORechargeResponse> =
@@ -85,7 +85,7 @@ class InfoMapDataSource @Inject constructor(
                 }
                 AppId.BENIDORM.idLocalCompany -> {
                     val response: Response<GetRPsAwsResponse> =
-                        awsServiceApi.getRechargingPointsByIdCompany(request)
+                        awsServiceApi.getRechargingPoints(request)
                     emit(response)
                 }
 

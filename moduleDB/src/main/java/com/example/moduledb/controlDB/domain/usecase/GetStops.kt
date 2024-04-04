@@ -8,5 +8,5 @@ import javax.inject.Inject
 class GetStops @Inject constructor(private val regionsRepository: StopsRepositoryImpl) {
 
     suspend fun invoke(idLocalCompany : Int) : Flow<NetResult<List<Any>>> =
-        regionsRepository.getStopsOracle(idLocalCompany)
+        regionsRepository.getStops(idLocalCompany)
 }

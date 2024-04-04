@@ -1,16 +1,14 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import android.util.Log
-import com.example.moduledb.controlDB.domain.models.MDBStops
+import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
-import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopRequest
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.BusStopResponse
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableDaybusStop
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableResponse
+import com.example.moduledb.controlDB.data.remote.response.stops.map.GetMapStopsAwsResponse
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
+import com.example.moduledb.controlDB.domain.models.MDBStops
 import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
+import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.parse
@@ -21,6 +19,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import retrofit2.Response
 import javax.inject.Inject
 
 class StopDataSource @Inject constructor(
@@ -85,4 +84,29 @@ class StopDataSource @Inject constructor(
                 }
             }
             .flowOn(Dispatchers.IO)
+
+    override fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
+        val request = RequestDataBase.getMapStopsRequestByIdCompany(idLocalCompany)
+        when (idLocalCompany) {
+            AppId.OURENSE.idLocalCompany -> {
+                val response: Response<GetMapStopsAwsResponse> = awsServiceApi.getMapStops(request)
+                emit(response)
+            }
+            else -> throw Exception("Unknow option for getPointsInterest")
+        }
+    }.catch { error ->
+        emit(error.toNetworkResult())
+    }.map { res ->
+        res.parse { response ->
+            response.result.features.map { feature ->
+                MDbListStops(
+                    idBusStop = feature.properties.idBusStop.toIntOrNull() ?: 0,
+                    desBusStop = feature.properties.popupContent,
+                    coordinates = feature.geometry.coordinates.map { it.toString() },
+                    buslineCrossing = emptyList(),
+                    brands = emptyList()
+                )
+            }
+        }
+    }
 }

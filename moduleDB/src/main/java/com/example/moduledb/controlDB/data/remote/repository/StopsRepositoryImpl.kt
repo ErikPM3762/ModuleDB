@@ -1,6 +1,5 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.DataResult
 import com.example.moduledb.controlDB.data.local.daos.MDbDetailStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
@@ -17,7 +16,6 @@ import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.data.remote.source.IStopsDataSource
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
-import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
 import com.example.moduledb.controlDB.domain.repository.StopsRepository
 import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
@@ -45,14 +43,19 @@ class StopsRepositoryImpl @Inject constructor(
     /**
      * funcion get para obtener los teoricos por parada AWS
      */
-    suspend fun getTheoricByTypeStopImpl(idLocalCompany: Int, idBusLine: String, tripCode: String): Flow<NetResult<Any>> = flow {
+    suspend fun getTheoricByTypeStopImpl(
+        idLocalCompany: Int,
+        idBusLine: String,
+        tripCode: String
+    ): Flow<NetResult<Any>> = flow {
         val localTheoricTypeStop = withContext(Dispatchers.IO) {
             theoricByTypeStop.getByLineGenerate(idBusLine)
         }
         if (localTheoricTypeStop?.idLineGenerate == idBusLine) {
             emit(NetResult.Success(localTheoricTypeStop.toTheoricByTypeStop()))
         } else {
-            remoteDataSource.getTeoricByTypeStop(idLocalCompany, idBusLine, tripCode).loading().map { result ->
+            remoteDataSource.getTeoricByTypeStop(idLocalCompany, idBusLine, tripCode).loading()
+                .map { result ->
                     if (result is NetResult.Success) {
                         val theorics = result.data.toRoomTheoricByTypeStop(idBusLine, tripCode)
                         theoricByTypeStop.insertOrUpdate(theorics)
@@ -60,14 +63,15 @@ class StopsRepositoryImpl @Inject constructor(
                     result
                 }
                 .loading().catch { error ->
-                    emit(NetResult.Error(getGenericError())) }
-                .flowOn(Dispatchers.IO).collect{emit(it)}
+                    emit(NetResult.Error(getGenericError()))
+                }
+                .flowOn(Dispatchers.IO).collect { emit(it) }
         }
-    } .flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.IO)
 
-    suspend fun getStopsOracle(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
+    suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<Any>>> = flow {
         val localStops = withContext(Dispatchers.IO) {
-            stopsDao!!.getAllStops()
+            stopsDao.getAllStops()
         }
         if (localStops.isNotEmpty()) {
             emit(NetResult.Success(localStops))
@@ -100,8 +104,18 @@ class StopsRepositoryImpl @Inject constructor(
         return withContext(Dispatchers.IO) { stopsDao!!.getStopById(idBusStop) }
     }
 
-    suspend fun getTheoricStopById(idBusStop: String, idLineGenerate: String, tripCode: String): BusStopEntity? {
-        return withContext(Dispatchers.IO) { theoricByTypeStop!!.getBusStopById(idBusStop, idLineGenerate, tripCode) }
+    suspend fun getTheoricStopById(
+        idBusStop: String,
+        idLineGenerate: String,
+        tripCode: String
+    ): BusStopEntity? {
+        return withContext(Dispatchers.IO) {
+            theoricByTypeStop!!.getBusStopById(
+                idBusStop,
+                idLineGenerate,
+                tripCode
+            )
+        }
     }
 
     override suspend fun getDetailStopsById(
@@ -146,4 +160,20 @@ class StopsRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
+        val localData = stopsDao.getAllStops()
+        if (localData.isNotEmpty())
+            emit(NetResult.Success(localData))
+        else
+            remoteDataSource.getMapStops(idLocalCompany).map { result ->
+                if (result is NetResult.Success)
+                    stopsDao.insertOrUpdate(result.data)
+                result
+            }.catch {
+                emit(NetResult.Error(getGenericError()))
+            }.collect { emit(it) }
+
+    }
+
 }

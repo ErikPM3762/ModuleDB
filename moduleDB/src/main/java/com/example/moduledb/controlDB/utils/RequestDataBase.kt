@@ -37,8 +37,8 @@ object RequestDataBase {
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
-    fun getPOIRequesByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+    fun getPOIRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
+        AppId.OURENSE.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "ourense",
             state = "ourense",
@@ -47,7 +47,7 @@ object RequestDataBase {
         )
 
 
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
+        AppId.BENIDORM.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "spain",
             state = "benidorm",
@@ -66,8 +66,8 @@ object RequestDataBase {
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
-    fun getRPRequesByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+    fun getRPRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
+        AppId.OURENSE.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "ourense",
             state = "ourense",
@@ -76,7 +76,7 @@ object RequestDataBase {
         )
 
 
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
+        AppId.BENIDORM.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "spain",
             state = "benidorm",
@@ -317,4 +317,15 @@ object RequestDataBase {
             state = "benidorm",
             pathIdBusLine = idPath
         )
+
+    fun getMapStopsRequestByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
+        AppId.OURENSE.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "ourense",
+            state = "ourense",
+            cityOrTown = "ourense",
+            idLocalCompany = idLocalCompany.toString()
+        )
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
 }

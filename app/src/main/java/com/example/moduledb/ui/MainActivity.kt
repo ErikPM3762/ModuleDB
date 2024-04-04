@@ -19,14 +19,14 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
+    private val idLocalCompany = AppId.OURENSE.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        stopsViewModel.fetchTheoricByTypeStop()
+        //stopsViewModel.fetchTheoricByTypeStop()
         clickListeners()
         initData()
         observers()
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoGetRechargePoints(idLocalCompany)
+        mainViewModel.demoGetMapStops(idLocalCompany)
     }
 
     private fun observers() {
