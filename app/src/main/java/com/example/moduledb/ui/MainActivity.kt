@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.RUBI.idLocalCompany
+    private val idLocalCompany = AppId.OURENSE.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demo_getAllLines(5)
+        mainViewModel.demoGetPointsOfInterest(idLocalCompany)
     }
 
     private fun observers() {

@@ -94,12 +94,15 @@ class InitDbViewModel @Inject constructor(
      * Retorna los puntos de interes
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
-    fun getPointsInterest() {
+    fun demoGetPointsOfInterest(idLocalCompany: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            getPointsInterest.invoke().collect { result ->
+            getPointsInterest(idLocalCompany).collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfInterestAvailable.postValue(Event(Unit))
+                        val TAG = "GET POIS"
+                        Log.d(TAG, "getPOIS: SUCCES")
+                        Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                        Log.d(TAG, "data: ${result.data}")
                     }
 
                     else -> {}
@@ -481,6 +484,7 @@ class InitDbViewModel @Inject constructor(
                         "${resultListLines.count()}"
                     )
                 }
+
                 else -> {}
             }
         }

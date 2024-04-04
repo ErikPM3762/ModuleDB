@@ -59,8 +59,11 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideInfoMapDataSource(serviceApi: OracleServiceApi): IInfoMapDataSource {
-        return InfoMapDataSource(serviceApi)
+    fun provideInfoMapDataSource(
+        oracleServiceApi: OracleServiceApi,
+        awsServiceApi: AwsServiceApi
+    ): IInfoMapDataSource {
+        return InfoMapDataSource(oracleServiceApi, awsServiceApi)
     }
 
     @Singleton
@@ -82,7 +85,14 @@ object ModuleInject {
         detailStopsDao: MDbDetailStopDao,
         theoricByTypeStop: MDbTheoricsByTypeStopDao,
     ): StopsRepository {
-        return StopsRepositoryImpl(serviceApi, awsServiceApi, remoteDataSource, stopsDao, detailStopsDao,theoricByTypeStop )
+        return StopsRepositoryImpl(
+            serviceApi,
+            awsServiceApi,
+            remoteDataSource,
+            stopsDao,
+            detailStopsDao,
+            theoricByTypeStop
+        )
     }
 
     @Singleton

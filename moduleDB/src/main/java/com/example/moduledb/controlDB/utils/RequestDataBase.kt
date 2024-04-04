@@ -2,6 +2,7 @@
 
 package com.example.moduledb.controlDB.utils
 
+import com.example.moduledb.controlDB.data.remote.request.BaseRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLineAwseRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailLineRequest
 import com.example.moduledb.controlDB.data.remote.request.DetailStopRequest
@@ -33,6 +34,35 @@ object RequestDataBase {
         }
 
         AppId.AHORROBUS.idLocalCompany -> getAhorrobusRequest()
+        else -> throw IllegalArgumentException("Unknown id company for regions request")
+    }
+
+    fun getPOIRequesByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
+        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "ourense",
+            state = "ourense",
+            cityOrTown = "ourense",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+
+        AppId.OURENSE.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "spain",
+            state = "benidorm",
+            cityOrTown = "benidorm",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+        AppId.AHORROBUS.idLocalCompany -> BaseRequest(
+            idFront = 51,
+            country = "mexico",
+            state = "",
+            cityOrTown = "",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 

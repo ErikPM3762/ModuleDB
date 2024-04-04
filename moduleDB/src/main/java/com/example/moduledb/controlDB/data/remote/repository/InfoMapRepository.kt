@@ -30,9 +30,9 @@ class InfoMapRepository @Inject constructor(
 
 
     /**
-     * Obtener los puntos de interes
+     * Points Of Interest
      */
-    suspend fun fetchPointInterestData(): Flow<NetResult<List<MDbPOIs>>> = flow {
+    suspend fun fetchPointInterestData(idLocalCompany: Int): Flow<NetResult<List<MDbPOIs>>> = flow {
         val localPointInterest = withContext(Dispatchers.IO) {
             pointInterestDao.getPointsInterestData()
         }
@@ -45,12 +45,13 @@ class InfoMapRepository @Inject constructor(
                         val version = mDbVersionInfoDao.getPointInterestVersion()
                         val versionRemote = versionResult.data.updateVersion
                         if (version != versionRemote) {
-                            remoteDataSource.getPointsInterest().loading().map { result ->
-                                if (result is NetResult.Success) {
-                                    pointInterestDao.insertOrUpdate(result.data.toPointsInterestList())
-                                }
-                                result
-                            }.flowOn(Dispatchers.IO)
+                            remoteDataSource.getPointsInterest(idLocalCompany).loading()
+                                .map { result ->
+                                    if (result is NetResult.Success) {
+                                        pointInterestDao.insertOrUpdate(result.data.toPointsInterestList())
+                                    }
+                                    result
+                                }.flowOn(Dispatchers.IO)
                         } else {
                             flow { emit(NetResult.Success(emptyList())) }
                         }
@@ -67,7 +68,6 @@ class InfoMapRepository @Inject constructor(
                 }
         }
     }
-
 
     /**
      * Obtener los puntos de recarga
