@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
+    private val idLocalCompany = AppId.VIGO.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,14 +71,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //location.latitude.toString() + "," + location.longitude.toString()
-
     private fun initData() {
-        mainViewModel.demoGetDirections(
-            "19.5228693",
-            "-99.1479429",
-            "puebl"
-        )
+        mainViewModel.demoGetMapStops(idLocalCompany)
+        mainViewModel.demoGetPointsOfInterest(idLocalCompany)
     }
 
     private fun observers() {

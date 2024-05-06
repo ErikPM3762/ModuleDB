@@ -91,10 +91,11 @@ class StopDataSource @Inject constructor(
     override fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         val request = RequestDataBase.getMapStopsRequestByIdCompany(idLocalCompany)
         when (idLocalCompany) {
-            AppId.OURENSE.idLocalCompany -> {
+            AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
                 val response: Response<GetMapStopsAwsResponse> = awsServiceApi.getMapStops(request)
                 emit(response)
             }
+
             else -> throw Exception("Unknow option for getPointsInterest")
         }
     }.catch { error ->

@@ -55,6 +55,14 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
+        AppId.VIGO.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "spain",
+            state = "vigo",
+            cityOrTown = "vigo",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
         AppId.AHORROBUS.idLocalCompany -> BaseRequest(
             idFront = 51,
             country = "mexico",
@@ -321,6 +329,14 @@ object RequestDataBase {
             country = "ourense",
             state = "ourense",
             cityOrTown = "ourense",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
+        AppId.VIGO.idLocalCompany -> BaseRequest(
+            idFront = 100,
+            country = "vigo",
+            state = "vigo",
+            cityOrTown = "vigo",
             idLocalCompany = idLocalCompany.toString()
         )
 
