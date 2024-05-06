@@ -25,6 +25,7 @@ import com.example.moduledb.controlDB.domain.usecase.GetRegions
 import com.example.moduledb.controlDB.domain.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
+import com.example.moduledb.controlDB.domain.usecase.api_here.GetDirectionsByApiHere
 import com.example.moduledb.controlDB.domain.usecase.lines.GetAllLines
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
@@ -59,6 +60,7 @@ class InitDbViewModel @Inject constructor(
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
     private val getAllLines: GetAllLines,
     private val getMapStops: GetMapStops,
+    private val getDirectionsByApiHere: GetDirectionsByApiHere
 ) : ViewModel() {
 
     private val TAG = this::class.java.simpleName
@@ -382,6 +384,7 @@ class InitDbViewModel @Inject constructor(
                     Log.d(TAG, "idLocalCompany: $idLocalCompany")
                     Log.d(TAG, "data: ${result.data}")
                 }
+
                 else -> {}
             }
         }
@@ -507,6 +510,25 @@ class InitDbViewModel @Inject constructor(
 
                 else -> {}
             }
+        }
+    }
+
+    fun demoGetDirections(
+        latitude: String,
+        longitude: String,
+        query: String,
+    ) = genericRequest {
+        getDirectionsByApiHere(latitude, longitude, query).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "query: $query")
+                    Log.d(TAG, "data: ${result.data}")
+                }
+
+                else -> {}
+            }
+
         }
     }
 

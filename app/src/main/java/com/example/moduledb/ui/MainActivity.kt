@@ -71,9 +71,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //location.latitude.toString() + "," + location.longitude.toString()
+
     private fun initData() {
-        stopsViewModel.fetchTheoricByTypeStop()
-        mainViewModel.demoGetStops(idLocalCompany)
+        mainViewModel.demoGetDirections(
+            "19.5228693",
+            "-99.1479429",
+            "puebl"
+        )
     }
 
     private fun observers() {
