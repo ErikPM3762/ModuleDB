@@ -111,10 +111,35 @@ object RequestDataBase {
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
-    fun getAllLinesRequestByIdLocalCompany(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> getBenidormAllLinesRequest(idLocalCompany.toString())
-        else -> throw IllegalArgumentException("Unknown id company for getAllLinesRequestByIdLocalCompany")
+    fun getAllLinesRequestByIdLocalCompany(idLocalCompany: Int): LinesListAwsRequest {
+        val request = when (idLocalCompany) {
+            AppId.BENIDORM.idLocalCompany -> getAllLinesRequest(
+                state = "benidorm",
+                cityOrTown = "benidorm",
+                idLocalCompany = idLocalCompany.toString()
+            )
+
+            AppId.VIGO.idLocalCompany -> getAllLinesRequest(
+                state = "vigo",
+                cityOrTown = "vigo",
+                idLocalCompany = idLocalCompany.toString()
+            )
+            else -> throw IllegalArgumentException("Unknown id company for getAllLinesRequestByIdLocalCompany")
+        }
+        return request
     }
+
+    private fun getAllLinesRequest(
+        country: String = "spain",
+        state: String,
+        cityOrTown: String,
+        idLocalCompany: String
+    ) = LinesListAwsRequest(
+        country = country, state = state,
+        cityOrTown = cityOrTown, idFront = 100,
+        idLocalCompany = idLocalCompany
+    )
+
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
         AppId.BENIDORM.idLocalCompany -> StopsSpainRequest(
@@ -216,14 +241,6 @@ object RequestDataBase {
         idMacroRegion = "",
         idRegion = idRegion ?: "",
         idBrand = ""
-    )
-
-    private fun getBenidormAllLinesRequest(idLocalCompany: String) = LinesListAwsRequest(
-        country = "spain",
-        state = "benidorm",
-        cityOrTown = "benidorm",
-        idFront = 100,
-        idLocalCompany = idLocalCompany
     )
 
     private fun getDetailStopOracleRequest(idBusStop: String) = DetailStopRequest(

@@ -482,7 +482,7 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun demo_getAllLines(idLocalCompany: Int) = genericRequest {
+    fun demoGetAllLines(idLocalCompany: Int) = genericRequest {
         getAllLines.invoke(idLocalCompany).collect { result ->
             when (result) {
                 is NetResult.Success -> {

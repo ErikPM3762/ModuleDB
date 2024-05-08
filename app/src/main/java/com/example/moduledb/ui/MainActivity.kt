@@ -72,8 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoGetMapStops(idLocalCompany)
-        mainViewModel.demoGetPointsOfInterest(idLocalCompany)
+        mainViewModel.demoGetAllLines(idLocalCompany)
     }
 
     private fun observers() {
