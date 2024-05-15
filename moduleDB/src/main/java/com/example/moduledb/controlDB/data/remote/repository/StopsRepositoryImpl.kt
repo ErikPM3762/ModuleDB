@@ -1,7 +1,5 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
-import android.util.Log
-import com.example.moduledb.controlDB.data.DataResult
 import com.example.moduledb.controlDB.data.local.daos.MDbDetailStopDao
 import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbTheoricsByTypeStopDao
@@ -13,17 +11,20 @@ import com.example.moduledb.controlDB.data.local.mapers.toRoomTheoricByTypeStop
 import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.local.mapers.toTheoricByTypeStop
 import com.example.moduledb.controlDB.data.performUpdateOperation
-import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
-import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
-import com.example.moduledb.controlDB.data.remote.source.IStopsDataSource
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
-import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
 import com.example.moduledb.controlDB.domain.repository.StopsRepository
 import com.example.moduledb.controlDB.utils.AppId
-import com.example.moduledb.controlDB.utils.NetResult
-import com.example.moduledb.controlDB.utils.RequestDataBase
-import com.example.moduledb.controlDB.utils.getGenericError
-import com.example.moduledb.controlDB.utils.loading
+import com.example.services.data.DataResult
+import com.example.services.data.response.stops.DetailStopsResponse
+import com.example.services.data.server.AwsServiceApi
+import com.example.services.data.server.OracleServiceApi
+import com.example.services.data.source.IStopsDataSource
+import com.example.services.domain.models.DetailStop
+import com.example.services.domain.models.TheoricByTypeStop
+import com.example.services.utils.NetResult
+import com.example.services.utils.RequestDataBase
+import com.example.services.utils.getGenericError
+import com.example.services.utils.loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@Suppress("UNCHECKED_CAST")
 class StopsRepositoryImpl @Inject constructor(
     private val oracleServiceApi: OracleServiceApi,
     private val awsServiceApi: AwsServiceApi,
@@ -50,12 +52,12 @@ class StopsRepositoryImpl @Inject constructor(
             theoricByTypeStop.getByLineGenerate(idBusLine)
         }
         if (localTheoricTypeStop?.idLineGenerate == idBusLine) {
-            emit(NetResult.Success(localTheoricTypeStop.toTheoricByTypeStop()))
+            emit(NetResult.Success(localTheoricTypeStop))
         } else {
             remoteDataSource.getTeoricByTypeStop(idLocalCompany, idBusLine, tripCode).loading().map { result ->
                     if (result is NetResult.Success) {
-                        val theorics = result.data.toRoomTheoricByTypeStop(idBusLine, tripCode)
-                        theoricByTypeStop.insertOrUpdate(theorics)
+                        val theorics = result.data as TheoricByTypeStop
+                        theoricByTypeStop.insertOrUpdate(theorics.toRoomTheoricByTypeStop(idBusLine, tripCode))
                     }
                     result
                 }
@@ -122,11 +124,11 @@ class StopsRepositoryImpl @Inject constructor(
                             )
                         )
                     }, { response ->
-                        response?.result?.stopsList?.toRoomDetailStop()
-                    }, { detailStop ->
-                        detailStopsDao.insertOrUpdate(detailStop)
-                        detailStop.toDetailStop()
-                    })
+                        response?.result?.stopsList as DetailStop
+                    }) { detailStop ->
+                        detailStopsDao.insertOrUpdate(detailStop.toRoomDetailStop())
+                        detailStop
+                    }
                 }
 
                 else -> {
@@ -137,13 +139,13 @@ class StopsRepositoryImpl @Inject constructor(
                             )
                         )
                     }, { response ->
-                        response?.result?.stopsList?.toRoomDetailStop()
-                    }, { detailStop ->
-                        detailStopsDao.insertOrUpdate(detailStop)
-                        detailStop.toDetailStop()
-                    })
+                        response?.result?.stopsList as DetailStop
+                    }) { detailStop ->
+                        detailStopsDao.insertOrUpdate(detailStop.toRoomDetailStop())
+                        detailStop
+                    }
                 }
             }
         }
-    }
+    } as DataResult<MDBDetailStop, Exception>
 }

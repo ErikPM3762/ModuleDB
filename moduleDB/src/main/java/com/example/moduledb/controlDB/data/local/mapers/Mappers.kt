@@ -1,6 +1,15 @@
 package com.example.moduledb.controlDB.data.local.mapers
 
 
+import com.example.moduledb.controlDB.data.local.entities.BackTripEntity
+import com.example.moduledb.controlDB.data.local.entities.BrandEntity
+import com.example.moduledb.controlDB.data.local.entities.BrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopBrandsEntity
+import com.example.moduledb.controlDB.data.local.entities.BusStopEntity
+import com.example.moduledb.controlDB.data.local.entities.DayEntity
+import com.example.moduledb.controlDB.data.local.entities.FeatureEntity
+import com.example.moduledb.controlDB.data.local.entities.GeographicEntity
+import com.example.moduledb.controlDB.data.local.entities.GeometryEntity
 import com.example.moduledb.controlDB.data.local.entities.MDbDetailStops
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesByRegion
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
@@ -10,21 +19,47 @@ import com.example.moduledb.controlDB.data.local.entities.MDbListTheoricByTypeSt
 import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.BusStopResponse
-import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TimeTableDaybusStop
+import com.example.moduledb.controlDB.data.local.entities.MacroRegionEntity
+import com.example.moduledb.controlDB.data.local.entities.OutTripEntity
+import com.example.moduledb.controlDB.data.local.entities.PropertiesEntity
+import com.example.moduledb.controlDB.data.local.entities.RegionEntity
+import com.example.moduledb.controlDB.data.local.entities.ScheduleEntity
+import com.example.moduledb.controlDB.data.local.entities.StyleEntity
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
-import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
-import com.example.moduledb.controlDB.domain.models.MDBStops
 import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
-import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
+import com.example.services.data.response.lines.BackTrip
+import com.example.services.data.response.lines.Brand
+import com.example.services.data.response.lines.Feature
+import com.example.services.data.response.lines.Geographic
+import com.example.services.data.response.lines.Geometry
+import com.example.services.data.response.lines.LinesByRegion
+import com.example.services.data.response.lines.LinesDetail
+import com.example.services.data.response.lines.ListLines
+import com.example.services.data.response.lines.OutTrip
+import com.example.services.data.response.lines.Properties
+import com.example.services.data.response.lines.Region
+import com.example.services.data.response.lines.Style
+import com.example.services.data.response.macroRegions.MacroRegion
+import com.example.services.data.response.macroRegions.MacroRegions
+import com.example.services.data.response.pointsRecharge.PORecharge
+import com.example.services.data.response.regions.Regions
+import com.example.services.data.response.routes.Route
+import com.example.services.data.response.stops.BusStopBrands
+import com.example.services.data.response.stops.Stops
+import com.example.services.data.response.teroicByStop.BusStop
+import com.example.services.data.response.teroicByStop.Day
+import com.example.services.data.response.teroicByStop.Schedule
+import com.example.services.domain.models.DetailStop
+import com.example.services.domain.models.POIsResponse
+import com.example.services.domain.models.TheoricByTypeStop
 
 
 /**
  * Transformacion del objeto para puntos de interes
  */
-fun MDbPOIsResponse.toPointsInterest(): MDbPOIs {
+fun POIsResponse.toPointsInterest(): MDbPOIs {
     return MDbPOIs(
         id = id?.toLongOrNull() ?: 0L,
         idPointOfInterest = id ?: "N/A",
@@ -37,7 +72,7 @@ fun MDbPOIsResponse.toPointsInterest(): MDbPOIs {
     )
 }
 
-fun List<MDbPOIsResponse>.toPointsInterestList(): List<MDbPOIs> {
+fun List<POIsResponse>.toPointsInterestList(): List<MDbPOIs> {
     return this.map {
         it.toPointsInterest()
     }
@@ -46,32 +81,32 @@ fun List<MDbPOIsResponse>.toPointsInterestList(): List<MDbPOIs> {
 /**
  * Transformacion del objeto para puntos de recarga
  */
-fun MDbPORechargeResponse.toPointsRecharge(): MDbPORecharge {
+fun PORecharge.toPointsRecharge(): MDbPORecharge {
     return MDbPORecharge(
-        id = idRechargeCenter?.toLongOrNull() ?: 0L,
-        idRechargeCenter = idRechargeCenter ?: "N/A",
-        RechargeCenter = RechargeCenter ?: "N/A",
-        latitude = latitude ?: "N/A",
-        longitude = longitude ?: "N/A",
-        rechargeCenterTypeId = rechargeCenterTypeId ?: "N/A",
-        rechargeCenterType = rechargeCenterType ?: "N/A",
-        rechargeCenterCategory = rechargeCenterCategory ?: "N/A",
-        street = street ?: "N/A",
-        outdoorNumber = outdoorNumber ?: "N/A",
-        interiorNumber = interiorNumber ?: "N/A",
-        neighborhood = neighborhood ?: "N/A",
-        postalCode = postalCode ?: 0
-    )
+id = idRechargeCenter?.toLongOrNull() ?: 0L,
+idRechargeCenter = idRechargeCenter ?: "N/A",
+RechargeCenter = RechargeCenter ?: "N/A",
+latitude = latitude ?: "N/A",
+longitude = longitude ?: "N/A",
+rechargeCenterTypeId = rechargeCenterTypeId ?: "N/A",
+rechargeCenterType = rechargeCenterType ?: "N/A",
+rechargeCenterCategory = rechargeCenterCategory ?: "N/A",
+street = street ?: "N/A",
+outdoorNumber = outdoorNumber ?: "N/A",
+interiorNumber = interiorNumber ?: "N/A",
+neighborhood = neighborhood ?: "N/A",
+postalCode = postalCode ?: 0
+)
 }
 
-fun List<MDbPORechargeResponse>.toPointsRechargeList(): List<MDbPORecharge> {
+fun List<PORecharge>.toPointsRechargeList(): List<MDbPORecharge> {
     return this.map { it.toPointsRecharge() }
 }
 
 /**
  * Transformacion del objeto para listado de Macro Regiones
  */
-fun MDBMacroRegions.toMacroRegions(): MDbMacroRegions {
+fun MacroRegions.toMacroRegions(): MDbMacroRegions {
     return MDbMacroRegions(
         idMacroRegion = idMacroRegion,
         desMacroRegion = desMacroRegion,
@@ -82,7 +117,7 @@ fun MDBMacroRegions.toMacroRegions(): MDbMacroRegions {
     )
 }
 
-fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
+fun List<MacroRegions>.toMacroRegionsList(): List<MDbMacroRegions> {
     return this.map {
         it.toMacroRegions()
     }
@@ -91,21 +126,21 @@ fun List<MDBMacroRegions>.toMacroRegionList(): List<MDbMacroRegions> {
 /**
  * Transformacion del objeto para listado de Lineas por Macro Regiones
  */
-fun MDbListLines.toLineByMacroRegion(idMacroRegion: String): MDbListLines {
+fun ListLines.toLineByMacroRegion(idMacroRegion: String): MDbListLines {
     return MDbListLines(
         idBusLine = idBusLine,
         idBusSAE = idBusSAE,
         descBusLine = descBusLine,
         desLocalCompany = desLocalCompany,
         color = color,
-        brands = brands,
-        macroRegions = macroRegions,
-        regions = regions,
+        brands = brands?.toBrandList(),
+        macroRegions = macroRegions?.toMacroRegionList(),
+        regions = regions?.toRegionList(),
         idMacroRegion = idMacroRegion
     )
 }
 
-fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbListLines> {
+fun List<ListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbListLines> {
     return this.map {
         it.toLineByMacroRegion(idMacroRegion)
     }
@@ -114,7 +149,7 @@ fun List<MDbListLines>.toLinesByMacroRegions(idMacroRegion: String): List<MDbLis
 /**
  * Transformacion del objeto para listado de Regiones
  */
-fun MDdRegions.toRegions(): MDdRegions {
+fun Regions.toRegions(): MDdRegions {
     return MDdRegions(
         idRegion = idRegion,
         desRegion = desRegion,
@@ -127,7 +162,7 @@ fun MDdRegions.toRegions(): MDdRegions {
     )
 }
 
-fun List<MDdRegions>.toRegionList(): List<MDdRegions> {
+fun List<Regions>.toRegionsList(): List<MDdRegions> {
     return this.map {
         it.toRegions()
     }
@@ -136,21 +171,21 @@ fun List<MDdRegions>.toRegionList(): List<MDdRegions> {
 /**
  * Transformacion del objeto para listado de Lineas por Regiones
  */
-fun MDbLinesByRegion.toLineByRegion(idMacroRegion: String): MDbLinesByRegion {
+fun LinesByRegion.toLineByRegion(idMacroRegion: String): MDbLinesByRegion {
     return MDbLinesByRegion(
         idBusLine = idBusLine,
         idBusSAE = idBusSAE,
         descBusLine = descBusLine,
         desLocalCompany = desLocalCompany,
         color = color,
-        brands = brands,
-        macroRegions = macroRegions,
-        regions = regions,
+        brands = brands?.toBrandList(),
+        macroRegions = macroRegions?.toMacroRegionList(),
+        regions = regions?.toRegionList(),
         idMacroRegion = idMacroRegion
     )
 }
 
-fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLinesByRegion> {
+fun List<LinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLinesByRegion> {
     return this.map {
         it.toLineByRegion(idMacroRegion)
     }
@@ -159,17 +194,17 @@ fun List<MDbLinesByRegion>.toLinesByRegions(idMacroRegion: String): List<MDbLine
 /**
  * Transformacion del objeto para paradas Oracle
  */
-fun MDBStops.toStop(): MDbListStops {
+fun Stops.toStop(): MDbListStops {
     return MDbListStops(
         idBusStop = idBusStop,
         desBusStop = desBusStop,
         coordinates = coordinates,
         buslineCrossing = buslineCrossing,
-        brands = brands
+        brands = brands?.toStopsBrandsList()
     )
 }
 
-fun List<MDBStops>.toStop(): List<MDbListStops> {
+fun List<Stops>.toStop(): List<MDbListStops> {
     return this.map {
         it.toStop()
     }
@@ -178,46 +213,46 @@ fun List<MDBStops>.toStop(): List<MDbListStops> {
 /**
  * Transformacion del objeto para teoricos por tipo parada AWS
  */
-private fun MDBTheoricByTypeStop.toTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+private fun TheoricByTypeStop.toTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
     return MDbListTheoricByTypeStop(
-        busStop = busStop,
+        busStop = busStop.toBusStopList(),
         idLineGenerate = idLineGenerate,
         tripCode = tripCode
     )
 }
 
-fun MDBTheoricByTypeStop.toRoomTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
+fun TheoricByTypeStop.toRoomTheoricByTypeStop(idLineGenerate: String, tripCode: String): MDbListTheoricByTypeStop {
     return this.toTheoricByTypeStop(idLineGenerate, tripCode)
 }
 
 /**
  * Transformacion del objeto para teoricos por tipo parada AWS
  */
-private fun MDbListTheoricByTypeStop.toTheoricByStop(): MDBTheoricByTypeStop {
+private fun TheoricByTypeStop.toTheoricByStop(): MDBTheoricByTypeStop {
     return MDBTheoricByTypeStop(
-        busStop = busStop
+        busStop = busStop.toBusStopList()
     )
 }
 
-fun MDbListTheoricByTypeStop.toTheoricByTypeStop(): MDBTheoricByTypeStop {
+fun TheoricByTypeStop.toTheoricByTypeStop(): MDBTheoricByTypeStop {
     return this.toTheoricByStop()
 }
 
 /**
  * Transformacion del objeto para listado de Macro Regiones
  */
-fun MDbLinesDetail.toDetailLine(): MDbLinesDetail {
+fun LinesDetail.toDetailLine(): MDbLinesDetail {
     return MDbLinesDetail(
         idBusSAE = idBusSAE,
         color = color,
         distance = distance,
-        outTrip = outTrip,
-        backTrip = backTrip,
+        outTrip = outTrip.toOutrip(),
+        backTrip = backTrip?.toBacktrip(),
         descBusLine = descBusLine,
         scale = scale,
         idBusLine = idBusLine,
         localCompany = localCompany,
-        geographicDataStructure = geographicDataStructure,
+        geographicDataStructure = geographicDataStructure?.toGeographics(),
         desLocalCompany = desLocalCompany,
         brands = brands,
         pathIdBusLine = pathIdBusLine
@@ -225,27 +260,56 @@ fun MDbLinesDetail.toDetailLine(): MDbLinesDetail {
     )
 }
 
-fun List<MDbLinesDetail>.toDetailLineList(): List<MDbLinesDetail> {
+fun List<LinesDetail>.toDetailLineList(): List<MDbLinesDetail> {
     return this.map {
         it.toDetailLine()
     }
 }
 
 /**
+ * Transformacion del objeto para listado de Macro Regiones
+ */
+fun MDbLinesDetail.toDetailLineInvert(): LinesDetail {
+    return LinesDetail(
+        idBusSAE = idBusSAE,
+        color = color,
+        distance = distance,
+        outTrip = outTrip.toOutripInvert(),
+        backTrip = backTrip?.toBacktripInvert(),
+        descBusLine = descBusLine,
+        scale = scale,
+        idBusLine = idBusLine,
+        localCompany = localCompany,
+        geographicDataStructure = geographicDataStructure?.toGeographicsInvert(),
+        desLocalCompany = desLocalCompany,
+        brands = brands,
+        pathIdBusLine = pathIdBusLine
+
+    )
+}
+
+fun List<MDbLinesDetail>.toDetailLineListInvert(): List<LinesDetail> {
+    return this.map {
+        it.toDetailLineInvert()
+    }
+}
+
+
+/**
  * Transformacion del objeto para detalle de parada
  */
-private fun MDBDetailStop.toRoomDetailStopConverter(): MDbDetailStops {
+private fun DetailStop.toRoomDetailStopConverter(): MDbDetailStops {
     return MDbDetailStops(
         id = idBusStop.toLongOrNull() ?: 0L,
         idBusStop = idBusStop ?: "0",
         desBusStop = desBusStop ?: "N/A",
         coordinates = coordinates,
         buslineCrossing = buslineCrossing,
-        brands = brands
+        brands = brands?.toStopsBrandsList()
     )
 }
 
-fun MDBDetailStop.toRoomDetailStop(): MDbDetailStops {
+fun DetailStop.toRoomDetailStop(): MDbDetailStops {
     return toRoomDetailStopConverter()
 }
 
@@ -265,3 +329,297 @@ private fun MDbDetailStops.toDetailStopConverter(): MDBDetailStop {
 fun MDbDetailStops.toDetailStop(): MDBDetailStop {
     return toDetailStopConverter()
 }
+
+private fun Brand.toBrand(): BrandEntity {
+    return BrandEntity(
+        idBrand = idBrand,
+        desBrand = desBrand,
+        parentId = parentId
+    )
+}
+
+fun List<Brand>.toBrandList(): List<BrandEntity> {
+    return this.map {
+        it.toBrand()
+    }
+}
+
+private fun Brand.toBrands(): BrandsEntity {
+    return BrandsEntity(
+        idBrand = idBrand.toString(),
+        desBrand = desBrand
+    )
+}
+
+fun List<Brand>.toBrandsList(): List<BrandsEntity> {
+    return this.map {
+        it.toBrands()
+    }
+}
+
+private fun MacroRegion.toMacroRegion(): MacroRegionEntity {
+    return MacroRegionEntity(
+        idMacroRegion,
+        desMacroRegion,
+        parentId
+    )
+}
+
+fun List<MacroRegion>.toMacroRegionList(): List<MacroRegionEntity> {
+    return this.map {
+        it.toMacroRegion()
+    }
+}
+
+private fun Region.toRegion(): RegionEntity {
+    return RegionEntity(
+        idRegion,
+        desRegion,
+        parentId
+    )
+}
+
+fun List<Region>.toRegionList(): List<RegionEntity> {
+    return this.map {
+        it.toRegion()
+    }
+}
+
+private fun Route.toRoute(): MDbRouteEntity {
+    return MDbRouteEntity(
+        idBusLine= idBusLine,
+        pathIdBusLine = pathIdBusLine,
+        pathIdDescription = pathIdDescription,
+        direction = direction
+    )
+}
+
+fun List<Route>.toRouteList(): List<MDbRouteEntity> {
+    return this.map {
+        it.toRoute()
+    }
+}
+
+private fun MDbRouteEntity.toRouteInverted(): Route {
+    return Route(
+        idBusLine= idBusLine,
+        pathIdBusLine = pathIdBusLine,
+        pathIdDescription = pathIdDescription,
+        direction = direction
+    )
+}
+
+fun List<MDbRouteEntity>.toRouteInvertedList(): List<Route> {
+    return this.map {
+        it.toRouteInverted()
+    }
+}
+
+
+private fun BusStopBrands.toStopsBrands(): BusStopBrandsEntity {
+    return BusStopBrandsEntity(
+        idBrand.toLong(),
+        idBrand,
+        desBrand
+    )
+}
+
+fun List<BusStopBrands>.toStopsBrandsList(): List<BusStopBrandsEntity> {
+    return this.map {
+        it.toStopsBrands()
+    }
+}
+
+private fun BusStop.toBusStop(): BusStopEntity {
+    return BusStopEntity(
+        idBusStop.toLong(),
+        idBusStop,
+        days.toDayList()
+    )
+}
+
+fun List<BusStop>.toBusStopList(): List<BusStopEntity> {
+    return this.map {
+        it.toBusStop()
+    }
+}
+
+private fun Day.toDay(): DayEntity {
+    return DayEntity(
+        dayType = dayType,
+        schedules = schedules.toScheduleList()
+    )
+}
+
+fun List<Day>.toDayList(): List<DayEntity> {
+    return this.map {
+        it.toDay()
+    }
+}
+
+private fun Schedule.toSchedule(): ScheduleEntity {
+    return ScheduleEntity(
+        dayTime = dayTime,
+        pathIdBusLine = pathIdBusLine,
+        arrivalBusStop = arrivalBusStop,
+        idBusStop = idBusStop
+    )
+}
+
+fun List<Schedule>.toScheduleList(): List<ScheduleEntity> {
+    return this.map {
+        it.toSchedule()
+    }
+}
+
+private fun OutTrip.toOutrip(): OutTripEntity {
+    return OutTripEntity(
+        features = features.toFeatureList(),
+        type = type,
+    )
+}
+
+private fun OutTripEntity.toOutripInvert(): OutTrip {
+    return OutTrip(
+        features = features.toFeatureListInvert(),
+        type = type,
+    )
+}
+
+private fun BackTrip.toBacktrip(): BackTripEntity {
+    return BackTripEntity(
+        features = features.toFeatureList(),
+        type = type,
+    )
+}
+
+private fun BackTripEntity.toBacktripInvert(): BackTrip {
+    return BackTrip(
+        features = features.toFeatureListInvert(),
+        type = type,
+    )
+}
+
+private fun Feature.toFeature(): FeatureEntity {
+    return FeatureEntity(
+        geometry = geometry.toGeometry(),
+        properties = properties.toProperties(),
+        type = type,
+        style = style?.toStyle()
+    )
+}
+
+
+fun List<Feature>.toFeatureList(): List<FeatureEntity> {
+    return this.map {
+        it.toFeature()
+    }
+}
+
+private fun FeatureEntity.toFeatureInvert(): Feature {
+    return Feature(
+        geometry = geometry.toGeometryInvert(),
+        properties = properties.toPropertiesInvert(),
+        type = type,
+        style = style?.toStyleInvert()
+    )
+}
+
+
+fun List<FeatureEntity>.toFeatureListInvert(): List<Feature> {
+    return this.map {
+        it.toFeatureInvert()
+    }
+}
+
+private fun Geometry.toGeometry(): GeometryEntity {
+    return GeometryEntity(
+        coordinates = coordinates,
+        type = type
+    )
+}
+
+private fun Style.toStyle(): StyleEntity {
+    return StyleEntity(
+        strokeWidth= strokeWidth,
+        fill= fill,
+        fillOpacity= fillOpacity
+    )
+}
+
+private fun Geographic.toGeographics(): GeographicEntity {
+    return GeographicEntity(
+        initialMapCoordinates= initialMapCoordinates
+    )
+}
+
+
+private fun GeometryEntity.toGeometryInvert(): Geometry {
+    return Geometry(
+        coordinates = coordinates,
+        type = type
+    )
+}
+
+private fun StyleEntity.toStyleInvert(): Style {
+    return Style(
+        strokeWidth= strokeWidth,
+        fill= fill,
+        fillOpacity= fillOpacity
+    )
+}
+
+private fun GeographicEntity.toGeographicsInvert(): Geographic {
+    return Geographic(
+        initialMapCoordinates= initialMapCoordinates
+    )
+}
+
+
+
+private fun Properties.toProperties(): PropertiesEntity {
+    return PropertiesEntity(
+        busLineCrossing = busLineCrossing,
+        color= color,
+        desBusStop= desBusStop,
+        idBusLine= idBusLine,
+        idBusSAE= idBusSAE,
+        idBusStop= idBusStop,
+        node=  node,
+        brands = brands?.toBrandsList()
+    )
+}
+
+private fun PropertiesEntity.toPropertiesInvert(): Properties {
+    return Properties(
+        busLineCrossing = busLineCrossing,
+        color= color!!,
+        desBusStop= desBusStop,
+        idBusLine= idBusLine,
+        idBusSAE= idBusSAE,
+        idBusStop= idBusStop,
+        node=  node,
+        brands = brands?.toBrandsListInvert()
+    )
+}
+
+private fun BrandsEntity.toBrandsInvert(): Brand {
+    return Brand(
+        idBrand = idBrand.toLong(),
+        desBrand = desBrand,
+        ""
+    )
+}
+
+fun List<BrandsEntity>.toBrandsListInvert(): List<Brand> {
+    return this.map {
+        it.toBrandsInvert()
+    }
+}
+
+
+
+
+
+
+

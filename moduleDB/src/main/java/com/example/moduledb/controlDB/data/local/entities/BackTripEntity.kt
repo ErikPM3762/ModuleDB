@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.example.moduledb.controlDB.data.remote.response.lines.Feature
 import com.example.moduledb.controlDB.utils.Converters
 
 @Entity

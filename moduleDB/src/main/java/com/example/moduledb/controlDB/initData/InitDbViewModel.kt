@@ -1,8 +1,9 @@
 package com.example.moduledb.controlDB.initData
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesByMacroRegionDao
@@ -26,8 +27,10 @@ import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
-import com.example.moduledb.controlDB.utils.Event
-import com.example.moduledb.controlDB.utils.NetResult
+import com.example.moduledb.controlDB.initData.viewState.MainViewState
+import com.example.services.data.response.lines.ListLines
+import com.example.services.data.response.macroRegions.MacroRegions
+import com.example.services.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
@@ -56,29 +59,9 @@ class InitDbViewModel @Inject constructor(
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
 ) : ViewModel() {
 
-    private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
-    val pointsOfInterestAvailable: LiveData<Event<Unit>> get() = _pointsOfInterestAvailable
+    //State para uso de JetpackCompose
+    var stateUi by mutableStateOf(MainViewState())
 
-    private val _pointsOfInterestNotAvailable = MutableLiveData<Event<Unit>>()
-    val pointsOfInterestNotAvailable: LiveData<Event<Unit>> get() = _pointsOfInterestNotAvailable
-
-    private val _pointsOfRechargeAvailable = MutableLiveData<Event<Unit>>()
-    val pointsOfRechargeAvailable: LiveData<Event<Unit>> get() = _pointsOfRechargeAvailable
-
-    private val _pointsOfRechargeNotAvailable = MutableLiveData<Event<Unit>>()
-    val pointsOfRechargeNotAvailable: LiveData<Event<Unit>> get() = _pointsOfRechargeNotAvailable
-
-    private val _mdbListLines = MutableLiveData<List<MDbListLines>>()
-    val mdbListLines: LiveData<List<MDbListLines>> get() = _mdbListLines
-
-    private val _mdbListMacroRegion = MutableLiveData<List<MDbMacroRegions>>()
-    val mdbListMacroRegion: LiveData<List<MDbMacroRegions>> get() = _mdbListMacroRegion
-
-    private val _mdbListAllLines = MutableLiveData<List<MDbListLines>>()
-    val mdbListAllLines: LiveData<List<MDbListLines>> get() = _mdbListAllLines
-
-    private val _mdbListStops = MutableLiveData<List<MDbListStops>>()
-    val mdbListStops: LiveData<List<MDbListStops>> get() = _mdbListStops
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -92,14 +75,17 @@ class InitDbViewModel @Inject constructor(
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
     fun getPointsInterest() {
+        stateUi = stateUi.copy(pointsOfInterest = emptyList())
         viewModelScope.launch(Dispatchers.IO) {
             getPointsInterest.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfInterestAvailable.postValue(Event(Unit))
+                        stateUi = stateUi.copy(pointsOfInterest = result.data)
                     }
 
-                    else -> {}
+                    else -> {
+                        Log.d("ViewModel", "Failed Call $result")
+                    }
                 }
             }
         }
@@ -112,14 +98,16 @@ class InitDbViewModel @Inject constructor(
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
     fun getPointsRecharge() {
+        stateUi = stateUi.copy(pointsOfRecharge = emptyList())
         viewModelScope.launch(Dispatchers.IO) {
             getPointsRecharge.invoke().collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfRechargeAvailable.postValue(Event(Unit))
+                        stateUi = stateUi.copy(pointsOfRecharge = result.data)
                     }
-
-                    else -> {}
+                    else -> {
+                        Log.d("ViewModel", "Failed Call $result")
+                    }
                 }
             }
         }
@@ -131,11 +119,14 @@ class InitDbViewModel @Inject constructor(
      * Obtener las macro regiones e iterar sobre la respuesta para guardar la lista de lineas por macroRegion
      */
     fun getMacroRegions(idLocalCompany: Int) {
+        stateUi = stateUi.copy(macroRegions = emptyList())
+        stateUi = stateUi.copy(linesByMacroRegion = emptyList())
         viewModelScope.launch(Dispatchers.IO) {
             getMacroRegions.invoke(idLocalCompany).collect() { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        val macroRegions = result.data as List<MDbMacroRegions>
+                        val macroRegions = result.data as List<MacroRegions>
+                        stateUi = stateUi.copy(macroRegions = macroRegions)
                         for (macroRegion in macroRegions) {
                             viewModelScope.launch {
                                 getLinesByMacroRegion.invoke(
@@ -144,7 +135,8 @@ class InitDbViewModel @Inject constructor(
                                     when (resultListLines) {
                                         is NetResult.Success -> {
                                             val listLinesByMRegions =
-                                                resultListLines.data as List<MDbListLines>
+                                                resultListLines.data as List<ListLines>
+                                            stateUi = stateUi.copy(linesByMacroRegion = listLinesByMRegions)
                                             Log.e(
                                                 "El tamaño de Las lineas es : ",
                                                 "${listLinesByMRegions.size}"
@@ -152,16 +144,23 @@ class InitDbViewModel @Inject constructor(
                                         }
 
                                         else -> {
-                                            // Manejar el error si es necesario
+                                            Log.e(
+                                                "viewModel ",
+                                                "error"
+                                            )
                                         }
                                     }
-                                    _pointsOfInterestAvailable.postValue(Event(Unit))
                                 }
                             }
                         }
                     }
 
-                    else -> {}
+                    else -> {
+                        Log.e(
+                            "viewModel ",
+                            "error 2"
+                        )
+                    }
                 }
             }
         }
@@ -193,7 +192,6 @@ class InitDbViewModel @Inject constructor(
                                                 // Manejar el error si es necesario
                                             }
                                         }
-                                        _pointsOfInterestAvailable.postValue(Event(Unit))
                                     }
                             }
                         }
@@ -216,7 +214,6 @@ class InitDbViewModel @Inject constructor(
                         // Manejar el error si es necesario
                     }
                 }
-                _pointsOfInterestAvailable.postValue(Event(Unit))
             }
         }
     }
@@ -245,9 +242,6 @@ class InitDbViewModel @Inject constructor(
                                 // Manejar el error si es necesario
                             }
                         }
-                        _pointsOfInterestAvailable.postValue(
-                            Event(Unit)
-                        )
                     }
                 }
             }
@@ -279,47 +273,11 @@ class InitDbViewModel @Inject constructor(
                                     // Manejar el error si es necesario
                                 }
                             }
-                            _pointsOfInterestAvailable.postValue(
-                                Event(Unit)
-                            )
                         }
                 }
             }
         }
     }
-
-    /**
-     * Funcion publica para obtener el listado de detalle de linea para Ahorrobus
-     */
-    /*
-    fun getDetailLinesByIdA(idLocalCompany: Int) {
-        var detailLinesInvocationCount = 0
-        viewModelScope.launch(Dispatchers.IO) {
-            val linesByRegionList = mDbLinesByRList.getAllMDbListLines()
-            for (lines in linesByRegionList) {
-                detailLinesInvocationCount++
-                viewModelScope.launch {
-                    getDetailLines.invoke(
-                        idLocalCompany, lines.idBusLine, "mexico"
-                    ).collect() { resulDetailLines ->
-                        when (resulDetailLines) {
-                            is NetResult.Success -> {
-                                Log.e("Lineas Llamadas", detailLinesInvocationCount.toString())
-                            }
-
-                            else -> {
-                                // Manejar el error si es necesario
-                            }
-                        }
-                        _pointsOfInterestAvailable.postValue(
-                            Event(Unit)
-                        )
-                    }
-                }
-            }
-        }
-    }
-     */
 
     /**
      * Funcion publica para obtener el listado de lineas por MacroRegion
@@ -328,7 +286,7 @@ class InitDbViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val result = mDbLinesByMRList.getMDbListLinesById(idMacroRegion.toString())
             withContext(Dispatchers.Main) {
-                _mdbListLines.value = result
+
             }
         }
     }
@@ -352,7 +310,7 @@ class InitDbViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val result = mDbLinesByMRList.getMDbListLinesById(idMacroRegion.toString())
             withContext(Dispatchers.Main) {
-                _mdbListLines.value = result
+
             }
         }
     }
@@ -367,7 +325,7 @@ class InitDbViewModel @Inject constructor(
                 when (result) {
                     is NetResult.Success -> {
                         val mdbListStops = result.data as List<MDbListStops>
-                        _mdbListStops.postValue(mdbListStops)
+
                     }
 
                     else -> {}
@@ -410,9 +368,6 @@ class InitDbViewModel @Inject constructor(
                             // Manejar el error si es necesario
                         }
                     }
-                    _pointsOfInterestAvailable.postValue(
-                        Event(Unit)
-                    )
                 }
 
             }
@@ -452,9 +407,6 @@ class InitDbViewModel @Inject constructor(
                             // Manejar el error si es necesario
                         }
                     }
-                    _pointsOfInterestAvailable.postValue(
-                        Event(Unit)
-                    )
                 }
 
             }

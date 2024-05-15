@@ -7,14 +7,21 @@ import com.example.moduledb.controlDB.data.local.daos.MDbMacroRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRegionsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbRouteDao
 import com.example.moduledb.controlDB.data.local.entities.MDbRouteEntity
+import com.example.moduledb.controlDB.data.local.mapers.macroRegions.toConverter
+import com.example.moduledb.controlDB.data.local.mapers.macroRegions.toConverterListLines
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByMacroRegions
 import com.example.moduledb.controlDB.data.local.mapers.toLinesByRegions
 import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionList
+import com.example.moduledb.controlDB.data.local.mapers.toMacroRegionsList
 import com.example.moduledb.controlDB.data.local.mapers.toRegionList
-import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
-import com.example.moduledb.controlDB.utils.NetResult
-import com.example.moduledb.controlDB.utils.getGenericError
-import com.example.moduledb.controlDB.utils.loading
+import com.example.moduledb.controlDB.data.local.mapers.toRegionsList
+import com.example.moduledb.controlDB.data.local.mapers.toRouteInvertedList
+import com.example.moduledb.controlDB.data.local.mapers.toRouteList
+import com.example.services.data.response.routes.Route
+import com.example.services.data.source.IRegionsDataSource
+import com.example.services.utils.NetResult
+import com.example.services.utils.getGenericError
+import com.example.services.utils.loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -42,17 +49,17 @@ class RegionsRepository @Inject constructor(
             macroRegionsDao.getMacroRegions()
         }
         if (localMacroRegions.isNotEmpty()) {
-            emit(NetResult.Success(localMacroRegions))
+            emit(NetResult.Success(localMacroRegions.toConverter()))
         } else {
             remoteDataSource.getStateInfo(idLocalCompany).loading().map { result ->
                 if (result is NetResult.Success) {
-                    val macroRegionsList = result.data.toMacroRegionList()
+                    val macroRegionsList = result.data
                     val existingRegions =
                         macroRegionsDao.getExistingMacroRegions(macroRegionsList.map { it.idMacroRegion })
                     val newMacroRegions = macroRegionsList.filter { region ->
                         existingRegions.none { it.idMacroRegion == region.idMacroRegion }
                     }
-                    macroRegionsDao.insertOrUpdate(newMacroRegions)
+                    macroRegionsDao.insertOrUpdate(newMacroRegions.toMacroRegionsList())
                 }
                 result
             }.loading().catch { error ->
@@ -72,7 +79,7 @@ class RegionsRepository @Inject constructor(
             linesByMacroRegionDao.getMDbListLinesById(idMacroRegion)
         }
         if (localMacroRegions.isNotEmpty()) {
-            emit(NetResult.Success(localMacroRegions))
+            emit(NetResult.Success(localMacroRegions.toConverterListLines()))
         } else {
             remoteDataSource.getLinesByMacroRegions(idLocalCompany, idMacroRegion).loading()
                 .map { result ->
@@ -103,13 +110,13 @@ class RegionsRepository @Inject constructor(
         } else {
             remoteDataSource.getRegionsInfo(idLocalCompany).loading().map { result ->
                 if (result is NetResult.Success) {
-                    val regionsList = result.data.toRegionList()
+                    val regionsList = result.data
                     val existingRegions =
                         regionsDao.getExistingRegions(regionsList.map { it.idMacroRegion })
                     val newRegions = regionsList.filter { region ->
                         existingRegions.none { it.idMacroRegion == region.idMacroRegion }
                     }
-                    regionsDao.insertOrUpdate(newRegions)
+                    regionsDao.insertOrUpdate(newRegions.toRegionsList())
                 }
                 result
             }.loading().catch { error ->
@@ -147,7 +154,7 @@ class RegionsRepository @Inject constructor(
      */
     fun getRoutesByIdLine(
         idLocalCompany: String, idLine: String
-    ): Flow<NetResult<List<MDbRouteEntity>>> = flow {
+    ): Flow<NetResult<List<Route>>> = flow {
         val haveLocalData = routeDao.getIfLocalDataExist(idLine)
         when (haveLocalData) {
             true -> emit(NetResult.Success(getLocalRoutesData(idLine)))
@@ -156,8 +163,9 @@ class RegionsRepository @Inject constructor(
 
     }
 
-    private fun getLocalRoutesData(idLine: String): List<MDbRouteEntity> {
-        return routeDao.getRoutesByIdBusLine(idLine)
+    private fun getLocalRoutesData(idLine: String): List<Route> {
+        val route = routeDao.getRoutesByIdBusLine(idLine)
+        return route.toRouteInvertedList()
     }
 
     private fun getRemoteRoutesData(
@@ -165,7 +173,7 @@ class RegionsRepository @Inject constructor(
         idLine: String
     ) = remoteDataSource.getRoutesByIdLine(idLocalCompany, idLine).map { result ->
         if (result is NetResult.Success) {
-            val data = result.data
+            val data = result.data.toRouteList()
             routeDao.insertOrUpdate(data)
         }
         result

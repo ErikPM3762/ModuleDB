@@ -1,5 +1,6 @@
 package com.example.moduledb.controlDB.data
 
+import com.example.services.data.DataResult
 import retrofit2.Response
 
 suspend inline fun <I, O, U> performUpdateOperation(

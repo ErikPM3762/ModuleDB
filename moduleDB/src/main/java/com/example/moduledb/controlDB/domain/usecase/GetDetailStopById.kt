@@ -1,9 +1,8 @@
 package com.example.moduledb.controlDB.domain.usecase
 
-import com.example.moduledb.controlDB.data.DataResult
-import com.example.moduledb.controlDB.data.remote.repository.StopsRepositoryImpl
 import com.example.moduledb.controlDB.domain.models.MDBDetailStop
 import com.example.moduledb.controlDB.domain.repository.StopsRepository
+import com.example.services.data.DataResult
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject

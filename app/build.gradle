@@ -40,7 +40,10 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.2.0"
     }
 
     externalNativeBuild {
@@ -61,6 +64,16 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
+    implementation "androidx.compose.ui:ui:1.4.3"
+    implementation "androidx.compose.material:material:1.4.3"
+    implementation "androidx.compose.ui:ui-tooling:1.4.3"
+    implementation "androidx.compose.runtime:runtime-livedata:1.4.3"
+    implementation "androidx.compose.runtime:runtime:1.4.3"
+    implementation "androidx.compose.foundation:foundation-layout:1.4.3"
+    implementation "androidx.compose.foundation:foundation:1.4.3"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "androidx.activity:activity-compose:1.7.0"
+
     implementation "${libraries.androidx_navigation}"
     implementation "${libraries.androidx_navigation_fragment}"
 
@@ -79,4 +92,6 @@ dependencies {
 
     implementation "${libraries.google_hilt}"
     kapt "${libraries.hilt_kapt}"
+
+    implementation "com.mobility.ado:Services:1.0.1"
 }

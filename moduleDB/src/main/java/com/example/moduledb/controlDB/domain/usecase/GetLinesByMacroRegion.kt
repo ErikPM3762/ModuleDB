@@ -1,8 +1,7 @@
 package com.example.moduledb.controlDB.domain.usecase
 
-import com.example.moduledb.controlDB.data.local.entities.MDbListLines
 import com.example.moduledb.controlDB.data.remote.repository.RegionsRepository
-import com.example.moduledb.controlDB.utils.NetResult
+import com.example.services.utils.NetResult
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

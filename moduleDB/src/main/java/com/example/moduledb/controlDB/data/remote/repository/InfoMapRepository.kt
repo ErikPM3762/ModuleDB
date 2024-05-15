@@ -1,20 +1,19 @@
 package com.example.moduledb.controlDB.data.remote.repository
 
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.daos.MDbPOIsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbPORechargeDao
 import com.example.moduledb.controlDB.data.local.daos.MDbVersionInfoDao
 import com.example.moduledb.controlDB.data.local.entities.MDbPOIs
 import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
+import com.example.moduledb.controlDB.data.local.mapers.por.toPointsRechargeListInverted
 import com.example.moduledb.controlDB.data.local.mapers.toPointsInterestList
 import com.example.moduledb.controlDB.data.local.mapers.toPointsRechargeList
-import com.example.moduledb.controlDB.domain.models.MDbPOIsResponse
-import com.example.moduledb.controlDB.domain.models.MDbPORechargeResponse
-import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
-import com.example.moduledb.controlDB.utils.NetResult
-import com.example.moduledb.controlDB.utils.getGenericError
-import com.example.moduledb.controlDB.utils.loading
+import com.example.services.data.response.pointsRecharge.PORecharge
+import com.example.services.data.source.IInfoMapDataSource
+import com.example.services.utils.NetResult
+import com.example.services.utils.getGenericError
+import com.example.services.utils.loading
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -61,7 +60,7 @@ class InfoMapRepository @Inject constructor(
                     } else {
                         flow { emit(NetResult.Error(getGenericError())) }
                     }
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).collect()
         }
     }
 
@@ -69,13 +68,14 @@ class InfoMapRepository @Inject constructor(
     /**
      * Obtener los puntos de recarga
      */
-    suspend fun fetchPointOfRechargeData(): Flow<NetResult<List<MDbPORecharge>>> = flow {
+    suspend fun fetchPointOfRechargeData(): Flow<NetResult<List<PORecharge>>> = flow {
 
         val localPointRecharge = withContext(Dispatchers.IO) {
             pointRechargeDao.getPointsRechargeData()
         }
+        val poRecharge = localPointRecharge.toPointsRechargeListInverted()
         if (localPointRecharge.isNotEmpty()) {
-            emit(NetResult.Success(localPointRecharge))
+            emit(NetResult.Success(poRecharge))
         } else {
             remoteDataSource.getVersionTablePointRecharge().loading()
                 .flatMapConcat { versionResult ->
@@ -90,12 +90,12 @@ class InfoMapRepository @Inject constructor(
                                 result
                             }.flowOn(Dispatchers.IO)
                         } else {
-                            flow { emit(NetResult.Success(localPointRecharge)) }
+                            flow { emit(NetResult.Success(poRecharge)) }
                         }
                     } else {
                         flow { emit(NetResult.Error(getGenericError())) }
                     }
-                }.flowOn(Dispatchers.IO)
+                }.flowOn(Dispatchers.IO).collect()
         }
     }
 }

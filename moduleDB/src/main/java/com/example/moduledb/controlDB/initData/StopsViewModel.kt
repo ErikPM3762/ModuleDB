@@ -1,13 +1,12 @@
 package com.example.moduledb.controlDB.initData
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.moduledb.controlDB.data.DataResult
 import com.example.moduledb.controlDB.domain.usecase.GetDetailStopById
 import com.example.moduledb.controlDB.domain.usecase.GetTheoricByIdStop
 import com.example.moduledb.controlDB.domain.usecase.GetTheoricByTypeStop
-import com.example.moduledb.controlDB.utils.NetResult
+import com.example.services.data.DataResult
+import com.example.services.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

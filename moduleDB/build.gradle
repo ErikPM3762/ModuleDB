@@ -27,6 +27,9 @@ android {
             }
         }
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.2.0"
+    }
 }
 
 
@@ -42,14 +45,9 @@ dependencies {
     implementation "${libraries.junit_ktx}"
     implementation "${libraries.androidx_navigation}"
     implementation "${libraries.androidx_navigation_fragment}"
-    implementation "${libraries.retrofit}"
-    implementation "${libraries.retrofit_converter}"
-    implementation "${libraries.okhttp3}"
     implementation "${libraries.lifecycle_library_core}"
     implementation "${libraries.google_hilt}"
     kapt "${libraries.hilt_kapt}"
-    implementation "${libraries.squeareup_interceptor}"
-    implementation "${libraries.coroutine_retrofit}"
 
 
     implementation "${libraries.roomRuntime}"
@@ -59,49 +57,60 @@ dependencies {
     implementation "${libraries.roomRuntime}"
     annotationProcessor "${libraries.roomCompiler}"
 
+    implementation "androidx.compose.ui:ui:1.4.3"
+    implementation "androidx.compose.material:material:1.4.3"
+    implementation "androidx.compose.ui:ui-tooling:1.4.3"
+    implementation "androidx.compose.runtime:runtime-livedata:1.4.3"
+    implementation "androidx.compose.runtime:runtime:1.4.3"
+    implementation "androidx.compose.foundation:foundation-layout:1.4.3"
+    implementation "androidx.compose.foundation:foundation:1.4.3"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1"
+    implementation "androidx.activity:activity-compose:1.7.0"
+
+    implementation "com.mobility.ado:Services:1.0.2"
+
 }
 
-ext.pomfileManualGenerator = {
-    def root = asNode()
-    def dependenciesNode = root.appendNode('dependencies')
-    configurations.implementation.allDependencies
-            .findAll {
-                it.name != null && it.name != 'unspecified' && it.version != 'unspecified'
-            }.each {
-        def dependencyNode = dependenciesNode.appendNode('dependency')
-        dependencyNode.appendNode('groupId', it.group)
-        dependencyNode.appendNode('artifactId', it.name)
-        dependencyNode.appendNode('version', it.version)
-        dependencyNode.appendNode('scope', 'compile')
-        if (it.properties.excludeRules?.size() > 0) {
-            def exclusionsNode = dependencyNode.appendNode('exclusions')
-            it.properties.excludeRules.each { exclusion ->
-                def exclusionNode = exclusionsNode.appendNode('exclusion')
-                exclusion.group != null && exclusionNode.appendNode('groupId', exclusion.group)
-                exclusionNode.appendNode('artifactId', exclusion.module != null ? exclusion.module : '*')
+//Solo ejecutar en la terminal la tarea publishing para que se suba al repositorio automaticamente
+publishing {
+    publications {
+        debug(MavenPublication) {
+            groupId 'com.mobility.ado.qa'
+            artifactId 'moduleDB'
+            version '1.0.30'
+            artifact("$buildDir/outputs/aar/${project.name}-debug.aar")
+
+            pom.withXml {
+                def root = asNode()
+                def dependenciesNode = root.appendNode('dependencies')
+                configurations.implementation.allDependencies.findAll {
+                    it.name != null && it.name != 'unspecified' && it.version != 'unspecified'
+                }.each {
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', it.group)
+                    dependencyNode.appendNode('artifactId', it.name)
+                    dependencyNode.appendNode('version', it.version)
+                    dependencyNode.appendNode('scope', 'compile')
+                    if (it.properties.excludeRules?.size() > 0) {
+                        def exclusionsNode = dependencyNode.appendNode('exclusions')
+                        it.properties.excludeRules.each { exclusion ->
+                            def exclusionNode = exclusionsNode.appendNode('exclusion')
+                            exclusion.group != null && exclusionNode.appendNode('groupId', exclusion.group)
+                            exclusionNode.appendNode('artifactId', exclusion.module != null ? exclusion.module : '*')
+                        }
+                    }
+                }
             }
         }
     }
-    root.children().last()
-}
-project(':moduleDB') {
-    version = "1.0.27"
-    group = 'com.mobility.ado.qa'
-    artifactoryPublish.dependsOn('build')
-    publishing {
-        publications {
-            gms(MavenPublication) {
-                groupId = group
-                artifactId = "${project.getName()}"
-                version = version
-                artifact("$buildDir/outputs/aar/${project.getName()}-${version}-gmsRelease.aar")
-                pom.withXml pomfileManualGenerator
+
+    repositories {
+        maven {
+            url "https://mobilitydeveloper-mobilityado.developer.ocp.oraclecloud.com/profile/mobilitydeveloper-mobilityado/s/mobilitydeveloper-mobilityado_login-register-app-module_60349/maven/"
+            credentials {
+                username = 'aadiaz@mobilityado.com'
+                password = 'F85ac21de4' // Considera usar variables de entorno o métodos más seguros para manejar credenciales
             }
         }
     }
-
-    artifactoryPublish {
-        publications(publishing.publications.gms)
-    }
-
 }

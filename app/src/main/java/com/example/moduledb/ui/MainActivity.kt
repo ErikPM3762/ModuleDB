@@ -1,119 +1,145 @@
 package com.example.moduledb.ui
 
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.room.Room
-import com.example.moduledb.controlDB.data.local.AppDataBase
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.moduledb.controlDB.initData.InitDbViewModel
 import com.example.moduledb.controlDB.initData.StopsViewModel
 import com.example.moduledb.controlDB.utils.AppId
-import com.example.moduledb.databinding.ActivityMainBinding
+import com.example.services.utils.AppIdManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
-    private val mainViewModel: InitDbViewModel by viewModels()
-    private val stopsViewModel: StopsViewModel by viewModels()
-    lateinit var binding: ActivityMainBinding
-    lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
-
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        stopsViewModel.fetchTheoricByTypeStop()
-        clickListeners()
-        initData()
-        observers()
-        binding.btnLISTMCRG.setOnClickListener {
-            val idRegionText = binding.etxLine.text.toString()
-
-            if (idRegionText.isNotEmpty()) {
-                val idRegion = idRegionText.toLongOrNull()
-
-                if (idRegion != null) {
-                    mainViewModel.getLinesByMacroRegionDb(idRegion)
-                } else {
-                    Toast.makeText(this, "Ingrese un número válido", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this, "Debes ingresar una región", Toast.LENGTH_SHORT).show()
+        setContent {
+            ModuleDBTheme {
+                MainScreen()
             }
+        }
+    }
+}
+
+@Composable
+fun MainScreen(
+    mainViewModel: InitDbViewModel = viewModel(),
+    stopsViewModel: StopsViewModel = viewModel()
+) {
+    val state = mainViewModel.stateUi
+    val context = LocalContext.current
+    val idLocalCompany = AppIdManager.getIdLocalCompany()
+
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .verticalScroll(rememberScrollState())
+    ) {
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                mainViewModel.getPointsInterest()
+            }) {
+            Text("Obtener Puntos de interes")
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                mainViewModel.getPointsRecharge()
+            }) {
+            Text("Obtener Puntos de recarga")
+        }
+
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp)
+                .align(Alignment.CenterHorizontally),
+            onClick = {
+                mainViewModel.getMacroRegions(idLocalCompany)
+            }) {
+            Text("Obtener MacroRegiones")
         }
 
 
+        // Observers
+        LaunchedEffect(state.pointsOfInterest) {
+            if (state.pointsOfInterest.isNotEmpty()) {
+                Toast.makeText(context, "Puntos de Interés Actualizados!", Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        appDatabase = Room.databaseBuilder(
-            applicationContext,
-            AppDataBase::class.java,
-            "module_db"
+        LaunchedEffect(state.pointsOfRecharge) {
+            if (state.pointsOfRecharge.isNotEmpty()) {
+                Toast.makeText(context, "Puntos de Recarga Actualizados!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        LaunchedEffect(state.macroRegions) {
+            if (state.macroRegions.isNotEmpty()) {
+                Toast.makeText(context, "Macro Regiones Actualizadas!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        LaunchedEffect(state.linesByMacroRegion) {
+            if (state.linesByMacroRegion.isNotEmpty()) {
+                Toast.makeText(context, "Lineas por macro Region Actualizadas!", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+}
+
+@Composable
+fun ModuleDBTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colors = lightColors(
+            primary = Color.Blue,
+            secondary = Color.Green
         )
-            .fallbackToDestructiveMigration()
-            .build()
+    ) {
+        content()
     }
+}
 
-    private fun clickListeners() {
-        binding.apply {
-            btnPOR.setOnClickListener { mainViewModel.getPointsRecharge() }
-            btnMacroRegions.setOnClickListener { mainViewModel.getMacroRegions(idLocalCompany) }
-            btnListRegions.setOnClickListener { mainViewModel.getRegions(idLocalCompany) }
-            btnStops.setOnClickListener { mainViewModel.getStops(idLocalCompany) }
-            btnLinesDetailByRegion.setOnClickListener {
-                mainViewModel.getDetailLinesByIdB(
-                    idLocalCompany
-                )
-            }
-            btnLines.setOnClickListener { mainViewModel.getListLines(idLocalCompany) }
-        }
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    ModuleDBTheme {
+        MainScreen()
     }
-
-    private fun initData() {
-        //mainViewModel.getPointsInterest()
-        //mainViewModel.getPointsRecharge()
-        // mainViewModel.getDetailLineByIdDb(139)
-        // mainViewModel.getMacroRegions(11)
-        //mainViewModel.fetchStopsByBuslineCrossingId("19")
-        //mainViewModel.demo(5, listOf("001", "002","003","004","013"))
-        //mainViewModel.demo2(5, listOf("004", "005", "006"))
-        //stopsViewModel.getDetailOfStopById()
-    }
-
-    private fun observers() {
-
-        mainViewModel.mdbListLines.observe(this) { mdbListLines ->
-            for (mdbListLine in mdbListLines) {
-                //println("idBusLine: ${mdbListLine.idBusLine}")
-            }
-            binding.img3.visibility = View.VISIBLE
-            binding.txtSizeLines.text = mdbListLines.size.toString()
-        }
-
-        mainViewModel.pointsOfInterestAvailable.observe(this) {
-            binding.img1.visibility = View.VISIBLE
-        }
-
-        mainViewModel.pointsOfRechargeAvailable.observe(this) {
-            binding.img2.visibility = View.VISIBLE
-        }
-
-        mainViewModel.mdbListMacroRegion.observe(this) {
-            Toast.makeText(this, "Total de regiones ${it.size}", Toast.LENGTH_SHORT).show()
-        }
-
-        mainViewModel.mdbListAllLines.observe(this) {
-            Toast.makeText(this, "Total de lineas ${it.size}", Toast.LENGTH_SHORT).show()
-        }
-
-        mainViewModel.mdbListStops.observe(this) {
-            Toast.makeText(this, "Total de paradas ${it.size}", Toast.LENGTH_SHORT).show()
-        }
-
-    }
-
-
 }

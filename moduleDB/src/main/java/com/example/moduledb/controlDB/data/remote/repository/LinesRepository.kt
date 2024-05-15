@@ -2,10 +2,12 @@ package com.example.moduledb.controlDB.data.remote.repository
 
 import com.example.moduledb.controlDB.data.local.daos.MDbLinesDetailDao
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
+import com.example.moduledb.controlDB.data.local.mapers.toDetailLineInvert
 import com.example.moduledb.controlDB.data.local.mapers.toDetailLineList
-import com.example.moduledb.controlDB.data.remote.source.ILinesDataSource
-import com.example.moduledb.controlDB.utils.NetResult
-import com.example.moduledb.controlDB.utils.getGenericError
+import com.example.services.data.response.lines.LinesDetail
+import com.example.services.data.source.ILinesDataSource
+import com.example.services.utils.NetResult
+import com.example.services.utils.getGenericError
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -25,11 +27,12 @@ class LinesRepository @Inject constructor(
         idLocalCompany: Int,
         idBusline: String,
         state: String
-    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
+    ): Flow<NetResult<List<LinesDetail>>> = flow {
         val localData = linesDetailDao.findLineByIdBusSAE(idBusline)
-        when (localData == null) {
+        val localDataInvert= localData?.toDetailLineInvert()
+        when (localDataInvert == null) {
             true -> getRemoteLineDetail(idLocalCompany, idBusline, state).collect { emit(it) }
-            false -> emit(NetResult.Success(listOf(localData)))
+            false -> emit(NetResult.Success(listOf(localDataInvert)))
         }
     }
 
@@ -56,8 +59,9 @@ class LinesRepository @Inject constructor(
         idLocalCompany: Int,
         idBusline: String,
         pathIdBusLine: String,
-    ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
+    ): Flow<NetResult<List<LinesDetail>>> = flow {
         val localData = linesDetailDao.findLineByIds(idBusline, pathIdBusLine)
+        val localDataInvert = localData?.toDetailLineInvert()
         when (localData == null) {
             true -> getRemoteRouteDetail(
                 idLocalCompany,
@@ -65,7 +69,7 @@ class LinesRepository @Inject constructor(
                 pathIdBusLine
             ).collect { emit(it) }
 
-            false -> emit(NetResult.Success(listOf(localData)))
+            false -> emit(NetResult.Success(listOf(localDataInvert!!)))
         }
     }
 
