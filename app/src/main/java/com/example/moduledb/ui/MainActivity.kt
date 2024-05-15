@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoGetAllLines(idLocalCompany)
+        mainViewModel.demoStopDetailVigo()
     }
 
     private fun observers() {

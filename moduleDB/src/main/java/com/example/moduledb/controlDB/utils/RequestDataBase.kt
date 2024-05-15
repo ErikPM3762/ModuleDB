@@ -13,6 +13,10 @@ import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
 import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopRequest
+import com.example.moduledb.controlDB.utils.AppId.AHORROBUS
+import com.example.moduledb.controlDB.utils.AppId.BENIDORM
+import com.example.moduledb.controlDB.utils.AppId.RUBI
+import com.example.moduledb.controlDB.utils.AppId.VIGO
 import com.google.gson.JsonObject
 
 object RequestDataBase {
@@ -29,11 +33,11 @@ object RequestDataBase {
     }
 
     fun getRequestByIdCompany(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> {
+        BENIDORM.idLocalCompany -> {
             getBenidormRequest()
         }
 
-        AppId.AHORROBUS.idLocalCompany -> getAhorrobusRequest()
+        AHORROBUS.idLocalCompany -> getAhorrobusRequest()
         else -> throw IllegalArgumentException("Unknown id company for regions request")
     }
 
@@ -47,7 +51,7 @@ object RequestDataBase {
         )
 
 
-        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+        BENIDORM.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "spain",
             state = "benidorm",
@@ -55,7 +59,7 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
-        AppId.VIGO.idLocalCompany -> BaseRequest(
+        VIGO.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "spain",
             state = "vigo",
@@ -63,7 +67,7 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
-        AppId.AHORROBUS.idLocalCompany -> BaseRequest(
+        AHORROBUS.idLocalCompany -> BaseRequest(
             idFront = 51,
             country = "mexico",
             state = "",
@@ -84,7 +88,7 @@ object RequestDataBase {
         )
 
 
-        AppId.BENIDORM.idLocalCompany -> BaseRequest(
+        BENIDORM.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "spain",
             state = "benidorm",
@@ -92,7 +96,7 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
-        AppId.AHORROBUS.idLocalCompany -> BaseRequest(
+        AHORROBUS.idLocalCompany -> BaseRequest(
             idFront = 51,
             country = "mexico",
             state = "",
@@ -105,25 +109,32 @@ object RequestDataBase {
 
     fun getRequestByIdCompanyListLines(idLocalCompany: Int, idMacroRegion: String) =
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
-            AppId.AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
-            AppId.RUBI.idLocalCompany -> getVigoListLinesRequest(idLocalCompany.toString())
+            BENIDORM.idLocalCompany -> getBenidormListLinesRequest(idMacroRegion)
+            AHORROBUS.idLocalCompany -> getAhorrobusListLinesRequest(idMacroRegion)
+            RUBI.idLocalCompany -> getVigoListLinesRequest(idLocalCompany.toString())
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
     fun getAllLinesRequestByIdLocalCompany(idLocalCompany: Int): LinesListAwsRequest {
         val request = when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> getAllLinesRequest(
+            BENIDORM.idLocalCompany -> getAllLinesRequest(
                 state = "benidorm",
                 cityOrTown = "benidorm",
                 idLocalCompany = idLocalCompany.toString()
             )
 
-            AppId.VIGO.idLocalCompany -> getAllLinesRequest(
+            RUBI.idLocalCompany -> getAllLinesRequest(
+                state = "rubi",
+                cityOrTown = "rubi",
+                idLocalCompany = idLocalCompany.toString()
+            )
+
+            VIGO.idLocalCompany -> getAllLinesRequest(
                 state = "vigo",
                 cityOrTown = "vigo",
                 idLocalCompany = idLocalCompany.toString()
             )
+
             else -> throw IllegalArgumentException("Unknown id company for getAllLinesRequestByIdLocalCompany")
         }
         return request
@@ -142,7 +153,7 @@ object RequestDataBase {
 
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
-        AppId.BENIDORM.idLocalCompany -> StopsSpainRequest(
+        BENIDORM.idLocalCompany -> StopsSpainRequest(
             idFront = 100,
             country = "benidorm",
             state = "benidorm",
@@ -150,7 +161,7 @@ object RequestDataBase {
             idLocalCompany = "5"
         )
 
-        AppId.AHORROBUS.idLocalCompany -> StopsRequest(
+        AHORROBUS.idLocalCompany -> StopsRequest(
             idLocalCompany = "11",
             country = "mexico",
             cityOrTown = "mexico",
@@ -165,23 +176,30 @@ object RequestDataBase {
 
     fun getRequestByIdCompanyDetailLine(idLocalCompany: Int, idBusLine: String, state: String) =
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> getBenidormDetailLineRequest(idBusLine)
-            AppId.AHORROBUS.idLocalCompany -> getAhorrobusDetailLineRequest(idBusLine, state)
-            AppId.RUBI.idLocalCompany -> getAwsDetailLineRequest(idBusLine, idLocalCompany)
+            BENIDORM.idLocalCompany -> getBenidormDetailLineRequest(idBusLine)
+            AHORROBUS.idLocalCompany -> getAhorrobusDetailLineRequest(idBusLine, state)
+            RUBI.idLocalCompany, VIGO.idLocalCompany -> getAwsDetailLineRequest(
+                idBusLine,
+                idLocalCompany
+            )
+
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
     fun getRequestByIdCompanyDetailStop(idLocalCompany: Int, idBusStop: String) =
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
-            AppId.AHORROBUS.idLocalCompany -> getDetailStopOracleRequest(idBusStop)
-            AppId.RUBI.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
+
+            AHORROBUS.idLocalCompany -> getDetailStopOracleRequest(idBusStop)
+            BENIDORM.idLocalCompany,
+            RUBI.idLocalCompany,
+            VIGO.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
+
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
     fun getRequestByIdCompanyDetailRoute(idLocalCompany: Int, idBusLine: String, idPath: String) =
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> getBenidormDetailRouteRequest(idBusLine, idPath)
+            BENIDORM.idLocalCompany -> getBenidormDetailRouteRequest(idBusLine, idPath)
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
@@ -318,7 +336,7 @@ object RequestDataBase {
         DetailLineAwseRequest(
             cityOrTown = "segovia",
             country = "españa",
-            idbusLine = idBusLine,
+            idBusLine = idBusLine,
             idFront = 100,
             idLocalCompany = idLocalCompany.toString(),
             state = "provincia_segovia",
@@ -349,7 +367,7 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
-        AppId.VIGO.idLocalCompany -> BaseRequest(
+        VIGO.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "vigo",
             state = "vigo",

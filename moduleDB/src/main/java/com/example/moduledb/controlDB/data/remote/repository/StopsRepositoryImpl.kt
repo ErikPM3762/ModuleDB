@@ -142,18 +142,19 @@ class StopsRepositoryImpl @Inject constructor(
                 }
 
                 else -> {
-                    performUpdateOperation({
-                        awsServiceApi.getDetailStopsById(
-                            RequestDataBase.getRequestByIdCompanyDetailStop(
-                                idLocalCompany, idBusStop
+                    performUpdateOperation(
+                        {
+                            val request = RequestDataBase.getRequestByIdCompanyDetailStop(
+                                idLocalCompany,
+                                idBusStop
                             )
-                        )
-                    }, { response ->
-                        response?.result?.stopsList?.toRoomDetailStop()
-                    }, { detailStop ->
-                        detailStopsDao.insertOrUpdate(detailStop)
-                        detailStop.toDetailStop()
-                    })
+                            awsServiceApi.getDetailStopsById(request)
+                        }, { response ->
+                            response?.result?.stopsList?.toRoomDetailStop()
+                        }, { detailStop ->
+                            detailStopsDao.insertOrUpdate(detailStop)
+                            detailStop.toDetailStop()
+                        })
                 }
             }
         }

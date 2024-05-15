@@ -16,6 +16,7 @@ import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.domain.usecase.GetDetailLine
 import com.example.moduledb.controlDB.domain.usecase.GetDetailLineById
+import com.example.moduledb.controlDB.domain.usecase.GetDetailStopById
 import com.example.moduledb.controlDB.domain.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.domain.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.domain.usecase.GetMacroRegions
@@ -25,6 +26,7 @@ import com.example.moduledb.controlDB.domain.usecase.GetRegions
 import com.example.moduledb.controlDB.domain.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
+import com.example.moduledb.controlDB.domain.usecase.GetTheoricByTypeStop
 import com.example.moduledb.controlDB.domain.usecase.api_here.GetDirectionsByApiHere
 import com.example.moduledb.controlDB.domain.usecase.lines.GetAllLines
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
@@ -35,6 +37,7 @@ import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -60,6 +63,8 @@ class InitDbViewModel @Inject constructor(
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
     private val getAllLines: GetAllLines,
     private val getMapStops: GetMapStops,
+    private val getDetailStopById: GetDetailStopById,
+    private val getTheoricByTypeStop: GetTheoricByTypeStop,
     private val getDirectionsByApiHere: GetDirectionsByApiHere
 ) : ViewModel() {
 
@@ -530,6 +535,34 @@ class InitDbViewModel @Inject constructor(
             }
 
         }
+    }
+
+    fun demoStopDetailVigo() = genericRequest {
+        val idLocalCompany = 60
+        val idBusStop = "130"
+        val idBusLine = "6"
+        getDetailStopById(idLocalCompany, idBusStop).collectLatest {
+            Log.d(TAG, "demoStopDetailVigo: StopDetail: $it")
+            getAllLines(idLocalCompany).collectLatest {
+                Log.d(TAG, "demoStopDetailVigo: Lines: $it")
+                getDetailLines(idLocalCompany, idBusLine, "").collectLatest {
+                    Log.d(TAG, "demoStopDetailVigo: LinesDetail: $it")
+                    getTheoricByTypeStop(idLocalCompany, idBusLine, "I").collectLatest {
+                        Log.d(TAG, "demoStopDetailVigo: GetTheorics: $it")
+                    }
+                }
+            }
+        }
+
+
+
+
+        /*
+        //private val getStopDetailById: GetDetailStopById,
+        //private val getAllLines: GetAllLines,
+        //private val getDetailLine: GetDetailLine,
+        //private val getTheoricByTypeStop: GetTheoricByTypeStop
+         */
     }
 
     private fun genericRequest(code: suspend () -> Unit) = viewModelScope.launch {
