@@ -186,16 +186,36 @@ object RequestDataBase {
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
-    fun getRequestByIdCompanyDetailStop(idLocalCompany: Int, idBusStop: String) =
-        when (idLocalCompany) {
+    fun getRequestByIdCompanyDetailStop(idLocalCompany: Int, idBusStop: String): DetailStopRequest {
+        val request = getDetailStopBaseRequest(idLocalCompany.toString(), idBusStop)
+        return when (idLocalCompany) {
+            AHORROBUS.idLocalCompany -> request.copy(
+                country = "intermedio",
+                state = "intermedio",
+                cityOrTown = "intermedio"
+            )
 
-            AHORROBUS.idLocalCompany -> getDetailStopOracleRequest(idBusStop)
-            BENIDORM.idLocalCompany,
-            RUBI.idLocalCompany,
-            VIGO.idLocalCompany -> getDetailStopAwsRequest(idBusStop)
+            BENIDORM.idLocalCompany -> request.copy(
+                country = "spain",
+                state = "benidorm",
+                cityOrTown = "benidorm"
+            )
+
+            RUBI.idLocalCompany -> request.copy(
+                country = "spain",
+                state = "rubi",
+                cityOrTown = "rubi"
+            )
+
+            VIGO.idLocalCompany -> request.copy(
+                country = "spain",
+                state = "vigo",
+                cityOrTown = "vigo"
+            )
 
             else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
+    }
 
     fun getRequestByIdCompanyDetailRoute(idLocalCompany: Int, idBusLine: String, idPath: String) =
         when (idLocalCompany) {
@@ -261,25 +281,16 @@ object RequestDataBase {
         idBrand = ""
     )
 
-    private fun getDetailStopOracleRequest(idBusStop: String) = DetailStopRequest(
-        idFront = 100,
-        country = "intermedio",
-        state = "intermedio",
-        cityOrTown = "intermedio",
-        idLocalCompany = "11",
-        idBusLine = "",
-        idBusStop = idBusStop
-    )
-
-    private fun getDetailStopAwsRequest(idBusStop: String) = DetailStopRequest(
-        idFront = 100,
-        country = "españa",
-        state = "provincia",
-        cityOrTown = "segovia",
-        idLocalCompany = "5",
-        idBusLine = "",
-        idBusStop = idBusStop
-    )
+    private fun getDetailStopBaseRequest(idLocalCompany: String, idBusStop: String) =
+        DetailStopRequest(
+            idFront = 100,
+            country = "",
+            state = "",
+            cityOrTown = "",
+            idBusLine = "",
+            idLocalCompany = idLocalCompany,
+            idBusStop = idBusStop
+        )
 
     fun getRequestByIdCompanyAws(idLocalCompany: Int, idBusLine: String, tripCode: String) =
         when (idLocalCompany) {
