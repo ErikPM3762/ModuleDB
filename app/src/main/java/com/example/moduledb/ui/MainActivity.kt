@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.AHORROBUS.idLocalCompany
+    private val idLocalCompany = AppId.VIGO.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,8 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        stopsViewModel.fetchTheoricByTypeStop()
-        mainViewModel.demoGetStops(idLocalCompany)
+        mainViewModel.demoStopDetailVigo()
     }
 
     private fun observers() {

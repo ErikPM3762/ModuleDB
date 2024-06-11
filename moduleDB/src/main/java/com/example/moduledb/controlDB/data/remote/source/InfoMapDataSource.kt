@@ -37,7 +37,7 @@ class InfoMapDataSource @Inject constructor(
                     emit(response)
                 }
 
-                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany -> {
+                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
                     val response: Response<GetPOIsAwsResponse> =
                         awsServiceApi.getPointsOfInterest(request)
                     emit(response)

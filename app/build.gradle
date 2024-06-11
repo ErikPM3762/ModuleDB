@@ -80,3 +80,9 @@ dependencies {
     implementation "${libraries.google_hilt}"
     kapt "${libraries.hilt_kapt}"
 }
+
+tasks.register('makeModule') {
+    group "generate_module_files"
+    dependsOn(":moduleDB:generatePomFileForGmsPublication")
+    dependsOn(":moduleDB:assembleDebug")
+}
