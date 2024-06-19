@@ -11,21 +11,21 @@ import retrofit2.Response
 
 
 @ExperimentalCoroutinesApi
-fun<T> Flow<NetResult<T>>.loading():Flow<NetResult<T>> =
+fun <T> Flow<NetResult<T>>.loading(): Flow<NetResult<T>> =
     this.onStart { emit(NetResult.StarLoading) }
         .onCompletion { emit(NetResult.StopLoading) }
 
 fun <T>Throwable.toNetworkResult(): Response<T> =
     Response.error(500, getGenericError().toResponseBody(null))
 
-fun <T, R> Response<T>.parse(parseMethod : (T) -> R): NetResult<R> {
+fun <T, R> Response<T>.parse(parseMethod: (T) -> R): NetResult<R> {
     val responseData = body()
-    return if(isSuccessful && responseData != null)
+    return if (isSuccessful && responseData != null)
         try {
             NetResult.Success(parseMethod(responseData))
-        } catch (e : Exception){
+        } catch (e: Exception) {
             NetResult.Error(getGenericError())
-        }else {
+        } else {
         // Verificar si podemos poner el error que nos regrese el servicio
         NetResult.Error(getGenericError())
     }

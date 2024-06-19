@@ -1,12 +1,8 @@
 package com.example.moduledb.controlDB.data.remote.server
 
-import com.example.moduledb.controlDB.domain.models.MDBMacroRegions
-import com.example.moduledb.controlDB.data.remote.request.DetailLineRequest
-import com.example.moduledb.controlDB.data.remote.request.DetailLinesListRequest
+import com.example.moduledb.controlDB.data.remote.request.BaseRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListRequest
 import com.example.moduledb.controlDB.data.remote.request.MacroRegionsRequest
-import com.example.moduledb.controlDB.data.remote.request.POIsRequest
-import com.example.moduledb.controlDB.data.remote.request.RechargingPointsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.response.AuthTokenResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.DetailLineResponse
@@ -34,10 +30,10 @@ interface OracleServiceApi {
      * Apis para hacer el llamado de los datos para Ahorrobus y replicas Mexico Oracle
      */
     @POST("/apis/1.1.0/puntosDeInteres/1.0.0/obtenerListaPuntosDeInteres")
-    suspend fun getPOIs(@Body params: POIsRequest): Response<POIsResponse>
+    suspend fun getPOIs(@Body params: BaseRequest): Response<POIsResponse>
 
     @POST("/apis/1.1.0/tarjetasPrepago/1.0.0/obtenerListaCentrosDeRecarga")
-    suspend fun getRechargingPoints(@Body params: RechargingPointsRequest): Response<PORechargeResponse>
+    suspend fun getRechargingPoints(@Body params: BaseRequest): Response<PORechargeResponse>
 
     @POST("/apis/1.1.0/puntosDeInteres/1.0.0/obtenerListaPuntosDeInteres/version")
     suspend fun getPOIsVersion(@Body params: JsonObject): Response<VTPointInterestResponse>
@@ -67,7 +63,6 @@ interface OracleServiceApi {
         @Field("grant_type") grantType: String,
         @Field("scope") ADOAPIs: String
     ): Call<AuthTokenResponse>
-
 
 
     /**

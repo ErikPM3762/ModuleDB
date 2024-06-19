@@ -85,7 +85,7 @@ ext.pomfileManualGenerator = {
     root.children().last()
 }
 project(':moduleDB') {
-    version = "1.0.29"
+    version = "1.2.3"
     group = 'com.mobility.ado.qa'
     artifactoryPublish.dependsOn('build')
     publishing {

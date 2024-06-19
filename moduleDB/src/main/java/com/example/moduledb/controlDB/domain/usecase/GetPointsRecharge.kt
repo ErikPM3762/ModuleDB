@@ -10,6 +10,6 @@ import javax.inject.Inject
 
 class GetPointsRecharge @Inject constructor(private val infoMapRepository: InfoMapRepository){
 
-    suspend fun invoke() : Flow<NetResult<List<MDbPORecharge>>> =
-        infoMapRepository.fetchPointOfRechargeData()
+    suspend operator fun invoke(idLocalCompany: Int) : Flow<NetResult<List<MDbPORecharge>>> =
+        infoMapRepository.fetchPointOfRechargeData(idLocalCompany)
 }

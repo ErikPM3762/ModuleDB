@@ -1,6 +1,7 @@
 package com.example.moduledb.controlDB.data.remote.server
 
 import com.example.moduledb.controlDB.data.remote.request.AuthTokenAwsRequest
+import com.example.moduledb.controlDB.data.remote.request.BaseRequest
 import com.example.moduledb.controlDB.data.remote.request.LinesListAwsRequest
 import com.example.moduledb.controlDB.data.remote.request.RoutesByIdLineRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
@@ -8,9 +9,12 @@ import com.example.moduledb.controlDB.data.remote.request.TeoricByTypeStopReques
 import com.example.moduledb.controlDB.data.remote.response.AuthTokenAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.DetailLineResponse
 import com.example.moduledb.controlDB.data.remote.response.lines.LinesByRegionsResponse
+import com.example.moduledb.controlDB.data.remote.response.pointsInterest.GetPOIsAwsResponse
+import com.example.moduledb.controlDB.data.remote.response.pointsRecharge.GetRPsAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.routes.RoutesByIdLineResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.DetailStopsResponse
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
+import com.example.moduledb.controlDB.data.remote.response.stops.map.GetMapStopsAwsResponse
 import com.example.moduledb.controlDB.data.remote.response.teroicByStop.TeoricsByTypeStopResponse
 import retrofit2.Call
 import retrofit2.Response
@@ -39,10 +43,17 @@ interface AwsServiceApi {
     @POST("ObtenerDetalleLinea")
     suspend fun getDetailOfLine(@Body params: Any): Response<DetailLineResponse>
 
-
     @POST("ObtenerTrayectos")
     suspend fun getRoutesByIdLine(@Body params: RoutesByIdLineRequest): Response<RoutesByIdLineResponse>
 
     @POST("ObtenerDetalleParada")
     suspend fun getDetailStopsById(@Body params: Any): Response<DetailStopsResponse>
+
+    @POST("ListarPuntosInteres")
+    suspend fun getPointsOfInterest(@Body params: BaseRequest): Response<GetPOIsAwsResponse>
+
+    @POST("ListarCentrosRecarga")
+    suspend fun getRechargingPoints(@Body params: BaseRequest): Response<GetRPsAwsResponse>
+    @POST("ObtenerMapaParadas")
+    suspend fun getMapStops(@Body params: BaseRequest): Response<GetMapStopsAwsResponse>
 }

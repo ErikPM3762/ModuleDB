@@ -6,10 +6,13 @@ import com.example.moduledb.controlDB.data.local.daos.MDbStopsDao
 import com.example.moduledb.controlDB.data.local.daos.MDbTheoricsByTypeStopDao
 import com.example.moduledb.controlDB.data.remote.repository.StopsRepositoryImpl
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
+import com.example.moduledb.controlDB.data.remote.server.IApiHereServiceApi
 import com.example.moduledb.controlDB.data.remote.server.LiveNetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.MDbBaseInterceptor
 import com.example.moduledb.controlDB.data.remote.server.NetworkMonitor
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
+import com.example.moduledb.controlDB.data.remote.source.ApiHereDataSource
+import com.example.moduledb.controlDB.data.remote.source.IApiHereDataSource
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
 import com.example.moduledb.controlDB.data.remote.source.ILinesDataSource
 import com.example.moduledb.controlDB.data.remote.source.IRegionsDataSource
@@ -59,8 +62,11 @@ object ModuleInject {
 
     @Singleton
     @Provides
-    fun provideInfoMapDataSource(serviceApi: OracleServiceApi): IInfoMapDataSource {
-        return InfoMapDataSource(serviceApi)
+    fun provideInfoMapDataSource(
+        oracleServiceApi: OracleServiceApi,
+        awsServiceApi: AwsServiceApi
+    ): IInfoMapDataSource {
+        return InfoMapDataSource(oracleServiceApi, awsServiceApi)
     }
 
     @Singleton
@@ -82,7 +88,14 @@ object ModuleInject {
         detailStopsDao: MDbDetailStopDao,
         theoricByTypeStop: MDbTheoricsByTypeStopDao,
     ): StopsRepository {
-        return StopsRepositoryImpl(serviceApi, awsServiceApi, remoteDataSource, stopsDao, detailStopsDao,theoricByTypeStop )
+        return StopsRepositoryImpl(
+            serviceApi,
+            awsServiceApi,
+            remoteDataSource,
+            stopsDao,
+            detailStopsDao,
+            theoricByTypeStop
+        )
     }
 
     @Singleton
@@ -114,6 +127,26 @@ object ModuleInject {
     @Provides
     fun provideNetworkMonitor(@ApplicationContext context: Context): NetworkMonitor {
         return LiveNetworkMonitor(context)
+    }
+
+
+    @Singleton
+    @Provides
+    fun provideApiHereService(interceptor: MDbBaseInterceptor): IApiHereServiceApi {
+        val client = interceptor.apiHereOkHttpClient
+        return Retrofit.Builder()
+            .baseUrl("https://autosuggest.search.hereapi.com/v1/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .client(client)
+            .build()
+            .create(IApiHereServiceApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideApiHereDataSource(service: IApiHereServiceApi): IApiHereDataSource {
+        return ApiHereDataSource(service)
     }
 
     /**

@@ -4,7 +4,10 @@ package com.example.moduledb.controlDB.data.remote.source
 import com.example.moduledb.controlDB.data.local.entities.MDbLinesDetail
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
-import com.example.moduledb.controlDB.utils.AppId
+import com.example.moduledb.controlDB.utils.AppId.AHORROBUS
+import com.example.moduledb.controlDB.utils.AppId.BENIDORM
+import com.example.moduledb.controlDB.utils.AppId.RUBI
+import com.example.moduledb.controlDB.utils.AppId.VIGO
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.getGenericError
@@ -34,36 +37,19 @@ class LinesDataSource @Inject constructor(
         state: String
     ): Flow<NetResult<List<MDbLinesDetail>>> =
         flow {
+            val request =
+                RequestDataBase.getRequestByIdCompanyDetailLine(idLocalCompany, idBusline, state)
             when (idLocalCompany) {
-                AppId.AHORROBUS.idLocalCompany -> emit(
-                    oracleServiceApi.getDetailOfLine(
-                        RequestDataBase.getRequestByIdCompanyDetailLine(
-                            idLocalCompany,
-                            idBusline,
-                            state
-                        )
-                    )
-                )
-
-                AppId.RUBI.idLocalCompany, AppId.BENIDORM.idLocalCompany -> emit(
-                    awsServiceApi.getDetailOfLine(
-                        RequestDataBase.getRequestByIdCompanyDetailLine(
-                            idLocalCompany,
-                            idBusline,
-                            state
-                        )
-                    )
-                )
+                AHORROBUS.idLocalCompany -> emit(oracleServiceApi.getDetailOfLine(request))
+                RUBI.idLocalCompany,
+                VIGO.idLocalCompany,
+                BENIDORM.idLocalCompany -> emit(awsServiceApi.getDetailOfLine(request))
             }
-        }
-            .map { res ->
-                res.parse {
-                    it.result!!.busLine
-                }
-            }.loading().catch { error ->
-                emit(NetResult.Error(getGenericError()))
-            }
-            .flowOn(Dispatchers.IO)
+        }.map { res ->
+            res.parse { it.result!!.busLine }
+        }.loading().catch { error ->
+            emit(NetResult.Error(getGenericError()))
+        }.flowOn(Dispatchers.IO)
 
     override fun getRouteDetailByIds(
         idLocalCompany: Int,
@@ -71,7 +57,7 @@ class LinesDataSource @Inject constructor(
         idPath: String
     ): Flow<NetResult<List<MDbLinesDetail>>> = flow {
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> emit(
+            BENIDORM.idLocalCompany -> emit(
                 awsServiceApi.getDetailOfLine(
                     RequestDataBase.getRequestByIdCompanyDetailRoute(
                         idLocalCompany,

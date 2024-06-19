@@ -153,16 +153,9 @@ class RegionsDataSource @Inject constructor(
 
     override fun getAllLines(idLocalCompany: Int): Flow<NetResult<List<MDbLinesByRegion>>> =
         flow {
-            when (idLocalCompany) {
-                AppId.BENIDORM.idLocalCompany -> emit(
-                    awsServiceApi.getLines(
-                        RequestDataBase.getAllLinesRequestByIdLocalCompany(
-                            idLocalCompany
-                        )
-                    )
-                )
-                else -> throw IllegalArgumentException("Unknown id company for getAllLines request")
-            }
+            val request = RequestDataBase.getAllLinesRequestByIdLocalCompany(idLocalCompany)
+            val result = awsServiceApi.getLines(request)
+            emit(result)
         }.catch { error ->
             emit(error.toNetworkResult())
         }

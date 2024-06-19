@@ -27,9 +27,11 @@ class MDbBaseInterceptor @Inject constructor() {
 
     val awsOkHttpClient = getOkHttpClient(InterceptorType.AWS)
 
+    val apiHereOkHttpClient = getOkHttpClient(InterceptorType.API_HERE)
+
 
     enum class InterceptorType {
-        AWS, ORACLE
+        AWS, ORACLE, API_HERE
     }
 
     private fun getOkHttpClient(type: InterceptorType) = HttpLoggingInterceptor().run {
@@ -116,6 +118,27 @@ class MDbBaseInterceptor @Inject constructor() {
                         response.request.newBuilder()
                             .header("Authorization", "Bearer $oracleAuthToken")
                             .build()
+                    }
+                    .build()
+            }
+
+            InterceptorType.API_HERE -> {
+                level = HttpLoggingInterceptor.Level.BODY
+                val timeout = 90L
+                OkHttpClient().newBuilder()
+                    .connectTimeout(timeout, TimeUnit.SECONDS)
+                    .readTimeout(timeout, TimeUnit.SECONDS)
+                    .writeTimeout(timeout, TimeUnit.SECONDS)
+                    .addInterceptor(this)
+                    .addInterceptor { chain ->
+                        val original: Request = chain.request()
+                        val requestBuilder: Request.Builder = original.newBuilder()
+                            .addHeader("Accept", "application/json")
+                            .addHeader("Content-Type", "application/json")
+                        // Adding Authorization token (API Key)
+                        // Requests will be denied without API key
+                        val request: Request = requestBuilder.build()
+                        chain.proceed(request)
                     }
                     .build()
             }

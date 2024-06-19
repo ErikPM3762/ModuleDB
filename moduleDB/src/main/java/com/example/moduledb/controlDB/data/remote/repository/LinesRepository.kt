@@ -37,9 +37,7 @@ class LinesRepository @Inject constructor(
         remoteDataSource.getDetailLineById(idLocalCompany, idBusline, state)
             .map { result ->
                 if (result is NetResult.Success) {
-                    println("idBusLine: $idBusline")
                     val data = result.data.toDetailLineList()
-                    println(data)
                     linesDetailDao.insertOrUpdate(data)
                 }
                 result

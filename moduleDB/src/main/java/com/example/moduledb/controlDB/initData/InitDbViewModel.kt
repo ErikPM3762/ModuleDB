@@ -16,6 +16,7 @@ import com.example.moduledb.controlDB.data.local.entities.MDbMacroRegions
 import com.example.moduledb.controlDB.data.local.entities.MDdRegions
 import com.example.moduledb.controlDB.domain.usecase.GetDetailLine
 import com.example.moduledb.controlDB.domain.usecase.GetDetailLineById
+import com.example.moduledb.controlDB.domain.usecase.GetDetailStopById
 import com.example.moduledb.controlDB.domain.usecase.GetLinesByMacroRegion
 import com.example.moduledb.controlDB.domain.usecase.GetLinesByRegion
 import com.example.moduledb.controlDB.domain.usecase.GetMacroRegions
@@ -25,14 +26,18 @@ import com.example.moduledb.controlDB.domain.usecase.GetRegions
 import com.example.moduledb.controlDB.domain.usecase.GetStopByBusLine
 import com.example.moduledb.controlDB.domain.usecase.GetStopById
 import com.example.moduledb.controlDB.domain.usecase.GetStops
+import com.example.moduledb.controlDB.domain.usecase.GetTheoricByTypeStop
+import com.example.moduledb.controlDB.domain.usecase.api_here.GetDirectionsByApiHere
 import com.example.moduledb.controlDB.domain.usecase.lines.GetAllLines
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRouteDetailByIdLineAndIdPath
 import com.example.moduledb.controlDB.domain.usecase.routes.GetRoutesByIdLine
+import com.example.moduledb.controlDB.domain.usecase.stops.GetMapStops
 import com.example.moduledb.controlDB.utils.Event
 import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -56,8 +61,14 @@ class InitDbViewModel @Inject constructor(
     private val getDetailLines: GetDetailLine,
     private val getDetailLinesById: GetDetailLineById,
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
-    private val getAllLines: GetAllLines
+    private val getAllLines: GetAllLines,
+    private val getMapStops: GetMapStops,
+    private val getDetailStopById: GetDetailStopById,
+    private val getTheoricByTypeStop: GetTheoricByTypeStop,
+    private val getDirectionsByApiHere: GetDirectionsByApiHere
 ) : ViewModel() {
+
+    private val TAG = this::class.java.simpleName
 
     private val _pointsOfInterestAvailable = MutableLiveData<Event<Unit>>()
     val pointsOfInterestAvailable: LiveData<Event<Unit>> get() = _pointsOfInterestAvailable
@@ -94,12 +105,14 @@ class InitDbViewModel @Inject constructor(
      * Retorna los puntos de interes
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
-    fun getPointsInterest() {
+    fun demoGetPointsOfInterest(idLocalCompany: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            getPointsInterest.invoke().collect { result ->
+            getPointsInterest(idLocalCompany).collect { result ->
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfInterestAvailable.postValue(Event(Unit))
+                        Log.d(TAG, "getPOIS: SUCCES")
+                        Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                        Log.d(TAG, "data: ${result.data}")
                     }
 
                     else -> {}
@@ -114,12 +127,15 @@ class InitDbViewModel @Inject constructor(
      * Retorna Los puntos de recarga
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
-    fun getPointsRecharge() {
+    fun demoGetRechargePoints(idLocalCompany: Int) {
+        Log.d(TAG, "demoGetRechargePoints")
         viewModelScope.launch(Dispatchers.IO) {
-            getPointsRecharge.invoke().collect { result ->
+            getPointsRecharge(idLocalCompany).collect { result ->
+                Log.d(TAG, "State: $result")
                 when (result) {
                     is NetResult.Success -> {
-                        _pointsOfRechargeAvailable.postValue(Event(Unit))
+                        Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                        Log.d(TAG, "data: ${result.data}")
                     }
 
                     else -> {}
@@ -364,17 +380,17 @@ class InitDbViewModel @Inject constructor(
      * Funcionalidad abierta para ser utilizada por medio de la instancia del viewModel de manera externa
      * Obtenemos la lista de las paradas de Oracle
      */
-    fun getStops(idLocalCompany: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getStops.invoke(idLocalCompany).collect() { result ->
-                when (result) {
-                    is NetResult.Success -> {
-                        val mdbListStops = result.data as List<MDbListStops>
-                        _mdbListStops.postValue(mdbListStops)
-                    }
-
-                    else -> {}
+    fun demoGetStops(idLocalCompany: Int) = genericRequest {
+        Log.d(TAG, "demoGetStops")
+        getStops(idLocalCompany).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
                 }
+
+                else -> {}
             }
         }
     }
@@ -471,7 +487,7 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun demo_getAllLines(idLocalCompany: Int) = genericRequest {
+    fun demoGetAllLines(idLocalCompany: Int) = genericRequest {
         getAllLines.invoke(idLocalCompany).collect { result ->
             when (result) {
                 is NetResult.Success -> {
@@ -481,9 +497,72 @@ class InitDbViewModel @Inject constructor(
                         "${resultListLines.count()}"
                     )
                 }
+
                 else -> {}
             }
         }
+    }
+
+    fun demoGetMapStops(idLocalCompany: Int) = genericRequest {
+        Log.d(TAG, "demoGetMapStops")
+        getMapStops(idLocalCompany).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    fun demoGetDirections(
+        latitude: String,
+        longitude: String,
+        query: String,
+    ) = genericRequest {
+        getDirectionsByApiHere(latitude, longitude, query).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "query: $query")
+                    Log.d(TAG, "data: ${result.data}")
+                }
+
+                else -> {}
+            }
+
+        }
+    }
+
+    fun demoStopDetailVigo() = genericRequest {
+        val idLocalCompany = 60
+        val idBusStop = "130"
+        val idBusLine = "6"
+        getDetailStopById(idLocalCompany, idBusStop).collectLatest {
+            Log.d(TAG, "demoStopDetailVigo: StopDetail: $it")
+            getAllLines(idLocalCompany).collectLatest {
+                Log.d(TAG, "demoStopDetailVigo: Lines: $it")
+                getDetailLines(idLocalCompany, idBusLine, "").collectLatest {
+                    Log.d(TAG, "demoStopDetailVigo: LinesDetail: $it")
+                    getTheoricByTypeStop(idLocalCompany, idBusLine, "I").collectLatest {
+                        Log.d(TAG, "demoStopDetailVigo: GetTheorics: $it")
+                    }
+                }
+            }
+        }
+
+
+
+
+        /*
+        //private val getStopDetailById: GetDetailStopById,
+        //private val getAllLines: GetAllLines,
+        //private val getDetailLine: GetDetailLine,
+        //private val getTheoricByTypeStop: GetTheoricByTypeStop
+         */
     }
 
     private fun genericRequest(code: suspend () -> Unit) = viewModelScope.launch {
