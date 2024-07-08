@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     private val stopsViewModel: StopsViewModel by viewModels()
     lateinit var binding: ActivityMainBinding
     lateinit var appDatabase: AppDataBase
-    private val idLocalCompany = AppId.VIGO.idLocalCompany
+    private val idLocalCompany = AppId.ARAGON.idLocalCompany
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +72,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoStopDetailVigo()
+        mainViewModel.demoGetMapStops(idLocalCompany)
+        mainViewModel.demoGetAllLines(idLocalCompany)
+        mainViewModel.demoGetPointsOfInterest(idLocalCompany)
+        mainViewModel.demoGetStops(idLocalCompany)
     }
 
     private fun observers() {
