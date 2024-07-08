@@ -369,23 +369,14 @@ object RequestDataBase {
             pathIdBusLine = idPath
         )
 
-    fun getMapStopsRequestByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "ourense",
-            state = "ourense",
-            cityOrTown = "ourense",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-        VIGO.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "vigo",
-            state = "vigo",
-            cityOrTown = "vigo",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
-    }
+    /**
+     * Request to service ObtenerMapaParadas
+     */
+    fun getMapStopsRequestByIdCompany(idLocalCompany: Int): BaseRequest = BaseRequest(
+        idFront = 100,
+        country = "generic",
+        state = "generic",
+        cityOrTown = "generic",
+        idLocalCompany = idLocalCompany.toString()
+    )
 }

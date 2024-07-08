@@ -106,6 +106,7 @@ class InitDbViewModel @Inject constructor(
      * Es aplicable para los siguientes negocios: Ahorrobus
      */
     fun demoGetPointsOfInterest(idLocalCompany: Int) {
+        Log.d(TAG, "demoGetPointsOfInterest")
         viewModelScope.launch(Dispatchers.IO) {
             getPointsInterest(idLocalCompany).collect { result ->
                 when (result) {
@@ -488,6 +489,7 @@ class InitDbViewModel @Inject constructor(
     }
 
     fun demoGetAllLines(idLocalCompany: Int) = genericRequest {
+        Log.d(TAG, "demoGetAllLines")
         getAllLines.invoke(idLocalCompany).collect { result ->
             when (result) {
                 is NetResult.Success -> {
