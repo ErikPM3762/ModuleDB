@@ -9,6 +9,7 @@ import com.example.moduledb.controlDB.data.local.entities.MDbPORecharge
 import com.example.moduledb.controlDB.data.local.mapers.toPointsInterestList
 import com.example.moduledb.controlDB.data.local.mapers.toPointsRechargeList
 import com.example.moduledb.controlDB.data.remote.source.IInfoMapDataSource
+import com.example.moduledb.controlDB.utils.AppId
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.getGenericError
 import com.example.moduledb.controlDB.utils.loading

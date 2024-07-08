@@ -37,13 +37,11 @@ class InfoMapDataSource @Inject constructor(
                     emit(response)
                 }
 
-                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
+                else -> {
                     val response: Response<GetPOIsAwsResponse> =
                         awsServiceApi.getPointsOfInterest(request)
                     emit(response)
                 }
-
-                else -> throw Exception("Unknow option for getPointsInterest")
             }
         }.catch { error ->
             emit(error.toNetworkResult())
@@ -83,13 +81,12 @@ class InfoMapDataSource @Inject constructor(
                         oracleServiceApi.getRechargingPoints(request)
                     emit(response)
                 }
-                AppId.BENIDORM.idLocalCompany -> {
+
+                else -> {
                     val response: Response<GetRPsAwsResponse> =
                         awsServiceApi.getRechargingPoints(request)
                     emit(response)
                 }
-
-                else -> throw Exception("Unknow option for getPointsInterest")
             }
         }.catch { error ->
             emit(error.toNetworkResult())

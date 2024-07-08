@@ -5,7 +5,6 @@ import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
 import com.example.moduledb.controlDB.data.remote.request.StopsSpainRequest
 import com.example.moduledb.controlDB.data.remote.response.stops.StopsResponse
-import com.example.moduledb.controlDB.data.remote.response.stops.map.GetMapStopsAwsResponse
 import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.domain.models.MDBTheoricByTypeStop
@@ -61,21 +60,18 @@ class StopDataSource @Inject constructor(
      */
     override suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> {
-                val request =
-                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
-                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
-                emit(response)
-            }
-
             AppId.AHORROBUS.idLocalCompany -> {
                 val request =
                     RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest
                 val response: Response<StopsResponse> = oracleServiceApi.getStops(request)
                 emit(response)
             }
-
-            else -> throw Exception("Unknow option for getStops")
+            else -> {
+                val request =
+                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
+                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
+                emit(response)
+            }
         }
 
     }.catch { error ->
@@ -90,14 +86,8 @@ class StopDataSource @Inject constructor(
 
     override fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         val request = RequestDataBase.getMapStopsRequestByIdCompany(idLocalCompany)
-        when (idLocalCompany) {
-            AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
-                val response: Response<GetMapStopsAwsResponse> = awsServiceApi.getMapStops(request)
-                emit(response)
-            }
-
-            else -> throw Exception("Unknow option for getPointsInterest")
-        }
+        val response = awsServiceApi.getMapStops(request)
+        emit(response)
     }.catch { error ->
         emit(error.toNetworkResult())
     }.map { res ->
