@@ -60,21 +60,18 @@ class StopDataSource @Inject constructor(
      */
     override suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> {
-                val request =
-                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
-                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
-                emit(response)
-            }
-
             AppId.AHORROBUS.idLocalCompany -> {
                 val request =
                     RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest
                 val response: Response<StopsResponse> = oracleServiceApi.getStops(request)
                 emit(response)
             }
-
-            else -> throw Exception("Unknow option for getStops")
+            else -> {
+                val request =
+                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
+                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
+                emit(response)
+            }
         }
 
     }.catch { error ->

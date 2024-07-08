@@ -153,14 +153,6 @@ object RequestDataBase {
 
 
     fun getRequestByIdCompanyStops(idLocalCompany: Int) = when (idLocalCompany) {
-        BENIDORM.idLocalCompany -> StopsSpainRequest(
-            idFront = 100,
-            country = "benidorm",
-            state = "benidorm",
-            cityOrTown = "benidorm",
-            idLocalCompany = "5"
-        )
-
         AHORROBUS.idLocalCompany -> StopsRequest(
             idLocalCompany = "11",
             country = "mexico",
@@ -171,7 +163,13 @@ object RequestDataBase {
             idBrand = ""
         )
 
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
+        else -> StopsSpainRequest(
+            idFront = 100,
+            country = "generic",
+            state = "generic",
+            cityOrTown = "generic",
+            idLocalCompany = idLocalCompany.toString()
+        )
     }
 
     fun getRequestByIdCompanyDetailLine(idLocalCompany: Int, idBusLine: String, state: String) =
