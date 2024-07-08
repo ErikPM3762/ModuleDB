@@ -42,31 +42,6 @@ object RequestDataBase {
     }
 
     fun getPOIRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "ourense",
-            state = "ourense",
-            cityOrTown = "ourense",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-
-        BENIDORM.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "spain",
-            state = "benidorm",
-            cityOrTown = "benidorm",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-        VIGO.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "spain",
-            state = "vigo",
-            cityOrTown = "vigo",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
         AHORROBUS.idLocalCompany -> BaseRequest(
             idFront = 51,
             country = "mexico",
@@ -75,7 +50,14 @@ object RequestDataBase {
             idLocalCompany = idLocalCompany.toString()
         )
 
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
+        else -> BaseRequest(
+            idFront = 100,
+            country = "generic",
+            state = "generic",
+            cityOrTown = "generic",
+            idLocalCompany = idLocalCompany.toString()
+        )
+
     }
 
     fun getRPRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {

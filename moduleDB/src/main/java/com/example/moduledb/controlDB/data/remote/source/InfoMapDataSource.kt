@@ -37,13 +37,11 @@ class InfoMapDataSource @Inject constructor(
                     emit(response)
                 }
 
-                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
+                else -> {
                     val response: Response<GetPOIsAwsResponse> =
                         awsServiceApi.getPointsOfInterest(request)
                     emit(response)
                 }
-
-                else -> throw Exception("Unknow option for getPointsInterest")
             }
         }.catch { error ->
             emit(error.toNetworkResult())
