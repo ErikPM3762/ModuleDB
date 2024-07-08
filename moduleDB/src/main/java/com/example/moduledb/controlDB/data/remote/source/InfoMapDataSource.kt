@@ -81,13 +81,12 @@ class InfoMapDataSource @Inject constructor(
                         oracleServiceApi.getRechargingPoints(request)
                     emit(response)
                 }
-                AppId.BENIDORM.idLocalCompany -> {
+
+                else -> {
                     val response: Response<GetRPsAwsResponse> =
                         awsServiceApi.getRechargingPoints(request)
                     emit(response)
                 }
-
-                else -> throw Exception("Unknow option for getPointsInterest")
             }
         }.catch { error ->
             emit(error.toNetworkResult())
