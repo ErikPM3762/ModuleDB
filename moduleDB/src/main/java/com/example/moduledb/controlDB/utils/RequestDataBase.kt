@@ -116,27 +116,11 @@ object RequestDataBase {
         }
 
     fun getAllLinesRequestByIdLocalCompany(idLocalCompany: Int): LinesListAwsRequest {
-        val request = when (idLocalCompany) {
-            BENIDORM.idLocalCompany -> getAllLinesRequest(
-                state = "benidorm",
-                cityOrTown = "benidorm",
-                idLocalCompany = idLocalCompany.toString()
-            )
-
-            RUBI.idLocalCompany -> getAllLinesRequest(
-                state = "rubi",
-                cityOrTown = "rubi",
-                idLocalCompany = idLocalCompany.toString()
-            )
-
-            VIGO.idLocalCompany -> getAllLinesRequest(
-                state = "vigo",
-                cityOrTown = "vigo",
-                idLocalCompany = idLocalCompany.toString()
-            )
-
-            else -> throw IllegalArgumentException("Unknown id company for getAllLinesRequestByIdLocalCompany")
-        }
+        val request = getAllLinesRequest(
+            state = "generic",
+            cityOrTown = "generic",
+            idLocalCompany = idLocalCompany.toString()
+        )
         return request
     }
 
