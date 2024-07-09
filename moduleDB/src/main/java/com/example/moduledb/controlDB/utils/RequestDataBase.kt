@@ -262,13 +262,13 @@ object RequestDataBase {
             tripCode = tripCode
         )
 
-    fun getRoutesByIdRequestForBenidorm(idBusLine: String, tripCode: String = "I") =
+    fun getRoutesByIdRequest(idLocalCompany: String, idBusLine: String, tripCode: String = "I") =
         RoutesByIdLineRequest(
             idFront = 60,
             country = "spain",
-            state = "benidorm",
-            cityOrTown = "benidorm",
-            idLocalCompany = "5",
+            state = "spain",
+            cityOrTown = "spain",
+            idLocalCompany = idLocalCompany,
             idBusLine = idBusLine,
             tripCode = tripCode
         )

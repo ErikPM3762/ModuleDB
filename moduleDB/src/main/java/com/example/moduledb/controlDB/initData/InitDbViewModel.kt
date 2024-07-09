@@ -37,7 +37,6 @@ import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -539,33 +538,20 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun demoStopDetailVigo() = genericRequest {
-        val idLocalCompany = 60
-        val idBusStop = "130"
-        val idBusLine = "6"
-        getDetailStopById(idLocalCompany, idBusStop).collectLatest {
-            Log.d(TAG, "demoStopDetailVigo: StopDetail: $it")
-            getAllLines(idLocalCompany).collectLatest {
-                Log.d(TAG, "demoStopDetailVigo: Lines: $it")
-                getDetailLines(idLocalCompany, idBusLine, "").collectLatest {
-                    Log.d(TAG, "demoStopDetailVigo: LinesDetail: $it")
-                    getTheoricByTypeStop(idLocalCompany, idBusLine, "I").collectLatest {
-                        Log.d(TAG, "demoStopDetailVigo: GetTheorics: $it")
-                    }
+    fun demoGetRoutes(idLocalCompany: Int, idLine: String) = genericRequest {
+        getRoutesByIdLine(idLocalCompany.toString(), idLine).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
                 }
+
+                else -> {}
             }
         }
-
-
-
-
-        /*
-        //private val getStopDetailById: GetDetailStopById,
-        //private val getAllLines: GetAllLines,
-        //private val getDetailLine: GetDetailLine,
-        //private val getTheoricByTypeStop: GetTheoricByTypeStop
-         */
     }
+
 
     private fun genericRequest(code: suspend () -> Unit) = viewModelScope.launch {
         code()
