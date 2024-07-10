@@ -57,7 +57,7 @@ class InitDbViewModel @Inject constructor(
     private val getStopsByBusLine: GetStopByBusLine,
     private val getStopsById: GetStopById,
     private val getRoutesByIdLine: GetRoutesByIdLine,
-    private val getDetailLines: GetDetailLine,
+    private val getDetailLine: GetDetailLine,
     private val getDetailLinesById: GetDetailLineById,
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
     private val getAllLines: GetAllLines,
@@ -250,7 +250,7 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLines.invoke(
+                    getDetailLine.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         lines.macroRegions?.get(0)?.desMacroRegion as String
@@ -283,7 +283,7 @@ class InitDbViewModel @Inject constructor(
             for (xx in x) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLines.invoke(
+                    getDetailLine.invoke(
                         idLocalCompany,
                         xx,
                         "Campeche"
@@ -421,7 +421,7 @@ class InitDbViewModel @Inject constructor(
         viewModelScope.launch {
             idBusLineList.forEach { idBusLine ->
                 Log.e("Lineas Llamadas", "idBusLine $idBusLine")
-                getDetailLines.invoke(
+                getDetailLine.invoke(
                     idLocalCompany, idBusLine, state
                 ).collectIndexed { _, resulDetailLines ->
                     when (resulDetailLines) {
@@ -540,6 +540,20 @@ class InitDbViewModel @Inject constructor(
 
     fun demoGetRoutes(idLocalCompany: Int, idLine: String) = genericRequest {
         getRoutesByIdLine(idLocalCompany.toString(), idLine).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
+                }
+
+                else -> {}
+            }
+        }
+    }
+
+    fun demoGetLineDetail(idLocalCompany: Int, idLine: String) = genericRequest {
+        getDetailLine(idLocalCompany, idLine, "").collect { result ->
             Log.d(TAG, "Status: $result")
             when (result) {
                 is NetResult.Success -> {
