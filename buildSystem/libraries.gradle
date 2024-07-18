@@ -57,5 +57,12 @@ ext.libraries = [
         //ROOM
         roomRuntime                   : "androidx.room:room-runtime:$version.room",
         roomCompiler                  : "androidx.room:room-compiler:$version.room",
-        roomKtx                       : "androidx.room:room-ktx:$version.room"
+        roomKtx                       : "androidx.room:room-ktx:$version.room",
+        
+        //FIREBASE
+        firebaseAnalytics             :"com.google.firebase:firebase-analytics:$version.firebaseAnalytics",
+        firebaseDatabase              :"com.google.firebase:firebase-database:$version.firebaseDatabase",
+
+        //PLAY SERVICES
+        playServicesMeasurementApi    :"com.google.android.gms:play-services-measurement-api:$version.playServicesMeasurementApi"
 ]

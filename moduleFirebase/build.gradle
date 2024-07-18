@@ -1,41 +1,100 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
 }
+
+apply from: rootProject.file("buildSystem/libraries.gradle")
+def libraries = ext.libraries
+apply from: "$rootProject.projectDir/buildsystem/genericbuild.gradle"
+def configuration = ext.configuration
 
 android {
     namespace 'com.example.modulefirebase'
-    compileSdk 34
+    compileSdk configuration.compileSdkVersion
 
     defaultConfig {
-        minSdk 24
+        minSdkVersion configuration.minSdkVersion
+        targetSdkVersion configuration.targetSdkVersion
+        versionCode configuration.versionCode
+        versionName configuration.versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-    }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
     }
 }
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.8.0')
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.google.android.material:material:1.12.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
+    implementation "${libraries.junit_ktx}"
+    implementation "${libraries.androidx_navigation}"
+    implementation "${libraries.androidx_navigation_fragment}"
+    implementation "${libraries.lifecycle_library_core}"
+    implementation "${libraries.google_hilt}"
+    kapt "${libraries.hilt_kapt}"
+
+    //Play Services
+    implementation "${libraries.playServicesMeasurementApi}"
+    // Firebase
+    implementation "${libraries.firebaseAnalytics}"
+    implementation "${libraries.firebaseDatabase}"
+}
+
+ext.pomfileManualGenerator = {
+    def root = asNode()
+    def dependenciesNode = root.appendNode('dependencies')
+    configurations.implementation.allDependencies
+            .findAll {
+                it.name != null && it.name != 'unspecified' && it.version != 'unspecified'
+            }.each {
+        def dependencyNode = dependenciesNode.appendNode('dependency')
+        dependencyNode.appendNode('groupId', it.group)
+        dependencyNode.appendNode('artifactId', it.name)
+        dependencyNode.appendNode('version', it.version)
+        dependencyNode.appendNode('scope', 'compile')
+        if (it.properties.excludeRules?.size() > 0) {
+            def exclusionsNode = dependencyNode.appendNode('exclusions')
+            it.properties.excludeRules.each { exclusion ->
+                def exclusionNode = exclusionsNode.appendNode('exclusion')
+                exclusion.group != null && exclusionNode.appendNode('groupId', exclusion.group)
+                exclusionNode.appendNode('artifactId', exclusion.module != null ? exclusion.module : '*')
+            }
+        }
+    }
+    root.children().last()
+}
+project(':moduleFirebase') {
+    version = "0.0.1"
+    group = 'com.mobility.ado'
+    artifactoryPublish.dependsOn('build')
+    publishing {
+        publications {
+            gms(MavenPublication) {
+                groupId = group
+                artifactId = "${project.getName()}"
+                version = version
+                artifact("$buildDir/outputs/aar/${project.getName()}-${version}-gmsRelease.aar")
+                pom.withXml pomfileManualGenerator
+            }
+        }
+    }
+
+    artifactoryPublish {
+        publications(publishing.publications.gms)
+    }
+
 }
