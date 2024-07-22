@@ -51,5 +51,12 @@ ext.versionlibrary = [
         confirmPass                  : "1.7.1",
 
         //ROOM
-        room                  : "2.4.3",
+        room                         : "2.4.3",
+
+        //FIREBASE,
+        firebaseAnalytics            : "21.1.1",
+        firebaseDatabase             : "20.0.6",
+
+        //PLAY SERVICES
+        playServicesMeasurementApi   : "21.1.1"
 ]
