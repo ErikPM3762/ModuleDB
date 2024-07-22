@@ -37,7 +37,6 @@ import com.example.moduledb.controlDB.utils.NetResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -58,7 +57,7 @@ class InitDbViewModel @Inject constructor(
     private val getStopsByBusLine: GetStopByBusLine,
     private val getStopsById: GetStopById,
     private val getRoutesByIdLine: GetRoutesByIdLine,
-    private val getDetailLines: GetDetailLine,
+    private val getDetailLine: GetDetailLine,
     private val getDetailLinesById: GetDetailLineById,
     private val getRouteDetailByIdLineAndIdPath: GetRouteDetailByIdLineAndIdPath,
     private val getAllLines: GetAllLines,
@@ -251,7 +250,7 @@ class InitDbViewModel @Inject constructor(
             for (lines in linesByRegionList) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLines.invoke(
+                    getDetailLine.invoke(
                         idLocalCompany,
                         lines.idBusLine,
                         lines.macroRegions?.get(0)?.desMacroRegion as String
@@ -284,7 +283,7 @@ class InitDbViewModel @Inject constructor(
             for (xx in x) {
                 detailLinesInvocationCount++
                 viewModelScope.launch {
-                    getDetailLines.invoke(
+                    getDetailLine.invoke(
                         idLocalCompany,
                         xx,
                         "Campeche"
@@ -422,7 +421,7 @@ class InitDbViewModel @Inject constructor(
         viewModelScope.launch {
             idBusLineList.forEach { idBusLine ->
                 Log.e("Lineas Llamadas", "idBusLine $idBusLine")
-                getDetailLines.invoke(
+                getDetailLine.invoke(
                     idLocalCompany, idBusLine, state
                 ).collectIndexed { _, resulDetailLines ->
                     when (resulDetailLines) {
@@ -539,33 +538,34 @@ class InitDbViewModel @Inject constructor(
         }
     }
 
-    fun demoStopDetailVigo() = genericRequest {
-        val idLocalCompany = 60
-        val idBusStop = "130"
-        val idBusLine = "6"
-        getDetailStopById(idLocalCompany, idBusStop).collectLatest {
-            Log.d(TAG, "demoStopDetailVigo: StopDetail: $it")
-            getAllLines(idLocalCompany).collectLatest {
-                Log.d(TAG, "demoStopDetailVigo: Lines: $it")
-                getDetailLines(idLocalCompany, idBusLine, "").collectLatest {
-                    Log.d(TAG, "demoStopDetailVigo: LinesDetail: $it")
-                    getTheoricByTypeStop(idLocalCompany, idBusLine, "I").collectLatest {
-                        Log.d(TAG, "demoStopDetailVigo: GetTheorics: $it")
-                    }
+    fun demoGetRoutes(idLocalCompany: Int, idLine: String) = genericRequest {
+        getRoutesByIdLine(idLocalCompany.toString(), idLine).collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
                 }
+
+                else -> {}
             }
         }
-
-
-
-
-        /*
-        //private val getStopDetailById: GetDetailStopById,
-        //private val getAllLines: GetAllLines,
-        //private val getDetailLine: GetDetailLine,
-        //private val getTheoricByTypeStop: GetTheoricByTypeStop
-         */
     }
+
+    fun demoGetLineDetail(idLocalCompany: Int, idLine: String) = genericRequest {
+        getDetailLine(idLocalCompany, idLine, "").collect { result ->
+            Log.d(TAG, "Status: $result")
+            when (result) {
+                is NetResult.Success -> {
+                    Log.d(TAG, "idLocalCompany: $idLocalCompany")
+                    Log.d(TAG, "data: ${result.data}")
+                }
+
+                else -> {}
+            }
+        }
+    }
+
 
     private fun genericRequest(code: suspend () -> Unit) = viewModelScope.launch {
         code()

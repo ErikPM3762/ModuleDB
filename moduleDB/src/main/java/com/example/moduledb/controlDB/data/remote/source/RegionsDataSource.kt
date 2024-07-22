@@ -134,13 +134,7 @@ class RegionsDataSource @Inject constructor(
         idLocalCompany: String,
         idLines: String
     ) = flow {
-        val request = when (idLocalCompany) {
-            "5" -> RequestDataBase.getRoutesByIdRequestForBenidorm(
-                idBusLine = idLines
-            )
-
-            else -> throw IllegalArgumentException("Unknown id company for getRoutesByIdLine request")
-        }
+        val request = RequestDataBase.getRoutesByIdRequest(idLocalCompany ,idLines)
         val response = awsServiceApi.getRoutesByIdLine(request)
         emit(response)
     }.catch { error ->

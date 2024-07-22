@@ -129,14 +129,11 @@ object RequestDataBase {
 
     fun getRequestByIdCompanyDetailLine(idLocalCompany: Int, idBusLine: String, state: String) =
         when (idLocalCompany) {
-            BENIDORM.idLocalCompany -> getBenidormDetailLineRequest(idBusLine)
             AHORROBUS.idLocalCompany -> getAhorrobusDetailLineRequest(idBusLine, state)
-            RUBI.idLocalCompany, VIGO.idLocalCompany -> getAwsDetailLineRequest(
+            else -> getAwsDetailLineRequest(
                 idBusLine,
                 idLocalCompany
             )
-
-            else -> throw IllegalArgumentException("Unknown id company for regions request")
         }
 
     fun getRequestByIdCompanyDetailStop(idLocalCompany: Int, idBusStop: String): DetailStopRequest {
@@ -262,13 +259,13 @@ object RequestDataBase {
             tripCode = tripCode
         )
 
-    fun getRoutesByIdRequestForBenidorm(idBusLine: String, tripCode: String = "I") =
+    fun getRoutesByIdRequest(idLocalCompany: String, idBusLine: String, tripCode: String = "I") =
         RoutesByIdLineRequest(
             idFront = 60,
             country = "spain",
-            state = "benidorm",
-            cityOrTown = "benidorm",
-            idLocalCompany = "5",
+            state = "spain",
+            cityOrTown = "spain",
+            idLocalCompany = idLocalCompany,
             idBusLine = idBusLine,
             tripCode = tripCode
         )
@@ -298,12 +295,12 @@ object RequestDataBase {
 
     private fun getAwsDetailLineRequest(idBusLine: String, idLocalCompany: Int) =
         DetailLineAwseRequest(
-            cityOrTown = "segovia",
-            country = "españa",
+            cityOrTown = "spain",
+            country = "spain",
             idBusLine = idBusLine,
             idFront = 100,
             idLocalCompany = idLocalCompany.toString(),
-            state = "provincia_segovia",
+            state = "spain",
             62418
         )
 

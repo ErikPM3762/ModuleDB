@@ -3,13 +3,14 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
 }
+
 apply from: rootProject.file("buildSystem/libraries.gradle")
 def libraries = ext.libraries
 apply from: "$rootProject.projectDir/buildsystem/genericbuild.gradle"
 def configuration = ext.configuration
 
 android {
-    namespace 'com.example.moduledb'
+    namespace 'com.example.modulefirebase'
     compileSdk configuration.compileSdkVersion
 
     defaultConfig {
@@ -29,8 +30,8 @@ android {
     }
 }
 
-
 dependencies {
+
     constraints {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
             because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
@@ -42,23 +43,15 @@ dependencies {
     implementation "${libraries.junit_ktx}"
     implementation "${libraries.androidx_navigation}"
     implementation "${libraries.androidx_navigation_fragment}"
-    implementation "${libraries.retrofit}"
-    implementation "${libraries.retrofit_converter}"
-    implementation "${libraries.okhttp3}"
     implementation "${libraries.lifecycle_library_core}"
     implementation "${libraries.google_hilt}"
     kapt "${libraries.hilt_kapt}"
-    implementation "${libraries.squeareup_interceptor}"
-    implementation "${libraries.coroutine_retrofit}"
 
-
-    implementation "${libraries.roomRuntime}"
-    implementation "${libraries.roomKtx}"
-    kapt "${libraries.roomCompiler}"
-
-    implementation "${libraries.roomRuntime}"
-    annotationProcessor "${libraries.roomCompiler}"
-
+    //Play Services
+    implementation "${libraries.playServicesMeasurementApi}"
+    // Firebase
+    implementation "${libraries.firebaseAnalytics}"
+    implementation "${libraries.firebaseDatabase}"
 }
 
 ext.pomfileManualGenerator = {
@@ -84,9 +77,9 @@ ext.pomfileManualGenerator = {
     }
     root.children().last()
 }
-project(':moduleDB') {
-    version = "1.3.2"
-    group = 'com.mobility.ado.qa'
+project(':moduleFirebase') {
+    version = "0.0.1"
+    group = 'com.mobility.ado'
     artifactoryPublish.dependsOn('build')
     publishing {
         publications {

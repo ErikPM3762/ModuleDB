@@ -76,6 +76,8 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.demoGetAllLines(idLocalCompany)
         mainViewModel.demoGetPointsOfInterest(idLocalCompany)
         mainViewModel.demoGetStops(idLocalCompany)
+        mainViewModel.demoGetLineDetail(idLocalCompany, "0101")
+        mainViewModel.demoGetRoutes(idLocalCompany, "0101")
     }
 
     private fun observers() {
