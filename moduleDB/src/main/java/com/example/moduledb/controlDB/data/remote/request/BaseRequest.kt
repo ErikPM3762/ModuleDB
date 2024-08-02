@@ -12,5 +12,7 @@ data class BaseRequest(
     @SerializedName("cityOrTown")
     val cityOrTown: String,
     @SerializedName("idLocalCompany")
-    val idLocalCompany: String
+    val idLocalCompany: String,
+    @SerializedName("idLiferayCompany")
+    val idLiferayCompany: String = "1"
 )

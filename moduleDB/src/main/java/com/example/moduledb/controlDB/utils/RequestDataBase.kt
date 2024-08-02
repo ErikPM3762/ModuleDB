@@ -42,12 +42,13 @@ object RequestDataBase {
     }
 
     fun getPOIRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
+        AppId.ARAGON.idLocalCompany, AppId.VIGO.idLocalCompany, AppId.RUBI.idLocalCompany, AppId.MATARO.idLocalCompany, AppId.SEGOVIA.idLocalCompany  -> BaseRequest(
             idFront = 100,
-            country = "ourense",
-            state = "ourense",
-            cityOrTown = "ourense",
-            idLocalCompany = idLocalCompany.toString()
+            country = "españa",
+            state = "provincia_segovia",
+            cityOrTown = "segovia",
+            idLocalCompany = idLocalCompany.toString(),
+            idLiferayCompany = "126451"
         )
 
 
@@ -56,14 +57,6 @@ object RequestDataBase {
             country = "spain",
             state = "benidorm",
             cityOrTown = "benidorm",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-        VIGO.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "spain",
-            state = "vigo",
-            cityOrTown = "vigo",
             idLocalCompany = idLocalCompany.toString()
         )
 
@@ -79,7 +72,7 @@ object RequestDataBase {
     }
 
     fun getRPRequesByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
+        AppId.ARAGON.idLocalCompany -> BaseRequest(
             idFront = 100,
             country = "ourense",
             state = "ourense",
@@ -369,23 +362,12 @@ object RequestDataBase {
             pathIdBusLine = idPath
         )
 
-    fun getMapStopsRequestByIdCompany(idLocalCompany: Int): BaseRequest = when (idLocalCompany) {
-        AppId.OURENSE.idLocalCompany -> BaseRequest(
+    fun getMapStopsRequestByIdCompany(idLocalCompany: Int): BaseRequest =
+        BaseRequest(
             idFront = 100,
             country = "ourense",
             state = "ourense",
             cityOrTown = "ourense",
             idLocalCompany = idLocalCompany.toString()
         )
-
-        VIGO.idLocalCompany -> BaseRequest(
-            idFront = 100,
-            country = "vigo",
-            state = "vigo",
-            cityOrTown = "vigo",
-            idLocalCompany = idLocalCompany.toString()
-        )
-
-        else -> throw IllegalArgumentException("Unknown id company for regions request")
-    }
 }

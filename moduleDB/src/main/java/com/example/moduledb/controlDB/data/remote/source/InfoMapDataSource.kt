@@ -31,43 +31,15 @@ class InfoMapDataSource @Inject constructor(
     override suspend fun getPointsInterest(idLocalCompany: Int): Flow<NetResult<ArrayList<MDbPOIsResponse>>> =
         flow {
             val request = RequestDataBase.getPOIRequesByIdCompany(idLocalCompany)
-            when (idLocalCompany) {
-                AppId.AHORROBUS.idLocalCompany -> {
-                    val response: Response<POIsResponse> = oracleServiceApi.getPOIs(request)
-                    emit(response)
-                }
+            val response: Response<POIsResponse> = oracleServiceApi.getPOIs(request)
+            emit(response)
 
-                AppId.BENIDORM.idLocalCompany, AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
-                    val response: Response<GetPOIsAwsResponse> =
-                        awsServiceApi.getPointsOfInterest(request)
-                    emit(response)
-                }
-
-                else -> throw Exception("Unknow option for getPointsInterest")
-            }
         }.catch { error ->
             emit(error.toNetworkResult())
         }.map { res ->
             res.parse {
                 when (it) {
                     is POIsResponse -> it.result!!.pointOfInterestList!!
-                    is GetPOIsAwsResponse -> {
-                        val data = it.result.pointsOfInterest.map { poiAws ->
-                            MDbPOIsResponse(
-                                id = poiAws.id.toString(),
-                                name = poiAws.head,
-                                description = poiAws.description,
-                                address = poiAws.address,
-                                phone = poiAws.phone,
-                                latitude = poiAws.latitude,
-                                longitude = poiAws.longitude
-                            )
-                        }
-                        val arrayList = ArrayList<MDbPOIsResponse>(data.count())
-                        arrayList.addAll(data)
-                        arrayList
-                    }
-
                     else -> throw Exception("Unknow option for getPointsInterest")
                 }
 
@@ -77,48 +49,16 @@ class InfoMapDataSource @Inject constructor(
     override suspend fun getPointsRecharge(idLocalCompany: Int): Flow<NetResult<ArrayList<MDbPORechargeResponse>>> =
         flow {
             val request = RequestDataBase.getRPRequesByIdCompany(idLocalCompany)
-            when (idLocalCompany) {
-                AppId.AHORROBUS.idLocalCompany -> {
-                    val response: Response<PORechargeResponse> =
-                        oracleServiceApi.getRechargingPoints(request)
-                    emit(response)
-                }
-                AppId.BENIDORM.idLocalCompany -> {
-                    val response: Response<GetRPsAwsResponse> =
-                        awsServiceApi.getRechargingPoints(request)
-                    emit(response)
-                }
+            val response: Response<PORechargeResponse> =
+                oracleServiceApi.getRechargingPoints(request)
+            emit(response)
 
-                else -> throw Exception("Unknow option for getPointsInterest")
-            }
         }.catch { error ->
             emit(error.toNetworkResult())
         }.map { res ->
             res.parse {
                 when (it) {
                     is PORechargeResponse -> it.result!!.pointOfRechargeList!!
-                    is GetRPsAwsResponse -> {
-                        val data = it.result.rpCenters.map { rpAws ->
-                            MDbPORechargeResponse(
-                                idRechargeCenter = rpAws.id.toString(),
-                                RechargeCenter = rpAws.rechargeCenter,
-                                latitude = rpAws.latitude,
-                                longitude = rpAws.longitude,
-                                rechargeCenterType = rpAws.type,
-                                rechargeCenterTypeId = rpAws.typeId,
-                                rechargeCenterCategory = rpAws.category,
-                                street = rpAws.street,
-                                outdoorNumber = rpAws.outdoorNumber,
-                                interiorNumber = rpAws.interiorNumber,
-                                neighborhood = rpAws.neighborhood,
-                                postalCode = rpAws.postalCode.toIntOrNull() ?: 0
-                            )
-                        }
-                        val arrayList = ArrayList<MDbPORechargeResponse>(data.count())
-                        arrayList.addAll(data)
-                        arrayList
-                    }
-
                     else -> throw Exception("Unknow option for getPointsInterest")
                 }
             }

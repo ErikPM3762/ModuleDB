@@ -1,5 +1,6 @@
 package com.example.moduledb.controlDB.data.remote.source
 
+import android.util.Log
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
@@ -91,15 +92,17 @@ class StopDataSource @Inject constructor(
     override fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         val request = RequestDataBase.getMapStopsRequestByIdCompany(idLocalCompany)
         when (idLocalCompany) {
-            AppId.OURENSE.idLocalCompany,AppId.VIGO.idLocalCompany -> {
+            AppId.ARAGON.idLocalCompany,
+            AppId.SEGOVIA.idLocalCompany,
+            AppId.MATARO.idLocalCompany,
+            AppId.RUBI.idLocalCompany,
+            AppId.VIGO.idLocalCompany -> {
                 val response: Response<GetMapStopsAwsResponse> = awsServiceApi.getMapStops(request)
                 emit(response)
             }
 
-            else -> throw Exception("Unknow option for getPointsInterest")
+            else -> throw Exception("Unknow option for $idLocalCompany")
         }
-    }.catch { error ->
-        emit(error.toNetworkResult())
     }.map { res ->
         res.parse { response ->
             response.result.features.map { feature ->

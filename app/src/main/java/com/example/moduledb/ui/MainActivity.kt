@@ -72,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initData() {
-        mainViewModel.demoStopDetailVigo()
+        mainViewModel.demoGetPointsOfInterest(9)
     }
 
     private fun observers() {
