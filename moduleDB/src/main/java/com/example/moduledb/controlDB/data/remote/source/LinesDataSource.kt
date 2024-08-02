@@ -6,8 +6,6 @@ import com.example.moduledb.controlDB.data.remote.server.AwsServiceApi
 import com.example.moduledb.controlDB.data.remote.server.OracleServiceApi
 import com.example.moduledb.controlDB.utils.AppId.AHORROBUS
 import com.example.moduledb.controlDB.utils.AppId.BENIDORM
-import com.example.moduledb.controlDB.utils.AppId.RUBI
-import com.example.moduledb.controlDB.utils.AppId.VIGO
 import com.example.moduledb.controlDB.utils.NetResult
 import com.example.moduledb.controlDB.utils.RequestDataBase
 import com.example.moduledb.controlDB.utils.getGenericError
@@ -41,9 +39,7 @@ class LinesDataSource @Inject constructor(
                 RequestDataBase.getRequestByIdCompanyDetailLine(idLocalCompany, idBusline, state)
             when (idLocalCompany) {
                 AHORROBUS.idLocalCompany -> emit(oracleServiceApi.getDetailOfLine(request))
-                RUBI.idLocalCompany,
-                VIGO.idLocalCompany,
-                BENIDORM.idLocalCompany -> emit(awsServiceApi.getDetailOfLine(request))
+                else -> emit(awsServiceApi.getDetailOfLine(request))
             }
         }.map { res ->
             res.parse { it.result!!.busLine }

@@ -66,7 +66,7 @@ publishing {
         debug(MavenPublication) {
             groupId 'com.mobility.ado.qa'
             artifactId 'moduleDB'
-            version '1.2.8'
+            version '1.3.2'
             artifact("$buildDir/outputs/aar/${project.name}-debug.aar")
 
             pom.withXml {
@@ -102,4 +102,5 @@ publishing {
             }
         }
     }
+
 }

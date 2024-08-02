@@ -3,3 +3,4 @@ rootProject.name = "ModuleDB"
 include ':app'
 include ':moduleDB'
 include ':moduledatabase:data'
+include ':moduleFirebase'

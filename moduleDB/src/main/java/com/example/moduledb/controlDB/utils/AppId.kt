@@ -7,5 +7,6 @@ enum class AppId (val idLocalCompany : Int){
     SEGOVIA(65),
     RUBI(51),
     MATARO(59),
-    VIGO(60)
+    VIGO(60),
+    ARAGON(9)
 }

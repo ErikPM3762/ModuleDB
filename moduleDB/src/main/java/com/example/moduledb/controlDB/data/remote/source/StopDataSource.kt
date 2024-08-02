@@ -1,6 +1,5 @@
 package com.example.moduledb.controlDB.data.remote.source
 
-import android.util.Log
 import com.example.moduledb.controlDB.data.local.entities.MDbListStops
 import com.example.moduledb.controlDB.data.local.mapers.toStop
 import com.example.moduledb.controlDB.data.remote.request.StopsRequest
@@ -62,21 +61,18 @@ class StopDataSource @Inject constructor(
      */
     override suspend fun getStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         when (idLocalCompany) {
-            AppId.BENIDORM.idLocalCompany -> {
-                val request =
-                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
-                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
-                emit(response)
-            }
-
             AppId.AHORROBUS.idLocalCompany -> {
                 val request =
                     RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsRequest
                 val response: Response<StopsResponse> = oracleServiceApi.getStops(request)
                 emit(response)
             }
-
-            else -> throw Exception("Unknow option for getStops")
+            else -> {
+                val request =
+                    RequestDataBase.getRequestByIdCompanyStops(idLocalCompany) as StopsSpainRequest
+                val response: Response<StopsResponse> = awsServiceApi.getStops(request)
+                emit(response)
+            }
         }
 
     }.catch { error ->
@@ -91,18 +87,10 @@ class StopDataSource @Inject constructor(
 
     override fun getMapStops(idLocalCompany: Int): Flow<NetResult<List<MDbListStops>>> = flow {
         val request = RequestDataBase.getMapStopsRequestByIdCompany(idLocalCompany)
-        when (idLocalCompany) {
-            AppId.ARAGON.idLocalCompany,
-            AppId.SEGOVIA.idLocalCompany,
-            AppId.MATARO.idLocalCompany,
-            AppId.RUBI.idLocalCompany,
-            AppId.VIGO.idLocalCompany -> {
-                val response: Response<GetMapStopsAwsResponse> = awsServiceApi.getMapStops(request)
-                emit(response)
-            }
-
-            else -> throw Exception("Unknow option for $idLocalCompany")
-        }
+        val response = awsServiceApi.getMapStops(request)
+        emit(response)
+    }.catch { error ->
+        emit(error.toNetworkResult())
     }.map { res ->
         res.parse { response ->
             response.result.features.map { feature ->
